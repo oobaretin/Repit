@@ -10,7 +10,8 @@
     "build:ios": "npm run build && npx cap sync ios",
     "open:ios": "npx cap open ios",
     "sync:ios": "npx cap sync ios",
-    "generate:icons": "node brand/generate-icons.mjs"
+    "generate:icons": "node brand/generate-icons.mjs",
+    "verify": "node scripts/verify-core-flows.mjs"
   },
   "dependencies": {
     "@capacitor/app": "7.0.1",

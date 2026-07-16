@@ -74,6 +74,21 @@ npm run build:ios
 
 See [brand/README.md](brand/README.md) for details.
 
+## App Store & privacy (pre-submission)
+
+Draft materials live in [`docs/`](docs/):
+
+- [App Store copy & keywords](docs/app-store-copy.md)
+- [Screenshot guide](docs/screenshot-guide.md)
+- [Privacy policy](docs/index.html) — host via [GitHub Pages](docs/README.md) at `https://oobaretin.github.io/Repit/`
+- [QA test report](docs/qa-test-report.md)
+
+Verify core timer logic:
+
+```bash
+node scripts/verify-core-flows.mjs
+```
+
 ## Version
 
 Current release: **1.0.0**
