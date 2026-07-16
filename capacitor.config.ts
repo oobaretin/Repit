@@ -6,13 +6,13 @@ const config: CapacitorConfig = {
   webDir: 'dist',
   ios: {
     contentInset: 'automatic',
-    backgroundColor: '#111827',
+    backgroundColor: '#060912',
   },
   plugins: {
     StatusBar: {
       overlaysWebView: false,
       style: 'DARK',
-      backgroundColor: '#111827',
+      backgroundColor: '#060912',
     },
     Keyboard: {
       resize: 'body',

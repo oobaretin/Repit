@@ -1,0 +1,818 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Repit — App Icon & Wordmark</title>
+<meta name="viewport" content="width=1440, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f4f2;
+    --panel: #ffffff;
+    --ink: #0b0f18;
+    --muted: #6b7280;
+    --line: #e5e5e2;
+    --slate: #060912;
+    --cyan-1: oklch(0.86 0.13 205);
+    --cyan-2: oklch(0.72 0.14 200);
+    --teal:   oklch(0.58 0.11 195);
+    --teal-2: oklch(0.48 0.09 200);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter Tight', system-ui, sans-serif;
+    font-feature-settings: 'ss01', 'cv11';
+    -webkit-font-smoothing: antialiased;
+  }
+  .canvas {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 72px 64px 96px;
+  }
+
+  /* ── Header ──────────────────────────────── */
+  header.top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 64px;
+  }
+  .brand {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  h1 {
+    font-size: 56px;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    margin: 8px 0 0;
+    line-height: 1;
+  }
+  h1 em {
+    font-style: normal;
+    color: var(--muted);
+  }
+  .meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.6;
+    text-align: right;
+  }
+  .meta span { color: var(--ink); }
+
+  /* ── Section headings ────────────────────── */
+  .section {
+    margin-bottom: 96px;
+  }
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.14em;
+  }
+  .section-title {
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+  }
+  .section-rule {
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+    margin-left: 16px;
+    align-self: center;
+  }
+
+  /* ── Hero hero card ──────────────────────── */
+  .hero {
+    background: var(--slate);
+    border-radius: 24px;
+    padding: 88px 72px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 70% 50%, oklch(0.4 0.08 200 / 0.12), transparent 70%);
+    pointer-events: none;
+  }
+  .hero-icon {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-copy {
+    color: #cfd6e2;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-copy .kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: oklch(0.72 0.08 200);
+    margin-bottom: 20px;
+  }
+  .hero-copy h2 {
+    font-size: 48px;
+    font-weight: 400;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    margin: 0 0 20px;
+    color: #f0f3f7;
+  }
+  .hero-copy p {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #8892a3;
+    max-width: 380px;
+    margin: 0;
+  }
+
+  /* ── Icon container ──────────────────────── */
+  .icon {
+    background: var(--slate);
+    border-radius: 22.37%; /* iOS squircle-ish */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.06) inset,
+      0 20px 40px -20px rgba(0,0,0,0.5);
+  }
+  .icon svg { width: 100%; height: 100%; display: block; }
+
+  .icon-1024 { width: 360px; }
+  .icon-hero { width: 320px; }
+
+  /* ── Concept grid ────────────────────────── */
+  .concepts {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+  }
+  .concept {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .concept .icon { width: 100%; }
+  .concept-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .concept-label b {
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .concept.primary .concept-label b {
+    color: oklch(0.55 0.14 200);
+  }
+  .concept-desc {
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--muted);
+    margin-top: -8px;
+  }
+
+  /* ── Size ladder ─────────────────────────── */
+  .sizes {
+    display: flex;
+    align-items: flex-end;
+    gap: 48px;
+    padding: 48px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+  }
+  .size-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .size-item .icon { display: block; }
+  .size-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+  .size-label b { color: var(--ink); font-weight: 500; }
+
+  /* fixed size icons */
+  .s-180 { width: 180px; border-radius: 40.28px; }
+  .s-120 { width: 120px; border-radius: 26.85px; }
+  .s-80  { width: 80px;  border-radius: 17.9px; }
+  .s-60  { width: 60px;  border-radius: 13.42px; }
+  .s-40  { width: 40px;  border-radius: 8.95px; }
+
+  /* ── Wordmark ────────────────────────────── */
+  .wordmark-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 24px;
+  }
+  .wm-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 48px 56px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 260px;
+  }
+  .wm-card.dark {
+    background: var(--slate);
+  }
+  .wm-card .cap {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  .wm-card.dark .cap { color: oklch(0.6 0.06 210); }
+
+  .wordmark {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .wordmark .mark {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+  }
+  .wordmark .text {
+    font-size: 56px;
+    font-weight: 500;
+    letter-spacing: -0.045em;
+    line-height: 1;
+    color: var(--ink);
+    font-feature-settings: 'ss01';
+  }
+  .wm-card.dark .wordmark .text { color: #f0f3f7; }
+
+  .wordmark-lockup-v {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  .wordmark-lockup-v .mark { width: 72px; height: 72px; }
+  .wordmark-lockup-v .text {
+    font-size: 40px;
+    font-weight: 500;
+    letter-spacing: -0.045em;
+    line-height: 1;
+    color: #f0f3f7;
+  }
+
+  /* ── Home screen mockup ─────────────────── */
+  .homescreen-row {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 32px;
+  }
+  .phone {
+    aspect-ratio: 9 / 19.5;
+    background: #1a2030;
+    border-radius: 44px;
+    padding: 12px;
+    box-shadow:
+      0 0 0 1px #2a3244,
+      0 40px 60px -30px rgba(0,0,0,0.4);
+    position: relative;
+  }
+  .phone-screen {
+    width: 100%;
+    height: 100%;
+    border-radius: 34px;
+    background:
+      linear-gradient(180deg, #1f2b3d 0%, #0f1520 50%, #1a2436 100%);
+    padding: 40px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+  .phone-notch {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 28px;
+    background: #000;
+    border-radius: 18px;
+    z-index: 2;
+  }
+  .phone-time {
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    padding-left: 12px;
+    margin-bottom: 24px;
+    z-index: 1;
+  }
+  .app-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px 16px;
+  }
+  .app {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .app-icon {
+    aspect-ratio: 1;
+    width: 100%;
+    border-radius: 22.37%;
+    background: #2a3244;
+    position: relative;
+    overflow: hidden;
+  }
+  .app-icon.repit { background: var(--slate); }
+  .app-icon.repit svg { width: 100%; height: 100%; }
+  /* generic filler icons — flat colors so they don't compete */
+  .app-icon.gray-1 { background: #3a4257; }
+  .app-icon.gray-2 { background: #2f3546; }
+  .app-icon.gray-3 { background: #4a5164; }
+  .app-icon.gray-4 { background: #262b3a; }
+  .app-icon.gray-5 { background: #353b4d; }
+  .app-icon.gray-6 { background: #454b5f; }
+  .app-icon.gray-7 { background: #2c3143; }
+  .app-icon.gray-8 { background: #3d4256; }
+  .app-icon.gray-9 { background: #2a3040; }
+  .app-icon.gray-10 { background: #40465a; }
+  .app-icon.gray-11 { background: #333949; }
+  .app-name {
+    font-size: 10px;
+    color: rgba(255,255,255,0.85);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .app-name.repit { color: #fff; font-weight: 600; }
+
+  .home-notes {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 40px 44px;
+  }
+  .home-notes h3 {
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px;
+  }
+  .notes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .note {
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    gap: 14px;
+    align-items: flex-start;
+    padding-bottom: 18px;
+    border-bottom: 1px dashed var(--line);
+  }
+  .note:last-child { border-bottom: none; padding-bottom: 0; }
+  .note-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: oklch(0.55 0.14 200);
+    padding-top: 4px;
+    letter-spacing: 0.08em;
+  }
+  .note-body {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .note-body b {
+    font-weight: 500;
+  }
+  .note-body span {
+    color: var(--muted);
+    display: block;
+    margin-top: 2px;
+    font-size: 12.5px;
+  }
+
+  /* ── Palette strip ───────────────────────── */
+  .palette {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+  }
+  .swatch {
+    aspect-ratio: 4/3;
+    border-radius: 14px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    border: 1px solid var(--line);
+  }
+  .swatch b { font-weight: 500; font-size: 11px; }
+  .swatch small { opacity: 0.7; }
+  .sw-slate { background: var(--slate); color: #cfd6e2; border-color: transparent; }
+  .sw-cyan1 { background: oklch(0.86 0.13 205); color: #06202a; }
+  .sw-cyan2 { background: oklch(0.72 0.14 200); color: #06202a; }
+  .sw-teal  { background: oklch(0.58 0.11 195); color: #eaf7f9; }
+  .sw-teal2 { background: oklch(0.42 0.08 200); color: #eaf7f9; }
+
+  footer {
+    margin-top: 40px;
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     REUSABLE SVG DEFINITIONS
+     All icons share the same gradient stops for consistency.
+     Viewbox is 1024×1024 = App Store size.
+════════════════════════════════════════════════════════════════ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- Primary cyan→teal gradient, angled ≈135° like Apple's Fitness/Breathe -->
+    <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="oklch(0.88 0.13 205)"/>
+      <stop offset="45%"  stop-color="oklch(0.75 0.14 200)"/>
+      <stop offset="100%" stop-color="oklch(0.52 0.09 195)"/>
+    </linearGradient>
+
+    <!-- Same gradient but for smaller mark sizes -->
+    <linearGradient id="ringGradSm" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="oklch(0.88 0.13 205)"/>
+      <stop offset="55%"  stop-color="oklch(0.72 0.14 200)"/>
+      <stop offset="100%" stop-color="oklch(0.55 0.10 195)"/>
+    </linearGradient>
+
+    <!-- Very subtle inner highlight on the base to give it depth -->
+    <radialGradient id="baseGlow" cx="50%" cy="42%" r="65%">
+      <stop offset="0%"   stop-color="#0e1826" stop-opacity="1"/>
+      <stop offset="60%"  stop-color="#060912" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#04070f" stop-opacity="1"/>
+    </radialGradient>
+
+    <!-- Icon 01 · Primary: open ring with terminal cap -->
+    <symbol id="icon-primary" viewBox="0 0 1024 1024">
+      <rect width="1024" height="1024" fill="url(#baseGlow)"/>
+      <!-- open ring: circle with a small arc gap at 12 o'clock; rounded caps -->
+      <g fill="none" stroke="url(#ringGrad)" stroke-width="112" stroke-linecap="round">
+        <!-- 12° gap centered at top (270°→ -84° start, 258° sweep)
+             We draw an arc from 96° to 84° going clockwise through 180°→360°→84°.
+             Easier: use an SVG path arc. -->
+        <path d="
+          M 512 128
+          A 384 384 0 1 1 460 129.5
+        "/>
+      </g>
+      <!-- terminal dot at the ring's starting cap (top-left of gap) -->
+      <circle cx="460" cy="129.5" r="56" fill="oklch(0.88 0.13 205)"/>
+    </symbol>
+
+    <!-- Icon 02 · Thin ring, more contemplative -->
+    <symbol id="icon-thin" viewBox="0 0 1024 1024">
+      <rect width="1024" height="1024" fill="url(#baseGlow)"/>
+      <g fill="none" stroke="url(#ringGrad)" stroke-width="56" stroke-linecap="round">
+        <path d="
+          M 512 152
+          A 360 360 0 1 1 462 153.5
+        "/>
+      </g>
+      <circle cx="462" cy="153.5" r="28" fill="oklch(0.88 0.13 205)"/>
+    </symbol>
+
+    <!-- Icon 03 · Dual ring (inhale + exhale) -->
+    <symbol id="icon-dual" viewBox="0 0 1024 1024">
+      <rect width="1024" height="1024" fill="url(#baseGlow)"/>
+      <!-- outer ring, opens top-right -->
+      <g fill="none" stroke="url(#ringGrad)" stroke-width="72" stroke-linecap="round">
+        <path d="
+          M 640 132
+          A 388 388 0 1 1 590 133
+        " opacity="0.42"/>
+      </g>
+      <!-- inner ring, opens bottom-left, offset for rhythm -->
+      <g fill="none" stroke="url(#ringGrad)" stroke-width="96" stroke-linecap="round">
+        <path d="
+          M 384 892
+          A 260 260 0 1 1 434 891
+        "/>
+      </g>
+      <circle cx="434" cy="891" r="48" fill="oklch(0.88 0.13 205)"/>
+    </symbol>
+
+    <!-- Icon 04 · Dot + arc, timer-forward -->
+    <symbol id="icon-dot" viewBox="0 0 1024 1024">
+      <rect width="1024" height="1024" fill="url(#baseGlow)"/>
+      <!-- Full faint ring for the "loop" -->
+      <circle cx="512" cy="512" r="336" fill="none"
+              stroke="oklch(0.5 0.06 205 / 0.22)" stroke-width="40"/>
+      <!-- Progress arc: ~62% -->
+      <g fill="none" stroke="url(#ringGrad)" stroke-width="80" stroke-linecap="round">
+        <!-- from 270° (top) clockwise ~225° -->
+        <path d="
+          M 512 176
+          A 336 336 0 0 1 750 754
+        "/>
+      </g>
+      <!-- Center dot -->
+      <circle cx="512" cy="512" r="52" fill="oklch(0.88 0.13 205)"/>
+    </symbol>
+
+    <!-- Compact wordmark mark = same as primary but simplified -->
+    <symbol id="icon-primary-sm" viewBox="0 0 1024 1024">
+      <rect width="1024" height="1024" rx="229" ry="229" fill="url(#baseGlow)"/>
+      <g fill="none" stroke="url(#ringGradSm)" stroke-width="128" stroke-linecap="round">
+        <path d="
+          M 512 128
+          A 384 384 0 1 1 456 130
+        "/>
+      </g>
+      <circle cx="456" cy="130" r="64" fill="oklch(0.88 0.13 205)"/>
+    </symbol>
+  </defs>
+</svg>
+
+
+<div class="canvas">
+
+  <!-- ══════════ HEADER ══════════ -->
+  <header class="top">
+    <div>
+      <div class="brand">Repit · App Identity · v1</div>
+      <h1>Breath, as a shape. <em>A ring, a rep.</em></h1>
+    </div>
+    <div class="meta">
+      <span>Category</span>  Mindfulness / Timer<br>
+      <span>Mood</span>  Serious · Elegant · Calm<br>
+      <span>Palette</span>  Slate · Cyan → Teal<br>
+      <span>Type</span>  Inter Tight Medium
+    </div>
+  </header>
+
+
+  <!-- ══════════ HERO ══════════ -->
+  <section class="section">
+    <div class="hero">
+      <div class="hero-icon">
+        <div class="icon icon-hero">
+          <svg viewBox="0 0 1024 1024"><use href="#icon-primary"/></svg>
+        </div>
+      </div>
+      <div class="hero-copy">
+        <div class="kicker">01 · Primary Mark</div>
+        <h2>An open ring — one breath, one repetition, one loop that never quite closes.</h2>
+        <p>The gap is intentional: it's the moment between breaths. The luminous cap
+          seeds where the next rep begins. Ring weight is tuned for legibility down to 40pt.</p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════ CONCEPTS ══════════ -->
+  <section class="section">
+    <div class="section-head">
+      <div class="section-num">02</div>
+      <div class="section-title">Concept variations</div>
+      <div class="section-rule"></div>
+    </div>
+    <div class="concepts">
+      <div class="concept primary">
+        <div class="icon"><svg viewBox="0 0 1024 1024"><use href="#icon-primary"/></svg></div>
+        <div class="concept-label"><b>Primary</b><span>01</span></div>
+        <div class="concept-desc">Bold open ring with terminal cap. The recommended mark — reads clearly at every size.</div>
+      </div>
+      <div class="concept">
+        <div class="icon"><svg viewBox="0 0 1024 1024"><use href="#icon-thin"/></svg></div>
+        <div class="concept-label"><b>Thin</b><span>02</span></div>
+        <div class="concept-desc">Same silhouette, finer stroke. More contemplative but softer at small sizes.</div>
+      </div>
+      <div class="concept">
+        <div class="icon"><svg viewBox="0 0 1024 1024"><use href="#icon-dual"/></svg></div>
+        <div class="concept-label"><b>Dual ring</b><span>03</span></div>
+        <div class="concept-desc">Inhale + exhale as nested rings. Poetic; more visual noise.</div>
+      </div>
+      <div class="concept">
+        <div class="icon"><svg viewBox="0 0 1024 1024"><use href="#icon-dot"/></svg></div>
+        <div class="concept-label"><b>Progress</b><span>04</span></div>
+        <div class="concept-desc">Timer-forward: arc + center dot. Reads more literally as a countdown.</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════ SIZE LADDER ══════════ -->
+  <section class="section">
+    <div class="section-head">
+      <div class="section-num">03</div>
+      <div class="section-title">Size ladder · iOS export sizes</div>
+      <div class="section-rule"></div>
+    </div>
+    <div class="sizes">
+      <div class="size-item">
+        <div class="icon s-180"><svg viewBox="0 0 1024 1024"><use href="#icon-primary"/></svg></div>
+        <div class="size-label"><b>180</b> · App icon @3x</div>
+      </div>
+      <div class="size-item">
+        <div class="icon s-120"><svg viewBox="0 0 1024 1024"><use href="#icon-primary"/></svg></div>
+        <div class="size-label"><b>120</b> · App icon @2x</div>
+      </div>
+      <div class="size-item">
+        <div class="icon s-80"><svg viewBox="0 0 1024 1024"><use href="#icon-primary"/></svg></div>
+        <div class="size-label"><b>80</b> · Spotlight</div>
+      </div>
+      <div class="size-item">
+        <div class="icon s-60"><svg viewBox="0 0 1024 1024"><use href="#icon-primary"/></svg></div>
+        <div class="size-label"><b>60</b> · Settings</div>
+      </div>
+      <div class="size-item">
+        <div class="icon s-40"><svg viewBox="0 0 1024 1024"><use href="#icon-primary"/></svg></div>
+        <div class="size-label"><b>40</b> · Notifications</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════ WORDMARK ══════════ -->
+  <section class="section">
+    <div class="section-head">
+      <div class="section-num">04</div>
+      <div class="section-title">Wordmark & lockups</div>
+      <div class="section-rule"></div>
+    </div>
+    <div class="wordmark-grid">
+      <div class="wm-card">
+        <div class="cap">Horizontal lockup · Light</div>
+        <div class="wordmark">
+          <div class="mark"><svg viewBox="0 0 1024 1024"><use href="#icon-primary-sm"/></svg></div>
+          <div class="text">repit</div>
+        </div>
+      </div>
+      <div class="wm-card dark">
+        <div class="cap">Vertical lockup · Dark</div>
+        <div class="wordmark-lockup-v">
+          <div class="mark"><svg viewBox="0 0 1024 1024"><use href="#icon-primary-sm"/></svg></div>
+          <div class="text">repit</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════ HOME SCREEN ══════════ -->
+  <section class="section">
+    <div class="section-head">
+      <div class="section-num">05</div>
+      <div class="section-title">In context · Home screen</div>
+      <div class="section-rule"></div>
+    </div>
+    <div class="homescreen-row">
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="phone-time">9:41</div>
+          <div class="app-grid">
+            <div class="app"><div class="app-icon gray-1"></div><div class="app-name">Messages</div></div>
+            <div class="app"><div class="app-icon gray-2"></div><div class="app-name">Calendar</div></div>
+            <div class="app"><div class="app-icon gray-3"></div><div class="app-name">Photos</div></div>
+            <div class="app"><div class="app-icon gray-4"></div><div class="app-name">Camera</div></div>
+
+            <div class="app"><div class="app-icon gray-5"></div><div class="app-name">Maps</div></div>
+            <div class="app"><div class="app-icon gray-6"></div><div class="app-name">Weather</div></div>
+            <div class="app"><div class="app-icon gray-7"></div><div class="app-name">Notes</div></div>
+            <div class="app"><div class="app-icon gray-8"></div><div class="app-name">Health</div></div>
+
+            <div class="app">
+              <div class="app-icon repit">
+                <svg viewBox="0 0 1024 1024"><use href="#icon-primary"/></svg>
+              </div>
+              <div class="app-name repit">Repit</div>
+            </div>
+            <div class="app"><div class="app-icon gray-9"></div><div class="app-name">Music</div></div>
+            <div class="app"><div class="app-icon gray-10"></div><div class="app-name">Podcasts</div></div>
+            <div class="app"><div class="app-icon gray-11"></div><div class="app-name">Books</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="home-notes">
+        <h3>Design rationale</h3>
+        <div class="notes-list">
+          <div class="note">
+            <div class="note-num">01</div>
+            <div class="note-body">
+              <b>The gap.</b>
+              <span>An open ring, not a closed one. Represents the pause between repetitions — the space where mindfulness lives.</span>
+            </div>
+          </div>
+          <div class="note">
+            <div class="note-num">02</div>
+            <div class="note-body">
+              <b>The cap.</b>
+              <span>The luminous dot at the ring's start is the "seed" of the next rep. It gives the mark a subtle sense of motion without animating.</span>
+            </div>
+          </div>
+          <div class="note">
+            <div class="note-num">03</div>
+            <div class="note-body">
+              <b>Gradient discipline.</b>
+              <span>Gradient lives only on the mark, angled 135°. The base stays a flat, cool slate so the icon feels grounded — not decorative.</span>
+            </div>
+          </div>
+          <div class="note">
+            <div class="note-num">04</div>
+            <div class="note-body">
+              <b>Small-size legibility.</b>
+              <span>Stroke weight is 11% of the icon width — heavy enough to survive at 40pt notification size without becoming clunky at 1024.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════ PALETTE ══════════ -->
+  <section class="section">
+    <div class="section-head">
+      <div class="section-num">06</div>
+      <div class="section-title">Palette</div>
+      <div class="section-rule"></div>
+    </div>
+    <div class="palette">
+      <div class="swatch sw-slate"><b>Slate</b><small>#060912 · base</small></div>
+      <div class="swatch sw-cyan1"><b>Cyan 01</b><small>oklch(.88 .13 205)</small></div>
+      <div class="swatch sw-cyan2"><b>Cyan 02</b><small>oklch(.72 .14 200)</small></div>
+      <div class="swatch sw-teal"><b>Teal</b><small>oklch(.58 .11 195)</small></div>
+      <div class="swatch sw-teal2"><b>Deep</b><small>oklch(.42 .08 200)</small></div>
+    </div>
+  </section>
+
+
+  <footer>
+    <div>REPIT · IDENTITY SYSTEM · 2026</div>
+    <div>4 CONCEPTS · 5 EXPORT SIZES · 2 LOCKUPS</div>
+  </footer>
+
+</div>
+
+</body>
+</html>

@@ -31,19 +31,28 @@ export PATH="$HOME/Repeat2/.tools/node-v22.17.0-darwin-x64/bin:$PATH"
 
 ## iOS build
 
-1. Install **Xcode** from the App Store
-2. Install CocoaPods: `sudo gem install cocoapods`
-3. Build and sync:
-   ```bash
-   npm run build:ios
-   npm run open:ios
-   ```
-4. In Xcode, select your team under **Signing & Capabilities**, then run on a device or simulator
-
-If Xcode is in Downloads:
+Xcode is installed at `~/Downloads/Xcode.app` on this machine. Before building:
 
 ```bash
-export DEVELOPER_DIR="$HOME/Downloads/Xcode.app/Contents/Developer"
+source scripts/ios-env.sh
+npm run build:ios
+npm run open:ios
+```
+
+Or open manually: `ios/App/App.xcworkspace` (use the **workspace**, not the `.xcodeproj`).
+
+### In Xcode
+
+1. Open **App.xcworkspace**
+2. Select the **App** target → **Signing & Capabilities**
+3. Choose your **Team** (Apple ID)
+4. Pick a simulator (e.g. iPhone 16) or connect your iPhone
+5. Press **Run** (▶)
+
+If Xcode is moved to Applications:
+
+```bash
+export DEVELOPER_DIR="/Applications/Xcode.app/Contents/Developer"
 ```
 
 ## App identity
@@ -53,6 +62,17 @@ export DEVELOPER_DIR="$HOME/Downloads/Xcode.app/Contents/Developer"
 | **App name** | Repit |
 | **Bundle ID** | com.repit.app |
 | **Category** | Health & Fitness |
+
+## App icon
+
+The primary logo (open ring mark) lives in `brand/`. Regenerate icons with:
+
+```bash
+npm run generate:icons
+npm run build:ios
+```
+
+See [brand/README.md](brand/README.md) for details.
 
 ## Version
 

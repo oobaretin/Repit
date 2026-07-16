@@ -1,40 +1,54 @@
 
 import React from 'react';
+import { formatDuration } from '../utils/formatDuration';
 
 interface SessionCompleteProps {
   reps: number;
   totalSessions: number;
+  durationSec?: number | null;
   onDismiss: () => void;
 }
 
 const SessionComplete: React.FC<SessionCompleteProps> = ({
   reps,
   totalSessions,
+  durationSec,
   onDismiss,
 }) => (
-  <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 pb-[calc(1rem+var(--safe-bottom))] bg-black/60 backdrop-blur-sm animate-fade-up">
+  <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 backdrop-blur-md animate-fade-up sm:items-center">
     <div
-      className="w-full max-w-sm rounded-3xl border border-cyan-500/20 bg-gray-900/95 p-6 shadow-2xl"
+      className="w-full max-w-sm rounded-t-[2rem] border border-emerald-500/20 bg-gray-950/95 p-6 shadow-2xl sm:rounded-[2rem] sm:mx-4"
+      style={{ paddingBottom: 'calc(1.5rem + var(--safe-bottom))' }}
       role="dialog"
       aria-labelledby="session-complete-title"
     >
-      <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-500/15 text-green-400 text-3xl">
-        ✓
+      <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500/10 ring-1 ring-emerald-400/25">
+        <span className="text-4xl text-emerald-400">✓</span>
       </div>
       <h2 id="session-complete-title" className="text-center text-2xl font-semibold text-white">
-        Session Complete
+        Well done
       </h2>
       <p className="mt-2 text-center text-gray-300">
-        You completed <span className="font-semibold text-cyan-300">{reps.toLocaleString()}</span> repetitions.
+        You completed{' '}
+        <span className="font-semibold text-emerald-300">{reps.toLocaleString()}</span>{' '}
+        repetitions
+        {durationSec ? (
+          <>
+            {' '}
+            in <span className="font-semibold text-emerald-300">{formatDuration(durationSec)}</span>.
+          </>
+        ) : (
+          '.'
+        )}
       </p>
-      <p className="mt-1 text-center text-sm text-gray-500">
-        {totalSessions} session{totalSessions === 1 ? '' : 's'} logged
+      <p className="mt-2 text-center text-sm text-gray-500">
+        {totalSessions} session{totalSessions === 1 ? '' : 's'} in your journey
       </p>
       <button
         onClick={onDismiss}
-        className="mt-6 w-full rounded-2xl bg-cyan-500 py-3.5 text-base font-semibold text-gray-950 transition active:scale-[0.98] active:bg-cyan-400"
+        className="mt-6 w-full rounded-2xl bg-emerald-500 py-4 text-base font-semibold text-gray-950 transition active:scale-[0.98] active:bg-emerald-400"
       >
-        Done
+        Close
       </button>
     </div>
   </div>

@@ -12,7 +12,7 @@ class NativeService {
 
     try {
       await StatusBar.setStyle({ style: Style.Dark });
-      await StatusBar.setBackgroundColor({ color: '#111827' });
+      await StatusBar.setBackgroundColor({ color: '#060912' });
     } catch {
       // Status bar plugin unavailable
     }

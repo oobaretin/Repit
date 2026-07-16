@@ -13,6 +13,8 @@ export enum SoundOption {
   None = 'None',
 }
 
+export type AppScreen = 'timer' | 'settings';
+
 export const REP_PRESETS = [27, 54, 108, 1000] as const;
 
 export interface SessionStats {
@@ -26,3 +28,24 @@ export const DEFAULT_SESSION_STATS: SessionStats = {
   totalReps: 0,
   lastSessionAt: null,
 };
+
+export interface SettingsPageProps {
+  targetReps: number;
+  setTargetReps: (reps: number) => void;
+  delay: number;
+  setDelay: (delay: number) => void;
+  selectedSound: SoundOption;
+  setSelectedSound: (sound: SoundOption) => void;
+  hapticsEnabled: boolean;
+  setHapticsEnabled: (enabled: boolean) => void;
+  lockOnLeave: boolean;
+  setLockOnLeave: (enabled: boolean) => void;
+  autoFocusLock: boolean;
+  setAutoFocusLock: (enabled: boolean) => void;
+  onLogout: () => void;
+  onRestart: () => void;
+  onBack: () => void;
+  isTimerActive: boolean;
+  totalSessions: number;
+  totalReps: number;
+}

@@ -22,8 +22,8 @@ body,
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: #111827;
+  font-family: 'Inter Tight', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #060912;
   overscroll-behavior: none;
   user-select: none;
   -webkit-user-select: none;
@@ -54,14 +54,14 @@ input[type='range'] {
 }
 
 input[type='range']::-webkit-slider-runnable-track {
-  background: #374151;
-  height: 0.35rem;
+  background: linear-gradient(90deg, #164e63, #374151);
+  height: 0.4rem;
   border-radius: 9999px;
 }
 
 input[type='range']::-moz-range-track {
-  background: #374151;
-  height: 0.35rem;
+  background: linear-gradient(90deg, #164e63, #374151);
+  height: 0.4rem;
   border-radius: 9999px;
 }
 
@@ -73,8 +73,8 @@ input[type='range']::-webkit-slider-thumb {
   height: 1.25rem;
   width: 1.25rem;
   border-radius: 50%;
-  border: 2px solid #111827;
-  box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.15);
+  border: 2px solid #0a0f1a;
+  box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.12);
 }
 
 input[type='range']::-moz-range-thumb {
@@ -83,28 +83,227 @@ input[type='range']::-moz-range-thumb {
   background-color: #22d3ee;
   height: 1.25rem;
   width: 1.25rem;
-  border: 2px solid #111827;
+  border: 2px solid #0a0f1a;
+}
+
+.ambient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ambient-orb-a {
+  top: -10%;
+  left: -20%;
+  width: 55vw;
+  height: 55vw;
+  background: rgba(34, 211, 238, 0.08);
+}
+
+.ambient-orb-b {
+  bottom: -15%;
+  right: -25%;
+  width: 60vw;
+  height: 60vw;
+  background: rgba(99, 102, 241, 0.07);
+}
+
+.ambient-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(4, 7, 15, 0.55) 100%);
+}
+
+.btn-icon {
+  display: flex;
+  height: 2.5rem;
+  width: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.75rem;
+  background: rgba(31, 41, 55, 0.8);
+  color: rgb(209, 213, 219);
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.btn-icon:active {
+  background: rgb(55, 65, 81);
+  transform: scale(0.96);
+}
+
+/* ── Breathing circle (synced to interval + sound) ── */
+
+.breath-stack {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.breath-layer {
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0.9);
+  opacity: 0.3;
+}
+
+.breath-layer-outer {
+  inset: 0;
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.22) 0%, rgba(34, 211, 238, 0) 68%);
+}
+
+.breath-layer-mid {
+  inset: 10%;
+  border: 1px solid rgba(34, 211, 238, 0.25);
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.08) 0%, transparent 70%);
+}
+
+.breath-layer-inner {
+  inset: 22%;
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.12) 0%, transparent 65%);
+}
+
+@keyframes breath-inhale-exhale {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.28;
+  }
+  12% {
+    transform: scale(1.1);
+    opacity: 0.95;
+  }
+  38% {
+    transform: scale(1.06);
+    opacity: 0.62;
+  }
+  100% {
+    transform: scale(0.9);
+    opacity: 0.28;
+  }
+}
+
+@keyframes breath-count-pulse {
+  0% {
+    transform: scale(1);
+  }
+  12% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes breath-control-pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.35);
+  }
+  12% {
+    transform: scale(1.06);
+    box-shadow: 0 0 28px 6px rgba(34, 211, 238, 0.28);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(34, 211, 238, 0);
+  }
+}
+
+@keyframes breath-stroke-glow {
+  0% {
+    stroke-opacity: 0.55;
+    filter: drop-shadow(0 0 2px rgba(34, 211, 238, 0.2));
+  }
+  12% {
+    stroke-opacity: 1;
+    filter: drop-shadow(0 0 14px rgba(34, 211, 238, 0.65));
+  }
+  100% {
+    stroke-opacity: 0.55;
+    filter: drop-shadow(0 0 2px rgba(34, 211, 238, 0.2));
+  }
+}
+
+@keyframes breath-idle-sway {
+  0%,
+  100% {
+    transform: scale(0.94);
+    opacity: 0.22;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 0.38;
+  }
+}
+
+.breath-running .breath-layer {
+  animation: breath-inhale-exhale var(--breath-duration, 2s) cubic-bezier(0.45, 0.05, 0.25, 1) infinite;
+}
+
+.breath-running .breath-layer-mid {
+  animation-delay: calc(var(--breath-duration, 2s) * 0.04);
+}
+
+.breath-running .breath-layer-inner {
+  animation-delay: calc(var(--breath-duration, 2s) * 0.08);
+}
+
+.breath-running .breath-count {
+  animation: breath-count-pulse var(--breath-duration, 2s) cubic-bezier(0.45, 0.05, 0.25, 1) infinite;
+}
+
+.breath-running .breath-control {
+  animation: breath-control-pulse var(--breath-duration, 2s) cubic-bezier(0.45, 0.05, 0.25, 1) infinite;
+}
+
+.breath-running .breath-progress-stroke {
+  animation: breath-stroke-glow var(--breath-duration, 2s) cubic-bezier(0.45, 0.05, 0.25, 1) infinite;
+}
+
+.breath-paused .breath-layer,
+.breath-paused .breath-count,
+.breath-paused .breath-control,
+.breath-paused .breath-progress-stroke {
+  animation-play-state: paused;
+}
+
+.breath-idle .breath-layer {
+  animation: breath-idle-sway 5s ease-in-out infinite;
+}
+
+.breath-idle .breath-layer-mid {
+  animation-delay: 0.6s;
+}
+
+.breath-idle .breath-layer-inner {
+  animation-delay: 1.2s;
 }
 
 @keyframes pulse-ring {
   0% {
-    transform: scale(0.98);
-    opacity: 0.7;
+    transform: scale(0.96);
+    opacity: 0.5;
   }
   50% {
     transform: scale(1);
-    opacity: 1;
+    opacity: 0.9;
   }
   100% {
-    transform: scale(0.98);
-    opacity: 0.7;
+    transform: scale(0.96);
+    opacity: 0.5;
   }
 }
 
 @keyframes fade-up {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(16px);
   }
   to {
     opacity: 1;
@@ -112,10 +311,41 @@ input[type='range']::-moz-range-thumb {
   }
 }
 
+@keyframes rep-pop {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 .animate-pulse-ring {
-  animation: pulse-ring 2.4s ease-in-out infinite;
+  animation: pulse-ring 3s ease-in-out infinite;
 }
 
 .animate-fade-up {
-  animation: fade-up 0.35s ease-out both;
+  animation: fade-up 0.4s ease-out both;
+}
+
+.page-enter {
+  animation: page-enter 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rep-pop {
+  animation: rep-pop 0.25s ease-out;
 }
