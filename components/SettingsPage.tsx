@@ -67,7 +67,6 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
   autoFocusLock,
   setAutoFocusLock,
   onLogout,
-  onRestart,
   onBack,
   isTimerActive,
   totalSessions,
@@ -207,15 +206,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
           />
         </section>
 
-        <section className="space-y-3">
-          <button
-            type="button"
-            onClick={onRestart}
-            disabled={!isTimerActive}
-            className="w-full rounded-xl bg-gray-800 py-3.5 text-sm font-medium text-gray-200 active:bg-gray-700 disabled:opacity-40"
-          >
-            Restart session
-          </button>
+        <section>
           <button
             type="button"
             onClick={onLogout}

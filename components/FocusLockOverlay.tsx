@@ -1,5 +1,6 @@
 
 import React, { useRef, useState, useCallback, useEffect } from 'react';
+import { BRAND_COLORS } from '../utils/brandColors';
 import { LockOpenIcon } from './icons';
 
 interface FocusLockOverlayProps {
@@ -61,7 +62,7 @@ const FocusLockOverlay: React.FC<FocusLockOverlayProps> = ({ onUnlock }) => {
               cy="24"
               r="20"
               fill="none"
-              stroke="rgb(34, 211, 238)"
+              stroke={BRAND_COLORS.cyan}
               strokeWidth="3"
               strokeLinecap="round"
               strokeDasharray={125.6}

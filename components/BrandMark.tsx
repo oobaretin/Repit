@@ -1,5 +1,5 @@
-
 import React from 'react';
+import { BRAND_COLORS } from '../utils/brandColors';
 
 interface BrandMarkProps {
   className?: string;
@@ -16,9 +16,9 @@ const BrandMark: React.FC<BrandMarkProps> = ({ className = '', size = 32 }) => (
   >
     <defs>
       <linearGradient id="repit-ring" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stopColor="#67e8f9" />
-        <stop offset="45%" stopColor="#22d3ee" />
-        <stop offset="100%" stopColor="#0891b2" />
+        <stop offset="0%" stopColor={BRAND_COLORS.cyanLight} />
+        <stop offset="45%" stopColor={BRAND_COLORS.cyan} />
+        <stop offset="100%" stopColor={BRAND_COLORS.cyanDeep} />
       </linearGradient>
       <radialGradient id="repit-base" cx="50%" cy="42%" r="65%">
         <stop offset="0%" stopColor="#0e1826" />
@@ -30,7 +30,7 @@ const BrandMark: React.FC<BrandMarkProps> = ({ className = '', size = 32 }) => (
     <g fill="none" stroke="url(#repit-ring)" strokeWidth="112" strokeLinecap="round">
       <path d="M 512 128 A 384 384 0 1 1 460 129.5" />
     </g>
-    <circle cx="460" cy="129.5" r="56" fill="#67e8f9" />
+    <circle cx="460" cy="129.5" r="56" fill={BRAND_COLORS.cyanLight} />
   </svg>
 );
 

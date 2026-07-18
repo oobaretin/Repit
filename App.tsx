@@ -10,7 +10,7 @@ import SettingsPage from './components/SettingsPage';
 import SessionBar from './components/SessionBar';
 import SessionComplete from './components/SessionComplete';
 import StatusChip from './components/StatusChip';
-import AppLockScreen from './components/AppLockScreen';
+import UnlockWelcomeScreen from './components/UnlockWelcomeScreen';
 import FocusLockOverlay from './components/FocusLockOverlay';
 import BrandMark from './components/BrandMark';
 import ConfigPill from './components/ConfigPill';
@@ -32,6 +32,7 @@ const App: React.FC = () => {
   const [showComplete, setShowComplete] = useState(false);
   const [sessionDurationSec, setSessionDurationSec] = useState<number | null>(null);
   const [appUnlocked, setAppUnlocked] = useState(true);
+  const [unlockReveal, setUnlockReveal] = useState(false);
   const [focusLocked, setFocusLocked] = useState(false);
   const [biometricAvailable, setBiometricAvailable] = useState(false);
   const currentRepRef = useRef(currentRep);
@@ -180,6 +181,13 @@ const App: React.FC = () => {
     await hapticsService.medium();
   }, []);
 
+  const handleUnlock = useCallback(() => {
+    setScreen('timer');
+    setAppUnlocked(true);
+    setUnlockReveal(true);
+    window.setTimeout(() => setUnlockReveal(false), 500);
+  }, []);
+
   const openSettings = useCallback(async () => {
     setScreen('settings');
     await hapticsService.light();
@@ -187,16 +195,18 @@ const App: React.FC = () => {
 
   if (!appUnlocked) {
     return (
-      <AppLockScreen
+      <UnlockWelcomeScreen
         biometricAvailable={biometricAvailable}
-        onUnlock={() => setAppUnlocked(true)}
+        onUnlock={handleUnlock}
       />
     );
   }
 
   return (
     <main
-      className="relative flex min-h-screen flex-col overflow-hidden bg-[#060912] text-white"
+      className={`relative flex min-h-screen flex-col overflow-hidden bg-[var(--brand-bg)] text-white${
+        unlockReveal ? ' app-unlock-reveal' : ''
+      }`}
       style={shellStyle}
     >
       <div className="ambient-orb ambient-orb-a" aria-hidden="true" />
@@ -220,7 +230,6 @@ const App: React.FC = () => {
             autoFocusLock={autoFocusLock}
             setAutoFocusLock={setAutoFocusLock}
             onLogout={handleLogout}
-            onRestart={handleRestart}
             onBack={() => setScreen('timer')}
             isTimerActive={isTimerActive}
             totalSessions={sessionStats.totalSessions}

@@ -43,7 +43,6 @@ export interface SettingsPageProps {
   autoFocusLock: boolean;
   setAutoFocusLock: (enabled: boolean) => void;
   onLogout: () => void;
-  onRestart: () => void;
   onBack: () => void;
   isTimerActive: boolean;
   totalSessions: number;
