@@ -12,7 +12,7 @@ const out = join(root, 'privacy-site');
 
 mkdirSync(out, { recursive: true });
 
-for (const file of ['index.html', 'icon.svg', '.nojekyll']) {
+for (const file of ['index.html', 'privacy.html', 'icon.svg', '.nojekyll']) {
   cpSync(join(root, 'docs', file), join(out, file));
 }
 
