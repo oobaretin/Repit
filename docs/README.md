@@ -39,10 +39,10 @@ npm run verify
 
 ## Free pre-submission checklist
 
-- [ ] **Privacy policy live** at `https://repit-privacy.netlify.app/`
-- [ ] **`npm run verify`** passes locally
-- [ ] **Device QA** — manual checklist in `qa-test-report.md` on a real iPhone
-- [ ] **Screenshots** — 5-scene set per `screenshot-guide.md` → `screenshots/`
+- [x] **Privacy policy live** at `https://repit-privacy.netlify.app/`
+- [x] **`npm run verify`** passes locally
+- [x] **Device QA** — manual checklist in `qa-test-report.md` on a real iPhone
+- [x] **Screenshots** — 5-scene set per `screenshot-guide.md` → `screenshots/`
 - [ ] **Fix any issues** from QA or screenshot pass
 
 When all boxes are checked, you’re ready for App Store Connect and TestFlight.

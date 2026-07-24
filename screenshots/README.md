@@ -15,6 +15,14 @@ Capture on **iPhone 16 Pro Max** simulator (1290 × 2796 px). See [docs/screensh
 
 ## Quick capture
 
+Automated (1290 × 2796, iPhone Pro Max dimensions):
+
+```bash
+npm run screenshots
+```
+
+Manual simulator setup:
+
 ```bash
 source scripts/ios-env.sh
 npm run build:ios

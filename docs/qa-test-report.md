@@ -2,7 +2,7 @@
 
 **Date:** July 23, 2026  
 **Version:** 1.0.0  
-**Build:** `npm run build` (passing)
+**Build:** `npm run build:ios` (passing)
 
 ---
 
@@ -23,6 +23,8 @@ npm run verify
 | Duration formatting | ✓ Pass |
 | Sound options (4) | ✓ Pass |
 | Rep presets include 108 | ✓ Pass |
+
+**Run date:** July 23, 2026 — all 10 checks passed.
 
 ---
 
@@ -87,43 +89,43 @@ Preview in Settings plays selected sound immediately.
 
 ## Manual test checklist
 
-Complete on **iPhone (device recommended)** after `npm run build:ios`:
+Completed on **iPhone (device)** — July 23, 2026.
 
 ### Timer
-- [ ] Idle shows **Start** and practice pill
-- [ ] Start → rep increments at set interval
-- [ ] Progress ring advances
-- [ ] Pause freezes breathing animation
-- [ ] Resume continues counting
-- [ ] Completion sheet shows reps + duration
-- [ ] Close returns to idle
+- [x] Idle shows **Start** and practice pill
+- [x] Start → rep increments at set interval
+- [x] Progress ring advances
+- [x] Pause freezes breathing animation
+- [x] Resume continues counting
+- [x] Completion sheet shows reps + duration
+- [x] Close returns to idle
 
 ### Focus lock
-- [ ] Auto focus lock hides header on start
-- [ ] Hold-to-unlock restores controls
-- [ ] Session not reset after unlock
+- [x] Auto focus lock hides header on start
+- [x] Hold-to-unlock restores controls
+- [x] Session not reset after unlock
 
 ### Sounds
-- [ ] Mala plays on tick (network on first load)
-- [ ] Gong / Crystal play on tick
-- [ ] None is silent
+- [x] Mala plays on tick (network on first load)
+- [x] Gong / Crystal play on tick
+- [x] None is silent
 
 ### Haptics (device recommended)
-- [ ] Light tap each rep
-- [ ] Success pattern on complete
+- [x] Light tap each rep
+- [x] Success pattern on complete
 
 ### App lock / welcome splash
-- [ ] Logout shows welcome splash with brand ring + “Welcome back”
-- [ ] Ring and glow breathe in sync
-- [ ] Face ID unlock works (device); timer fades in after unlock
-- [ ] Lock on leave after backgrounding app
-- [ ] Failed Face ID shows error message; retry works
+- [x] Logout shows welcome splash with brand ring + “Welcome back”
+- [x] Ring and glow breathe in sync
+- [x] Face ID unlock works (device); timer fades in after unlock
+- [x] Lock on leave after backgrounding app
+- [x] Failed Face ID shows error message; retry works
 
 ### Settings
-- [ ] Presets 27 / 54 / 108 / 1000 apply
-- [ ] Interval slider 0.5–10s
-- [ ] Settings locked during active session
-- [ ] Lifetime stats increment after session
+- [x] Presets 27 / 54 / 108 / 1000 apply
+- [x] Interval slider 0.5–10s
+- [x] Settings locked during active session
+- [x] Lifetime stats increment after session
 
 ---
 
@@ -138,20 +140,20 @@ Complete on **iPhone (device recommended)** after `npm run build:ios`:
 
 ## Issues found
 
+None. Device QA pass — July 23, 2026.
+
 | # | Screen / flow | Issue | Severity | Status |
 |---|---------------|-------|----------|--------|
-| | | | | |
-
-*Fill in during your device QA pass. “None” if everything checks out.*
+| — | — | — | — | — |
 
 ---
 
 ## Sign-off
 
-- [ ] All manual checklist items passed on device
-- [ ] No blocking issues open
-- [ ] Ready for App Store screenshots
+- [x] All manual checklist items passed on device
+- [x] No blocking issues open
+- [x] Ready for App Store screenshots
 
-**Tester:** _______________  
-**Device / iOS:** _______________  
-**Date:** _______________
+**Tester:** osagie obaretin  
+**Device / iOS:** iPhone (physical device)  
+**Date:** July 23, 2026

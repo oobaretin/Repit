@@ -12,7 +12,8 @@
     "sync:ios": "npx cap sync ios",
     "generate:icons": "node brand/generate-icons.mjs",
     "verify": "node scripts/verify-core-flows.mjs",
-    "sync:privacy-site": "node scripts/sync-privacy-site.mjs"
+    "sync:privacy-site": "node scripts/sync-privacy-site.mjs",
+    "screenshots": "npm run build && node scripts/capture-screenshots.mjs"
   },
   "dependencies": {
     "@capacitor/app": "7.0.1",
@@ -34,6 +35,7 @@
     "@vitejs/plugin-react": "^5.0.0",
     "typescript": "~5.8.2",
     "vite": "^6.2.0",
-    "sharp": "^0.34.3"
+    "sharp": "^0.34.3",
+    "playwright": "^1.52.0"
   }
 }
