@@ -2,7 +2,7 @@
 
 Static site for App Store Connect **Privacy Policy URL**. The main Repit repo can stay **private**.
 
-Source of truth: **`docs/index.html`** → synced here via `npm run sync:privacy-site`.
+Source of truth: **`docs/index.html`** (app landing page) and **`docs/privacy.html`** (policy) → synced here via `npm run sync:privacy-site`.
 
 ---
 
@@ -10,7 +10,7 @@ Source of truth: **`docs/index.html`** → synced here via `npm run sync:privacy
 
 Deploy straight from your **private** Repit repo. No second public GitHub repo needed.
 
-**Live URL:** https://repit-privacy.netlify.app/
+**Live URL:** https://repit-privacy.netlify.app/ (privacy policy at `/privacy.html`)
 
 ### Setup
 
@@ -22,13 +22,13 @@ Deploy straight from your **private** Repit repo. No second public GitHub repo n
    - **Publish directory:** `privacy-site`
 5. **Deploy site**
 
-After deploy, open the `.netlify.app` URL and confirm the privacy policy loads.
+After deploy, open the `.netlify.app` URL and confirm the app page loads, then click through to the privacy policy.
 
-Use that URL in **App Store Connect → Privacy Policy URL** (update `docs/app-store-copy.md` with your exact URL).
+Use the `/privacy.html` URL in **App Store Connect → Privacy Policy URL** (update `docs/app-store-copy.md` with your exact URL).
 
 ### Updates
 
-Edit `docs/index.html` → push to `main` → Netlify redeploys automatically.
+Edit `docs/index.html` or `docs/privacy.html` → push to `main` → Netlify redeploys automatically.
 
 ### Even faster (no Git connect)
 
@@ -77,6 +77,7 @@ git push -u origin main
 
 | File | Purpose |
 |------|---------|
-| `index.html` | Privacy policy (synced from `docs/index.html`) |
+| `index.html` | App landing page (synced from `docs/index.html`), links to `privacy.html` |
+| `privacy.html` | Privacy policy (synced from `docs/privacy.html`) |
 | `icon.svg` | App mark in page header |
 | `.nojekyll` | For GitHub Pages only (harmless on Netlify) |

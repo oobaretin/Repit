@@ -13,7 +13,7 @@ Pick one:
 | **Netlify** (live) | `https://repit-privacy.netlify.app/` | Deployed from private Repit repo |
 | GitHub Pages | `https://oobaretin.github.io/repit-privacy/` | Separate public repo with only `privacy-site/` |
 
-After editing `docs/index.html`, run `npm run sync:privacy-site` and push (Netlify runs sync on deploy automatically).
+After editing `docs/index.html` or `docs/privacy.html`, run `npm run sync:privacy-site` and push (Netlify runs sync on deploy automatically).
 
 ---
 
@@ -21,8 +21,9 @@ After editing `docs/index.html`, run `npm run sync:privacy-site` and push (Netli
 
 | File | Purpose |
 |------|---------|
-| `index.html` | Privacy policy source (synced to `privacy-site/`) |
-| `icon.svg` | Logo for the privacy page |
+| `index.html` | Simple app landing page, links to the privacy policy |
+| `privacy.html` | Privacy policy source (synced to `privacy-site/`) |
+| `icon.svg` | Logo for the app and privacy pages |
 | `app-store-copy.md` | Description, keywords, review notes |
 | `screenshot-guide.md` | Screenshot layouts and capture steps |
 | `qa-test-report.md` | Core flow test results and manual checklist |
@@ -39,7 +40,7 @@ npm run verify
 
 ## Free pre-submission checklist
 
-- [x] **Privacy policy live** at `https://repit-privacy.netlify.app/`
+- [x] **Privacy policy live** at `https://repit-privacy.netlify.app/privacy.html`
 - [x] **`npm run verify`** passes locally
 - [x] **Device QA** — manual checklist in `qa-test-report.md` on a real iPhone
 - [x] **Screenshots** — 5-scene set per `screenshot-guide.md` → `screenshots/`
