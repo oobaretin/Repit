@@ -1,6 +1,6 @@
 # Repit — Core Flow QA Report
 
-**Date:** July 16, 2026  
+**Date:** July 23, 2026  
 **Version:** 1.0.0  
 **Build:** `npm run build` (passing)
 
@@ -11,7 +11,7 @@
 Run:
 
 ```bash
-node scripts/verify-core-flows.mjs
+npm run verify
 ```
 
 | Check | Result |
@@ -77,16 +77,17 @@ Preview in Settings plays selected sound immediately.
 
 | Flow | Expected behavior |
 |------|-------------------|
-| Logout | Settings → Logout → full-screen lock |
-| Unlock | Face ID / Touch ID via native biometric API |
-| Lock on leave | If enabled, switching apps triggers lock screen on return |
-| Web | Biometric unavailable → simple Unlock button |
+| Logout | Settings → Logout → welcome splash with brand ring |
+| Welcome splash | Logo ring + “Welcome back” + gradient unlock button |
+| Unlock | Face ID / Touch ID via native biometric API; splash fades out, timer fades in |
+| Lock on leave | If enabled, switching apps triggers welcome splash on return |
+| Web | Biometric unavailable → “Tap to unlock” button |
 
 ---
 
 ## Manual test checklist
 
-Complete on **iPhone simulator or device** after `npm run build:ios`:
+Complete on **iPhone (device recommended)** after `npm run build:ios`:
 
 ### Timer
 - [ ] Idle shows **Start** and practice pill
@@ -103,7 +104,7 @@ Complete on **iPhone simulator or device** after `npm run build:ios`:
 - [ ] Session not reset after unlock
 
 ### Sounds
-- [ ] Mala plays on tick (simulator: audible)
+- [ ] Mala plays on tick (network on first load)
 - [ ] Gong / Crystal play on tick
 - [ ] None is silent
 
@@ -111,10 +112,12 @@ Complete on **iPhone simulator or device** after `npm run build:ios`:
 - [ ] Light tap each rep
 - [ ] Success pattern on complete
 
-### App lock
-- [ ] Logout shows lock screen with logo
-- [ ] Face ID unlock works (device)
+### App lock / welcome splash
+- [ ] Logout shows welcome splash with brand ring + “Welcome back”
+- [ ] Ring and glow breathe in sync
+- [ ] Face ID unlock works (device); timer fades in after unlock
 - [ ] Lock on leave after backgrounding app
+- [ ] Failed Face ID shows error message; retry works
 
 ### Settings
 - [ ] Presets 27 / 54 / 108 / 1000 apply
@@ -135,4 +138,20 @@ Complete on **iPhone simulator or device** after `npm run build:ios`:
 
 ## Issues found
 
-None from automated/code review pass. Manual device checklist above is pending your sign-off.
+| # | Screen / flow | Issue | Severity | Status |
+|---|---------------|-------|----------|--------|
+| | | | | |
+
+*Fill in during your device QA pass. “None” if everything checks out.*
+
+---
+
+## Sign-off
+
+- [ ] All manual checklist items passed on device
+- [ ] No blocking issues open
+- [ ] Ready for App Store screenshots
+
+**Tester:** _______________  
+**Device / iOS:** _______________  
+**Date:** _______________

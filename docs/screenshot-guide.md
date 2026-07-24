@@ -89,7 +89,15 @@ Fast path: set **27 reps** at **0.5s** interval (~14s) to reach completion quick
 
 ## Optional 6th screenshot
 
-**App lock / Face ID** — after tapping Logout in Settings. Caption: *Unlock with Face ID when you return*.
+**Welcome splash / Face ID** — Settings → Logout. Shows the brand ring, “Welcome back”, and gradient unlock button.
+
+| | |
+|---|---|
+| **Screen** | Welcome splash (`UnlockWelcomeScreen`) |
+| **State** | Ring + glow visible; “Unlock with Face ID” button at bottom |
+| **Caption idea** | *Unlock with Face ID when you return* |
+
+Capture before tapping unlock so the ring and cyan glow are fully visible.
 
 Only include if you have space; not required for v1.
 
@@ -135,7 +143,7 @@ Repit supports iPad orientations in Info.plist. If you ship iPad, add 12.9" scre
 03-focus-lock.png
 04-settings.png
 05-session-complete.png
-06-face-id-optional.png
+06-welcome-splash-optional.png
 ```
 
 Upload in this order in App Store Connect — first image is the one users see in search.

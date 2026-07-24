@@ -11,7 +11,8 @@
     "open:ios": "npx cap open ios",
     "sync:ios": "npx cap sync ios",
     "generate:icons": "node brand/generate-icons.mjs",
-    "verify": "node scripts/verify-core-flows.mjs"
+    "verify": "node scripts/verify-core-flows.mjs",
+    "sync:privacy-site": "node scripts/sync-privacy-site.mjs"
   },
   "dependencies": {
     "@capacitor/app": "7.0.1",

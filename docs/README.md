@@ -1,30 +1,60 @@
-# Repit docs (GitHub Pages)
+# Repit docs
 
-## Enable privacy policy hosting
+The main **Repit** repo is private. Host the privacy policy on **Netlify** (deploy from this repo) or a **public `repit-privacy` repo** (GitHub Pages).
 
-1. Push this repo to GitHub
-2. Go to **Settings → Pages**
-3. **Source:** Deploy from branch
-4. **Branch:** `main` → folder **`/docs`**
-5. Save
+---
 
-Your privacy policy will be live at:
+## Privacy policy URL
 
-**https://oobaretin.github.io/Repit/**
+Pick one:
 
-Use that URL in App Store Connect.
+| Host | Example URL | Notes |
+|------|-------------|--------|
+| **Netlify** (recommended) | `https://repit-privacy.netlify.app` | Connect private Repit repo; see [`privacy-site/README.md`](../privacy-site/README.md) |
+| GitHub Pages | `https://oobaretin.github.io/repit-privacy/` | Separate public repo with only `privacy-site/` |
+
+After editing `docs/index.html`, run `npm run sync:privacy-site` and push (Netlify runs sync on deploy automatically).
+
+---
 
 ## Contents
 
 | File | Purpose |
 |------|---------|
-| `index.html` | Privacy policy (public URL for App Store) |
+| `index.html` | Privacy policy source (synced to `privacy-site/`) |
+| `icon.svg` | Logo for the privacy page |
 | `app-store-copy.md` | Description, keywords, review notes |
 | `screenshot-guide.md` | Screenshot layouts and capture steps |
 | `qa-test-report.md` | Core flow test results and manual checklist |
 
+---
+
 ## Verify timer logic locally
 
 ```bash
-node scripts/verify-core-flows.mjs
+npm run verify
 ```
+
+---
+
+## Free pre-submission checklist
+
+- [ ] **Privacy policy live** at your Netlify or GitHub Pages URL
+- [ ] **`npm run verify`** passes locally
+- [ ] **Device QA** — manual checklist in `qa-test-report.md` on a real iPhone
+- [ ] **Screenshots** — 5-scene set per `screenshot-guide.md` → `screenshots/`
+- [ ] **Fix any issues** from QA or screenshot pass
+
+When all boxes are checked, you’re ready for App Store Connect and TestFlight.
+
+---
+
+## If you make Repit public later
+
+You can host from this repo’s `/docs` folder instead:
+
+1. **Settings → Pages →** deploy **`main`** / **`/docs`**
+2. URL becomes `https://oobaretin.github.io/Repit/`
+3. Update App Store Connect with the new URL
+
+The workflow in `.github/workflows/deploy-privacy-policy.yml` also works on a **public** Repit repo.

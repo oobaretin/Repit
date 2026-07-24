@@ -80,7 +80,7 @@ Draft materials live in [`docs/`](docs/):
 
 - [App Store copy & keywords](docs/app-store-copy.md)
 - [Screenshot guide](docs/screenshot-guide.md)
-- [Privacy policy](docs/index.html) — host via [GitHub Pages](docs/README.md) at `https://oobaretin.github.io/Repit/`
+- [Privacy policy](docs/index.html) — host on **Netlify** from this private repo ([`privacy-site/`](privacy-site/README.md))
 - [QA test report](docs/qa-test-report.md)
 
 Verify core timer logic:

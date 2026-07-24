@@ -102,7 +102,7 @@ Welcome to Repit — a mindfulness repetition timer for mantra, affirmations, an
 
 | Field | Value |
 |-------|--------|
-| **Privacy Policy URL** | `https://oobaretin.github.io/Repit/` |
+| **Privacy Policy URL** | Your Netlify URL (e.g. `https://repit-privacy.netlify.app`) or GitHub Pages — see [privacy-site/README.md](../privacy-site/README.md) |
 | **Support URL** | `https://github.com/oobaretin/Repit/issues` |
 | **Marketing URL** | *(optional)* `https://github.com/oobaretin/Repit` |
 
