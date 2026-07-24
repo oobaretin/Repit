@@ -10,7 +10,7 @@ Pick one:
 
 | Host | Example URL | Notes |
 |------|-------------|--------|
-| **Netlify** (recommended) | `https://repit-privacy.netlify.app` | Connect private Repit repo; see [`privacy-site/README.md`](../privacy-site/README.md) |
+| **Netlify** (live) | `https://repit-privacy.netlify.app/` | Deployed from private Repit repo |
 | GitHub Pages | `https://oobaretin.github.io/repit-privacy/` | Separate public repo with only `privacy-site/` |
 
 After editing `docs/index.html`, run `npm run sync:privacy-site` and push (Netlify runs sync on deploy automatically).
@@ -39,7 +39,7 @@ npm run verify
 
 ## Free pre-submission checklist
 
-- [ ] **Privacy policy live** at your Netlify or GitHub Pages URL
+- [ ] **Privacy policy live** at `https://repit-privacy.netlify.app/`
 - [ ] **`npm run verify`** passes locally
 - [ ] **Device QA** — manual checklist in `qa-test-report.md` on a real iPhone
 - [ ] **Screenshots** — 5-scene set per `screenshot-guide.md` → `screenshots/`

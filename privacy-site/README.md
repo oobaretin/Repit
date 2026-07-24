@@ -10,7 +10,7 @@ Source of truth: **`docs/index.html`** → synced here via `npm run sync:privacy
 
 Deploy straight from your **private** Repit repo. No second public GitHub repo needed.
 
-**Example URL:** `https://repit-privacy.netlify.app` (you pick the subdomain at signup)
+**Live URL:** https://repit-privacy.netlify.app/
 
 ### Setup
 
