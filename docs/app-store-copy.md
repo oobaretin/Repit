@@ -19,15 +19,27 @@ Use this when creating the listing in App Store Connect.
 
 (30 characters max — current: 28)
 
+**Alternate (subscription-forward):**
+
+**Daily Mantra & Breath Timer**
+
+---
+
+## Monetization
+
+**Model:** Free download · **7-day free trial** · **$14.99/year** or **$2.99/month** after trial.
+
+Full plan, onboarding, and paywall copy: [subscription-plan.md](./subscription-plan.md).
+
 ---
 
 ## Promotional Text
 
 Optional. Can be updated without a new app review.
 
-> Count mantras, affirmations, or breaths with a calm repetition timer. Focus lock, gentle sounds, haptics, and on-device Face ID — built for daily practice.
+> Start a 7-day free trial — count mantras, affirmations, or breaths with a calm repetition timer. Focus lock, sounds, haptics, and on-device Face ID.
 
-(169 characters)
+(158 characters)
 
 ---
 
@@ -35,6 +47,8 @@ Optional. Can be updated without a new app review.
 
 ```
 Repit is a minimal repetition timer for mantra practice, affirmations, breath counting, and any mindful practice that uses a steady count.
+
+Start with a 7-day free trial. After that, choose annual ($14.99/year) or monthly ($2.99/month). Cancel anytime in your Apple ID subscription settings.
 
 Set your target repetitions and interval, tap Start, and follow the breathing circle. Each rep brings a gentle sound and haptic tap so you can stay present without watching the screen.
 
@@ -49,6 +63,10 @@ FEATURES
 • Session tracking — lifetime sessions and total reps stored on your device
 • Privacy first — no account required; Face ID unlock stays on your device
 
+SUBSCRIPTION
+
+Repit requires a subscription after the 7-day free trial. Payment is charged to your Apple ID. Subscriptions renew automatically unless canceled at least 24 hours before the end of the current period. Manage subscriptions in Settings → Apple ID → Subscriptions.
+
 WHO IT'S FOR
 
 • Mantra and japa meditation
@@ -59,7 +77,7 @@ WHO IT'S FOR
 
 Repit stays out of your way: dark, elegant, and designed for uninterrupted practice.
 
-Questions or feedback? Open an issue on GitHub or contact us through the support link in the listing.
+Questions or feedback? Contact us through the support link in the listing.
 ```
 
 (~1,350 characters — well under the 4,000 limit)
@@ -89,6 +107,7 @@ mantra,meditation,timer,breath counting,mala beads,affirmation,japa,108,repetiti
 ```
 Welcome to Repit — a mindfulness repetition timer for mantra, affirmations, and breath counting.
 
+• 7-day free trial, then annual or monthly subscription
 • Configurable reps and interval
 • Breathing circle synced to your pace
 • Mala, Gong, and Crystal sounds
@@ -118,7 +137,7 @@ Based on current app behavior:
 |-----------|------------|-----------------|-------------------|
 | Contact info | No | — | — |
 | Health & fitness | No* | — | — |
-| Financial info | No | — | — |
+| Financial info | No* | — | — |
 | Location | No | — | — |
 | User content | No | — | — |
 | Identifiers | No | — | — |
@@ -126,6 +145,8 @@ Based on current app behavior:
 | Diagnostics | No | — | — |
 
 \* Session rep counts are stored **locally on device only** — not transmitted. Apple may still ask about “Fitness” if you describe breath counting; answer based on whether you claim health features (Repit is a general mindfulness timer, not a medical/health tracker).
+
+**Subscriptions:** Payment and billing are handled by Apple. Repit does not store card or payment details. Subscription status is verified on-device via StoreKit.
 
 **Face ID:** Used for app unlock only; processed on-device via iOS — declare if prompted under authentication/biometric usage.
 
@@ -151,6 +172,10 @@ Optional field when submitting:
 
 ```
 Repit is a repetition timer for mindfulness practice. No account is required.
+
+Subscriptions: complete onboarding → tap "Start free trial" → sign in with sandbox Apple ID when prompted.
+Products: com.repit.app.premium.annual and com.repit.app.premium.monthly (7-day free trial each).
+Restore purchases is on the paywall.
 
 To test Face ID lock: open Settings → tap Logout → unlock with Face ID.
 To test focus lock: start a session → controls hide automatically → hold the unlock button at the bottom for ~1.2 seconds.
