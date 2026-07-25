@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { REP_PRESETS, SettingsPageProps, SoundOption } from '../types';
 import { formatDuration } from '../utils/formatDuration';
 import { ChevronLeftIcon } from './icons';
@@ -68,12 +68,27 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
   setAutoFocusLock,
   onLogout,
   onBack,
+  onRestorePurchases,
   isTimerActive,
   totalSessions,
   totalReps,
 }) => {
   const soundOptions = Object.values(SoundOption);
   const estimatedSessionSec = targetReps > 0 ? targetReps * delay : 0;
+  const [restoreMessage, setRestoreMessage] = useState('');
+  const [restoreBusy, setRestoreBusy] = useState(false);
+
+  const handleRestore = async () => {
+    setRestoreBusy(true);
+    setRestoreMessage('');
+    const result = await onRestorePurchases();
+    setRestoreBusy(false);
+    if (result.success) {
+      setRestoreMessage('Subscription restored.');
+      return;
+    }
+    if (result.error) setRestoreMessage(result.error);
+  };
 
   return (
     <div className="flex min-h-full flex-col">
@@ -204,6 +219,26 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
             label="Lock when leaving app"
             description="Require unlock after switching apps"
           />
+        </section>
+
+        <section className="space-y-3 rounded-2xl border border-gray-700/40 bg-gray-800/40 p-4">
+          <h2 className="text-sm font-medium text-gray-200">Subscription</h2>
+          <p className="text-xs text-gray-500">
+            Manage or cancel in Settings → Apple ID → Subscriptions on your iPhone.
+          </p>
+          <button
+            type="button"
+            onClick={handleRestore}
+            disabled={restoreBusy}
+            className="w-full rounded-xl bg-gray-700/60 py-3 text-sm font-medium text-gray-200 active:bg-gray-700 disabled:opacity-50"
+          >
+            {restoreBusy ? 'Restoring…' : 'Restore purchases'}
+          </button>
+          {restoreMessage && (
+            <p className={`text-xs ${restoreMessage.includes('restored') ? 'text-emerald-400' : 'text-gray-400'}`}>
+              {restoreMessage}
+            </p>
+          )}
         </section>
 
         <section>

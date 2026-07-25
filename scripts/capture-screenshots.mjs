@@ -63,9 +63,17 @@ async function applyPrefs(page, prefs) {
   }, { ...DEFAULT_PREFS, ...prefs });
 }
 
+async function bypassSubscriptionGate(page) {
+  await page.evaluate(() => {
+    localStorage.setItem('repit-onboardingComplete', 'true');
+    localStorage.setItem('repit-devPremium', 'true');
+  });
+}
+
 async function loadApp(page, prefs = {}) {
   await page.goto(baseUrl, { waitUntil: 'networkidle' });
   await applyPrefs(page, prefs);
+  await bypassSubscriptionGate(page);
   await page.reload({ waitUntil: 'networkidle' });
   await page.waitForTimeout(600);
 }

@@ -14,8 +14,13 @@ import UnlockWelcomeScreen from './components/UnlockWelcomeScreen';
 import FocusLockOverlay from './components/FocusLockOverlay';
 import BrandMark from './components/BrandMark';
 import ConfigPill from './components/ConfigPill';
+import OnboardingFlow from './components/OnboardingFlow';
+import PaywallScreen from './components/PaywallScreen';
+import TrialReminderBanner from './components/TrialReminderBanner';
+import BootstrapLoading from './components/BootstrapLoading';
 import usePersistentState from './hooks/usePersistentState';
 import { useMeditationTimer } from './hooks/useMeditationTimer';
+import { useSubscription } from './hooks/useSubscription';
 import { LockIcon, SettingsIcon } from './components/icons';
 
 const shellStyle = {
@@ -26,6 +31,23 @@ const shellStyle = {
 } as const;
 
 const App: React.FC = () => {
+  const {
+    isPremium,
+    loading: subscriptionLoading,
+    trialDaysLeft,
+    devMode,
+    purchase,
+    restore,
+    refresh,
+  } = useSubscription();
+
+  const [onboardingComplete, setOnboardingComplete] = usePersistentState('repit-onboardingComplete', false);
+  const [everPremium, setEverPremium] = usePersistentState('repit-everPremium', false);
+  const [trialReminderDismissed, setTrialReminderDismissed] = usePersistentState(
+    'repit-trialReminderDismissed',
+    false,
+  );
+
   const [screen, setScreen] = useState<AppScreen>('timer');
   const [timerState, setTimerState] = useState<TimerState>(TimerState.Idle);
   const [currentRep, setCurrentRep] = useState(0);
@@ -49,6 +71,17 @@ const App: React.FC = () => {
   currentRepRef.current = currentRep;
   const isTimerActive = timerState === TimerState.Running || timerState === TimerState.Paused;
   const sessionSummary = `${targetReps.toLocaleString()} reps · ${delay.toFixed(1)}s · ${selectedSound}`;
+
+  const showTrialReminder =
+    isPremium &&
+    trialDaysLeft !== null &&
+    trialDaysLeft <= 2 &&
+    trialDaysLeft > 0 &&
+    !trialReminderDismissed;
+
+  useEffect(() => {
+    if (isPremium) setEverPremium(true);
+  }, [isPremium, setEverPremium]);
 
   useEffect(() => {
     nativeService.initialize();
@@ -193,6 +226,31 @@ const App: React.FC = () => {
     await hapticsService.light();
   }, []);
 
+  const handleRestorePurchases = useCallback(async () => {
+    const result = await restore();
+    return result;
+  }, [restore]);
+
+  if (subscriptionLoading) {
+    return <BootstrapLoading />;
+  }
+
+  if (!onboardingComplete) {
+    return <OnboardingFlow onComplete={() => setOnboardingComplete(true)} />;
+  }
+
+  if (!isPremium) {
+    return (
+      <PaywallScreen
+        expired={everPremium}
+        devMode={devMode}
+        onSubscribed={() => void refresh()}
+        onPurchase={purchase}
+        onRestore={restore}
+      />
+    );
+  }
+
   if (!appUnlocked) {
     return (
       <UnlockWelcomeScreen
@@ -214,6 +272,14 @@ const App: React.FC = () => {
       <div className="ambient-vignette" aria-hidden="true" />
 
       <div className="relative z-10 mx-auto flex w-full max-w-lg flex-1 flex-col">
+        {showTrialReminder && screen === 'timer' && !focusLocked && (
+          <TrialReminderBanner
+            daysLeft={trialDaysLeft!}
+            onViewPlans={openSettings}
+            onDismiss={() => setTrialReminderDismissed(true)}
+          />
+        )}
+
         {screen === 'settings' ? (
           <div key="settings" className="page-enter flex min-h-full flex-1 flex-col">
           <SettingsPage
@@ -231,6 +297,7 @@ const App: React.FC = () => {
             setAutoFocusLock={setAutoFocusLock}
             onLogout={handleLogout}
             onBack={() => setScreen('timer')}
+            onRestorePurchases={handleRestorePurchases}
             isTimerActive={isTimerActive}
             totalSessions={sessionStats.totalSessions}
             totalReps={sessionStats.totalReps}

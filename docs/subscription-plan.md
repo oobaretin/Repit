@@ -259,11 +259,12 @@ See [app-store-copy.md](./app-store-copy.md) — subscription description, promo
 
 - [ ] Subscription products created in App Store Connect  
 - [ ] 7-day introductory offer on both products  
-- [ ] Onboarding + paywall implemented  
-- [ ] Restore purchases works  
-- [ ] Trial reminder (day 5–6)  
-- [ ] Expired trial state handled  
-- [ ] Paywall legal footer with Privacy Policy link  
-- [ ] Sandbox tested end-to-end  
+- [x] Onboarding + paywall implemented  
+- [x] Restore purchases works (Settings + paywall)  
+- [x] Trial reminder (day 5–6)  
+- [x] Expired trial state handled  
+- [x] Paywall legal footer with Privacy Policy link  
+- [ ] RevenueCat project + `VITE_REVENUECAT_IOS_API_KEY` in `.env`  
+- [ ] Sandbox tested end-to-end on device  
 - [ ] Privacy policy mentions subscriptions billed through Apple (optional sentence)  
 - [ ] Screenshots still accurate (or add paywall/onboarding shot if desired)

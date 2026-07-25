@@ -44,6 +44,7 @@ export interface SettingsPageProps {
   setAutoFocusLock: (enabled: boolean) => void;
   onLogout: () => void;
   onBack: () => void;
+  onRestorePurchases: () => Promise<{ success: boolean; error?: string }>;
   isTimerActive: boolean;
   totalSessions: number;
   totalReps: number;
