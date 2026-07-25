@@ -4,6 +4,8 @@ Monetization model for v1: **7-day free trial** after onboarding, then **annual 
 
 **Bundle ID:** `com.repit.app`
 
+**Setup guide:** [revenuecat-setup.md](./revenuecat-setup.md) — App Store Connect + RevenueCat step-by-step.
+
 ---
 
 ## Pricing (launch)
