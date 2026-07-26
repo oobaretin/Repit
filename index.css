@@ -170,6 +170,48 @@ input[type='range']::-moz-range-thumb {
   color: rgb(107, 114, 128);
 }
 
+.settings-fold-trigger {
+  display: flex;
+  width: 100%;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: -0.25rem;
+  padding: 0.5rem 0.25rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  border-radius: 0.75rem;
+  text-align: left;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s ease;
+}
+
+.settings-fold-trigger:active {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.settings-fold-body {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  animation: settings-fold-in 0.2s ease-out;
+}
+
+@keyframes settings-fold-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .sound-chip {
   display: flex;
   min-height: 3.25rem;

@@ -14,5 +14,4 @@ See [docs/README.md](../docs/README.md#privacy-policy-hosting) for one-time GitH
 
 ## Legacy
 
-- **Netlify** (`repit-privacy.netlify.app`) — deprecated; disconnect in Netlify after GitHub Pages is live.
 - **`npm run sync:privacy-site`** — copies `docs/` into this folder for manual deploys only; not required for GitHub Pages.

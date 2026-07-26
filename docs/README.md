@@ -24,7 +24,6 @@ The policy is published from this repo via GitHub Actions when `docs/index.html`
 3. Push to `main` or run **Actions → Deploy privacy policy → Run workflow**.
 4. Confirm https://oobaretin.github.io/Repit/ loads.
 5. Set the same URL in **App Store Connect → Privacy Policy URL**.
-6. Disconnect the old Netlify site if it was connected (`repit-privacy.netlify.app`).
 
 Edits: change `docs/index.html` → push → workflow redeploys automatically.
 

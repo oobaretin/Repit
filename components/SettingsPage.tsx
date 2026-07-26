@@ -4,7 +4,7 @@ import { REP_PRESETS, SettingsPageProps, SoundOption, MAX_CUSTOM_PRESETS } from 
 import { SOUND_GROUPS, SOUND_HINTS } from '../constants/sounds';
 import { formatDuration } from '../utils/formatDuration';
 import { formatHistoryDate } from '../utils/practiceStats';
-import { ChevronLeftIcon } from './icons';
+import { ChevronLeftIcon, ChevronDownIcon, ChevronUpIcon } from './icons';
 import packageJson from '../package.json';
 
 const SOUND_GRID_CLASS = {
@@ -64,6 +64,45 @@ const Toggle: React.FC<{
   </label>
 );
 
+const SettingsFold: React.FC<{
+  title: string;
+  hint?: string;
+  badge?: string;
+  defaultOpen?: boolean;
+  children: React.ReactNode;
+}> = ({ title, hint, badge, defaultOpen = false, children }) => {
+  const [open, setOpen] = useState(defaultOpen);
+
+  return (
+    <section className="settings-card">
+      <button
+        type="button"
+        onClick={() => setOpen((prev) => !prev)}
+        className="settings-fold-trigger"
+        aria-expanded={open}
+      >
+        <div className="min-w-0 flex-1 text-left">
+          <h2 className="settings-section-title">{title}</h2>
+          {!open && hint && <p className="mt-1 text-xs text-gray-500">{hint}</p>}
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
+          {badge && (
+            <span className="rounded-full bg-cyan-500/15 px-2.5 py-1 text-xs font-semibold text-cyan-300">
+              {badge}
+            </span>
+          )}
+          {open ? (
+            <ChevronUpIcon className="h-5 w-5 text-gray-400" />
+          ) : (
+            <ChevronDownIcon className="h-5 w-5 text-gray-400" />
+          )}
+        </div>
+      </button>
+      {open ? <div className="settings-fold-body">{children}</div> : null}
+    </section>
+  );
+};
+
 const SettingsPage: React.FC<SettingsPageProps> = ({
   targetReps,
   setTargetReps,
@@ -120,6 +159,14 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
 
   const recentHistory = sessionHistory.slice(0, 10);
 
+  const preferenceSummary = [
+    hapticsEnabled && 'Haptics on',
+    autoFocusLock && 'Focus lock',
+    lockOnLeave && 'App lock',
+  ]
+    .filter(Boolean)
+    .join(' · ') || 'Defaults';
+
   return (
     <div className="flex min-h-full flex-col">
       <header className="flex items-center gap-3 border-b border-gray-800/80 pb-4">
@@ -171,8 +218,15 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
         </section>
 
         {recentHistory.length > 0 && (
-          <section className="settings-card space-y-3">
-            <h2 className="settings-section-title">Recent sessions</h2>
+          <SettingsFold
+            title="Recent sessions"
+            hint={
+              recentHistory[0]
+                ? `Latest · ${formatHistoryDate(recentHistory[0].completedAt)} · ${recentHistory[0].reps.toLocaleString()} reps`
+                : undefined
+            }
+            badge={String(recentHistory.length)}
+          >
             <ul className="space-y-2">
               {recentHistory.map((entry) => (
                 <li
@@ -191,7 +245,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                 </li>
               ))}
             </ul>
-          </section>
+          </SettingsFold>
         )}
 
         <section className="settings-card space-y-3">
@@ -329,17 +383,11 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
           </div>
         </section>
 
-        <section className="settings-card space-y-4">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <h2 className="settings-section-title">Tick sound</h2>
-              <p className="mt-1 text-xs text-gray-500">Tap to preview · plays each rep</p>
-            </div>
-            <span className="shrink-0 rounded-full bg-cyan-500/15 px-2.5 py-1 text-xs font-semibold text-cyan-300">
-              {selectedSound}
-            </span>
-          </div>
-
+        <SettingsFold
+          title="Tick sound"
+          hint="Tap to preview · plays each rep"
+          badge={selectedSound}
+        >
           {SOUND_GROUPS.map((group) => (
             <div key={group.id} className="space-y-2">
               <p className="settings-group-label">{group.label}</p>
@@ -355,10 +403,12 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
               </div>
             </div>
           ))}
-        </section>
+        </SettingsFold>
 
-        <section className="settings-card space-y-4">
-          <h2 className="settings-section-title">Preferences</h2>
+        <SettingsFold
+          title="Preferences"
+          hint={preferenceSummary}
+        >
           <Toggle
             checked={hapticsEnabled}
             onChange={() => setHapticsEnabled(!hapticsEnabled)}
@@ -377,7 +427,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
             label="Lock when leaving app"
             description="Require unlock after switching apps"
           />
-        </section>
+        </SettingsFold>
 
         <section className="settings-card space-y-3">
           <h2 className="settings-section-title">Subscription</h2>
