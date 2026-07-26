@@ -3,7 +3,7 @@ export const ENTITLEMENT_PREMIUM = 'premium';
 export const PRODUCT_ANNUAL = 'com.repit.app.premium.annual';
 export const PRODUCT_MONTHLY = 'com.repit.app.premium.monthly';
 
-export const PRIVACY_POLICY_URL = 'https://repit-privacy.netlify.app/';
+export const PRIVACY_POLICY_URL = 'https://oobaretin.github.io/Repit/';
 
 export type SubscriptionPlan = 'annual' | 'monthly';
 

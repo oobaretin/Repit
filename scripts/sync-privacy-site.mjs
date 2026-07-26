@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Copies the privacy policy site from docs/ into privacy-site/
- * for publishing to a separate public GitHub repo (free Pages while Repit stays private).
+ * Copies privacy policy assets from docs/ into privacy-site/
+ * for optional manual deploys. GitHub Pages deploys directly from docs/.
  */
 import { cpSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';

@@ -1,6 +1,6 @@
-# Deploy privacy policy from the private Repit repo (free Netlify tier).
-# Connect: Netlify → Add site → Import from Git → oobaretin/Repit
-# Site settings are read from this file automatically.
+# Deprecated — privacy policy is hosted on GitHub Pages.
+# Disconnect this site in Netlify if still connected.
+# Live URL: https://oobaretin.github.io/Repit/
 
 [build]
   command = "npm run sync:privacy-site"

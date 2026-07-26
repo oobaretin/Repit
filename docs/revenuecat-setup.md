@@ -232,7 +232,7 @@ When subscriptions work in sandbox:
 
 1. Complete App Store listing ([app-store-copy.md](./app-store-copy.md))
 2. Upload screenshots from `screenshots/`
-3. Set **Privacy Policy URL**: `https://repit-privacy.netlify.app/`
+3. Set **Privacy Policy URL**: `https://oobaretin.github.io/Repit/`
 4. Submit for review with sandbox notes from [app-store-copy.md](./app-store-copy.md)
 
 See also: [subscription-plan.md](./subscription-plan.md)

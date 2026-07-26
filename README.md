@@ -80,7 +80,7 @@ Draft materials live in [`docs/`](docs/):
 
 - [App Store copy & keywords](docs/app-store-copy.md)
 - [Screenshot guide](docs/screenshot-guide.md)
-- [Privacy policy](docs/index.html) — host on **Netlify** from this private repo ([`privacy-site/`](privacy-site/README.md))
+- [Privacy policy](https://oobaretin.github.io/Repit/) — hosted on **GitHub Pages** from [`docs/index.html`](docs/index.html)
 - [QA test report](docs/qa-test-report.md)
 
 Verify core timer logic:
@@ -91,4 +91,4 @@ node scripts/verify-core-flows.mjs
 
 ## Version
 
-Current release: **1.0.0**
+Current release: **1.1.0**

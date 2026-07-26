@@ -70,7 +70,7 @@ Create one group, e.g. **`Repit Premium`**.
 
 | Link | URL |
 |------|-----|
-| Privacy Policy | `https://repit-privacy.netlify.app/` |
+| Privacy Policy | `https://oobaretin.github.io/Repit/` |
 | Terms of Use (EULA) | Apple standard EULA, or custom hosted URL |
 
 Subscription auto-renewal disclosure is **required** on the paywall (see copy below).
@@ -204,7 +204,7 @@ Settings → Apple ID → Subscriptions.
 Privacy Policy · Terms of Use
 ```
 
-Link **Privacy Policy** to `https://repit-privacy.netlify.app/`.
+Link **Privacy Policy** to `https://oobaretin.github.io/Repit/`.
 
 ---
 

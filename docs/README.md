@@ -1,19 +1,32 @@
 # Repit docs
 
-The main **Repit** repo is private. Host the privacy policy on **Netlify** (deploy from this repo) or a **public `repit-privacy` repo** (GitHub Pages).
+Internal planning, App Store copy, and the **privacy policy** source for GitHub Pages.
+
+**Privacy policy (public):** https://oobaretin.github.io/Repit/
 
 ---
 
-## Privacy policy URL
+## Privacy policy hosting
 
-Pick one:
+The policy is published from this repo via GitHub Actions when `docs/index.html` changes.
 
-| Host | Example URL | Notes |
-|------|-------------|--------|
-| **Netlify** (live) | `https://repit-privacy.netlify.app/` | Deployed from private Repit repo |
-| GitHub Pages | `https://oobaretin.github.io/repit-privacy/` | Separate public repo with only `privacy-site/` |
+| Item | Value |
+|------|--------|
+| Source | `docs/index.html` |
+| Workflow | `.github/workflows/deploy-privacy-policy.yml` |
+| Live URL | `https://oobaretin.github.io/Repit/` |
+| App constant | `PRIVACY_POLICY_URL` in `constants/subscription.ts` |
 
-After editing `docs/index.html`, run `npm run sync:privacy-site` and push (Netlify runs sync on deploy automatically).
+### One-time GitHub setup
+
+1. Make the **Repit** repo **public** (Settings → General → Danger zone).
+2. **Settings → Pages → Build and deployment → Source:** **GitHub Actions**.
+3. Push to `main` or run **Actions → Deploy privacy policy → Run workflow**.
+4. Confirm https://oobaretin.github.io/Repit/ loads.
+5. Set the same URL in **App Store Connect → Privacy Policy URL**.
+6. Disconnect the old Netlify site if it was connected (`repit-privacy.netlify.app`).
+
+Edits: change `docs/index.html` → push → workflow redeploys automatically.
 
 ---
 
@@ -21,13 +34,13 @@ After editing `docs/index.html`, run `npm run sync:privacy-site` and push (Netli
 
 | File | Purpose |
 |------|---------|
-| `index.html` | Privacy policy source (synced to `privacy-site/`) |
-| `icon.svg` | Logo for the privacy page |
+| `index.html` | Privacy policy (published to GitHub Pages) |
+| `icon.svg` | Logo on the privacy page |
 | `app-store-copy.md` | Description, keywords, review notes |
-| `subscription-plan.md` | Pricing, onboarding, paywall copy, StoreKit setup |
-| [revenuecat-setup.md](./revenuecat-setup.md) | **Step-by-step** App Store Connect + RevenueCat setup |
+| `subscription-plan.md` | Pricing, onboarding, paywall copy |
+| [revenuecat-setup.md](./revenuecat-setup.md) | App Store Connect + RevenueCat setup |
+| [premium-v1.1-roadmap.md](./premium-v1.1-roadmap.md) | Feature and pricing roadmap |
 | `screenshot-guide.md` | Screenshot layouts and capture steps |
-| `sound-library-plan.md` | Grouped 10+ sound expansion plan |
 | `qa-test-report.md` | Core flow test results and manual checklist |
 
 ---
@@ -40,24 +53,12 @@ npm run verify
 
 ---
 
-## Free pre-submission checklist
+## Pre-submission checklist
 
-- [x] **Privacy policy live** at `https://repit-privacy.netlify.app/`
-- [x] **`npm run verify`** passes locally
-- [x] **Device QA** — manual checklist in `qa-test-report.md` on a real iPhone
-- [x] **Screenshots** — 5-scene set per `screenshot-guide.md` → `screenshots/`
-- [ ] **Fix any issues** from QA or screenshot pass
+- [ ] **Privacy policy live** at `https://oobaretin.github.io/Repit/`
+- [ ] **`npm run verify`** passes locally
+- [ ] **Device QA** — manual checklist in `qa-test-report.md`
+- [ ] **Screenshots** — per `screenshot-guide.md` → `screenshots/`
+- [ ] **No secrets in repo** — `.env` gitignored, RevenueCat key only in local `.env`
 
-When all boxes are checked, you’re ready for App Store Connect and TestFlight.
-
----
-
-## If you make Repit public later
-
-You can host from this repo’s `/docs` folder instead:
-
-1. **Settings → Pages →** deploy **`main`** / **`/docs`**
-2. URL becomes `https://oobaretin.github.io/Repit/`
-3. Update App Store Connect with the new URL
-
-The workflow in `.github/workflows/deploy-privacy-policy.yml` also works on a **public** Repit repo.
+When all boxes are checked, you're ready for App Store Connect and TestFlight.
