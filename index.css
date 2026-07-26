@@ -567,6 +567,11 @@ input[type='range']::-moz-range-thumb {
   animation: welcome-breathe-text var(--welcome-breathe) ease-in-out 1.2s infinite;
 }
 
+.welcome-splash-text-personal {
+  font-size: clamp(1rem, 3.8vw, 1.375rem);
+  letter-spacing: 0.18em;
+}
+
 .welcome-unlock-footer {
   position: relative;
   z-index: 20;

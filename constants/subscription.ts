@@ -41,6 +41,8 @@ export const ONBOARDING_STEPS = [
   {
     headline: 'Private by design',
     body: 'No account required. Your settings and session stats stay on your device. Optional Face ID when you return.',
+    namePrompt: 'What should we call you?',
+    nameHint: 'Optional — stored only on your device.',
   },
 ] as const;
 

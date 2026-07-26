@@ -67,6 +67,7 @@ const App: React.FC = () => {
   const [sessionStats, setSessionStats] = usePersistentState('repit-sessionStats', DEFAULT_SESSION_STATS);
   const [lockOnLeave, setLockOnLeave] = usePersistentState('repit-lockOnLeave', true);
   const [autoFocusLock, setAutoFocusLock] = usePersistentState('repit-autoFocusLock', true);
+  const [displayName, setDisplayName] = usePersistentState('repit-displayName', '');
 
   currentRepRef.current = currentRep;
   const isTimerActive = timerState === TimerState.Running || timerState === TimerState.Paused;
@@ -236,7 +237,7 @@ const App: React.FC = () => {
   }
 
   if (!onboardingComplete) {
-    return <OnboardingFlow onComplete={() => setOnboardingComplete(true)} />;
+    return <OnboardingFlow onComplete={() => setOnboardingComplete(true)} setDisplayName={setDisplayName} />;
   }
 
   if (!isPremium) {
@@ -255,6 +256,7 @@ const App: React.FC = () => {
     return (
       <UnlockWelcomeScreen
         biometricAvailable={biometricAvailable}
+        displayName={displayName}
         onUnlock={handleUnlock}
       />
     );
@@ -376,6 +378,7 @@ const App: React.FC = () => {
           reps={targetReps}
           totalSessions={sessionStats.totalSessions}
           durationSec={sessionDurationSec}
+          displayName={displayName}
           onDismiss={dismissComplete}
         />
       )}

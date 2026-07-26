@@ -1,11 +1,13 @@
 
 import React from 'react';
 import { formatDuration } from '../utils/formatDuration';
+import { sessionCompleteGreeting } from '../utils/displayName';
 
 interface SessionCompleteProps {
   reps: number;
   totalSessions: number;
   durationSec?: number | null;
+  displayName?: string;
   onDismiss: () => void;
 }
 
@@ -13,6 +15,7 @@ const SessionComplete: React.FC<SessionCompleteProps> = ({
   reps,
   totalSessions,
   durationSec,
+  displayName = '',
   onDismiss,
 }) => (
   <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 backdrop-blur-md animate-fade-up sm:items-center">
@@ -26,7 +29,7 @@ const SessionComplete: React.FC<SessionCompleteProps> = ({
         <span className="text-4xl text-emerald-400">✓</span>
       </div>
       <h2 id="session-complete-title" className="text-center text-2xl font-semibold text-white">
-        Well done
+        {sessionCompleteGreeting(displayName)}
       </h2>
       <p className="mt-2 text-center text-gray-300">
         You completed{' '}

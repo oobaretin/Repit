@@ -4,14 +4,17 @@ import { tryBiometricUnlock } from '../services/lockService';
 import { hapticsService } from '../services/hapticsService';
 import BrandRing from './BrandRing';
 import { LockOpenIcon } from './icons';
+import { welcomeGreeting } from '../utils/displayName';
 
 interface UnlockWelcomeScreenProps {
   biometricAvailable: boolean;
+  displayName?: string;
   onUnlock: () => void;
 }
 
 const UnlockWelcomeScreen: React.FC<UnlockWelcomeScreenProps> = ({
   biometricAvailable,
+  displayName = '',
   onUnlock,
 }) => {
   const [error, setError] = useState('');
@@ -46,6 +49,8 @@ const UnlockWelcomeScreen: React.FC<UnlockWelcomeScreenProps> = ({
   }, [biometricAvailable, busy, exiting, finishUnlock]);
 
   const unlockLabel = biometricAvailable ? 'Unlock with Face ID' : 'Tap to unlock';
+  const welcomeText = welcomeGreeting(displayName);
+  const personalized = welcomeText.includes(',');
 
   return (
     <div
@@ -66,7 +71,11 @@ const UnlockWelcomeScreen: React.FC<UnlockWelcomeScreenProps> = ({
         </div>
 
         <p className="welcome-splash-text-wrap welcome-splash-text-wrap-locked relative z-10 mt-8">
-          <span className="welcome-splash-text">Welcome back</span>
+          <span
+            className={`welcome-splash-text${personalized ? ' welcome-splash-text-personal' : ''}`}
+          >
+            {welcomeText}
+          </span>
         </p>
       </div>
 

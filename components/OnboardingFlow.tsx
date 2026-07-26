@@ -1,19 +1,30 @@
 import React, { useState } from 'react';
 import BrandRing from './BrandRing';
 import { ONBOARDING_STEPS } from '../constants/subscription';
+import { normalizeDisplayName } from '../utils/displayName';
 
 interface OnboardingFlowProps {
   onComplete: () => void;
+  setDisplayName: (name: string) => void;
 }
 
-const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
+const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, setDisplayName }) => {
   const [step, setStep] = useState(0);
+  const [nameInput, setNameInput] = useState('');
   const current = ONBOARDING_STEPS[step];
   const isLast = step === ONBOARDING_STEPS.length - 1;
 
+  const finish = (saveName: boolean) => {
+    if (saveName) {
+      const normalized = normalizeDisplayName(nameInput);
+      if (normalized) setDisplayName(normalized);
+    }
+    onComplete();
+  };
+
   const handleNext = () => {
     if (isLast) {
-      onComplete();
+      finish(true);
       return;
     }
     setStep((s) => s + 1);
@@ -59,7 +70,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
           )}
 
           {step === 2 && (
-            <div className="mb-10 flex h-20 w-20 items-center justify-center rounded-2xl bg-cyan-500/10 ring-1 ring-cyan-400/25">
+            <div className="mb-8 flex h-20 w-20 items-center justify-center rounded-2xl bg-cyan-500/10 ring-1 ring-cyan-400/25">
               <span className="text-3xl" aria-hidden="true">
                 🔒
               </span>
@@ -68,15 +79,47 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
 
           <h1 className="max-w-sm text-2xl font-semibold tracking-tight text-white">{current.headline}</h1>
           <p className="mt-4 max-w-sm text-base leading-relaxed text-gray-400">{current.body}</p>
+
+          {isLast && 'namePrompt' in current && (
+            <div className="mt-8 w-full max-w-sm text-left">
+              <label htmlFor="display-name" className="block text-sm font-medium text-gray-200">
+                {current.namePrompt}
+              </label>
+              <p className="mt-1 text-xs text-gray-500">{current.nameHint}</p>
+              <input
+                id="display-name"
+                type="text"
+                value={nameInput}
+                onChange={(e) => setNameInput(e.target.value)}
+                autoComplete="given-name"
+                autoCapitalize="words"
+                maxLength={32}
+                placeholder="Alex"
+                className="mt-3 w-full rounded-2xl border border-gray-700/80 bg-gray-900/80 px-4 py-3.5 text-base text-white placeholder:text-gray-600 focus:border-cyan-400/50 focus:outline-none focus:ring-2 focus:ring-cyan-400/20"
+              />
+            </div>
+          )}
         </div>
 
-        <button
-          type="button"
-          onClick={handleNext}
-          className="welcome-unlock-btn mt-6 w-full max-w-md self-center rounded-2xl py-4 text-base font-semibold"
-        >
-          {isLast ? 'Start free trial' : 'Continue'}
-        </button>
+        <div className="mt-6 flex w-full max-w-md flex-col self-center gap-3">
+          <button
+            type="button"
+            onClick={handleNext}
+            className="welcome-unlock-btn w-full rounded-2xl py-4 text-base font-semibold"
+          >
+            {isLast ? 'Start free trial' : 'Continue'}
+          </button>
+
+          {isLast && (
+            <button
+              type="button"
+              onClick={() => finish(false)}
+              className="text-center text-sm text-gray-500 underline-offset-2 hover:text-gray-400 hover:underline"
+            >
+              Skip
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
