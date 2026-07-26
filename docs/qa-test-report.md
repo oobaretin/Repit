@@ -60,14 +60,14 @@ Ten tick sounds grouped in Settings (Traditional, Bright, Soft, Silent). Mala us
 | Group | Sound | Behavior |
 |-------|-------|----------|
 | Traditional | **Mala** | Original Mixkit bead click (embedded MP3 → Web Audio buffer) |
-| Traditional | **Wood** | Filtered noise + low triangle (~180 Hz) |
-| Traditional | **Gong** | Deep sine partials (~120 / 60 Hz) |
-| Traditional | **Bell** | Dual sine (~520 / 780 Hz) |
-| Bright | **Crystal** | Bright sine + shimmer (~2200 / 4400 Hz) |
-| Bright | **Bowl** | Singing-bowl sine (~440 / 880 Hz) |
-| Bright | **Tap** | Short noise + triangle click |
-| Soft | **Breath** | Soft noise + low sine |
-| Soft | **Om** | Low harmonic sine (~136 / 272 Hz) |
+| Traditional | **Wood** | Mokugyo-style knock — noise + 196 / 392 Hz (~0.35s) |
+| Traditional | **Gong** | Deep sine ~120 Hz, gentle fade (~1.8s) |
+| Traditional | **Bell** | Temple bell partials ~520 / 780 / 1170 Hz (~1.2s) |
+| Bright | **Crystal** | Bright sine ~2200 Hz, gentle fade (~1.2s) |
+| Bright | **Bowl** | Singing bowl ~440 Hz with beat partial (~2s) |
+| Bright | **Tap** | Muted mallet — noise + ~290 Hz (~0.22s) |
+| Soft | **Breath** | Filtered air swell + soft low tone (~0.6s) |
+| Soft | **Om** | ~136 Hz Om with harmonics, soft attack (~1s) |
 | Silent | **None** | No sound; haptics still fire if enabled |
 
 Preview in Settings plays the selected sound immediately. Overlapping ticks are stopped when the interval is shorter than the sound length.
