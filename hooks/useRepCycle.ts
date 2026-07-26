@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, type MutableRefObject } from 'react';
 
 interface UseRepCycleOptions {
   isRunning: boolean;
@@ -7,13 +7,19 @@ interface UseRepCycleOptions {
   currentRep: number;
 }
 
-export function useRepCycle({ isRunning, isPaused, delay, currentRep }: UseRepCycleOptions) {
+export interface RepCycleHandle {
+  phaseRef: MutableRefObject<number>;
+  cycleStartRef: MutableRefObject<number>;
+  delayMs: number;
+}
+
+export function useRepCycle({ isRunning, isPaused, delay, currentRep }: UseRepCycleOptions): RepCycleHandle {
   const cycleStartRef = useRef(Date.now());
   const pausedPhaseRef = useRef(0);
   const prevRepRef = useRef(currentRep);
   const wasRunningRef = useRef(false);
   const wasPausedRef = useRef(false);
-  const [phase, setPhase] = useState(0);
+  const phaseRef = useRef(0);
 
   const delayMs = Math.max(delay * 1000, 100);
 
@@ -21,12 +27,12 @@ export function useRepCycle({ isRunning, isPaused, delay, currentRep }: UseRepCy
     if (prevRepRef.current !== currentRep) {
       cycleStartRef.current = Date.now();
       pausedPhaseRef.current = 0;
-      setPhase(0);
+      phaseRef.current = 0;
       prevRepRef.current = currentRep;
     }
-  }, [currentRep, delayMs]);
+  }, [currentRep]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const justStarted = isRunning && !wasRunningRef.current;
     const justResumed = isRunning && wasPausedRef.current && !isPaused;
 
@@ -36,13 +42,13 @@ export function useRepCycle({ isRunning, isPaused, delay, currentRep }: UseRepCy
         pausedPhaseRef.current = 0;
       } else if (justStarted) {
         cycleStartRef.current = Date.now();
-        setPhase(0);
+        phaseRef.current = 0;
       }
     }
 
     if (isPaused && !wasPausedRef.current && isRunning) {
       pausedPhaseRef.current = Math.min(0.999, (Date.now() - cycleStartRef.current) / delayMs);
-      setPhase(pausedPhaseRef.current);
+      phaseRef.current = pausedPhaseRef.current;
     }
 
     wasRunningRef.current = isRunning;
@@ -51,19 +57,12 @@ export function useRepCycle({ isRunning, isPaused, delay, currentRep }: UseRepCy
 
   useEffect(() => {
     if (!isRunning || isPaused) return;
-
-    let rafId = 0;
-
-    const tick = () => {
-      const elapsed = Date.now() - cycleStartRef.current;
-      const nextPhase = Math.min(0.999, elapsed / delayMs);
-      setPhase(nextPhase);
-      rafId = requestAnimationFrame(tick);
-    };
-
-    rafId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafId);
+    phaseRef.current = Math.min(0.999, (Date.now() - cycleStartRef.current) / delayMs);
   }, [isRunning, isPaused, delayMs]);
 
-  return phase;
+  return { phaseRef, cycleStartRef, delayMs };
+}
+
+export function phaseAtTime(cycleStartMs: number, delayMs: number, now = Date.now()): number {
+  return Math.min(0.999, (now - cycleStartMs) / delayMs);
 }

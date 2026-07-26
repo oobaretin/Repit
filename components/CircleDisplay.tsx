@@ -1,9 +1,9 @@
 
-import React, { useEffect, useRef, useId } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useId } from 'react';
 import { TimerState } from '../types';
 import { formatDuration } from '../utils/formatDuration';
 import { breathAtPhase } from '../utils/repCycle';
-import { useRepCycle } from '../hooks/useRepCycle';
+import { phaseAtTime, useRepCycle } from '../hooks/useRepCycle';
 import { BRAND_GRADIENT_STOPS, brandGlow } from '../utils/brandColors';
 import { PlayIcon, PauseIcon, CheckIcon } from './icons';
 
@@ -17,6 +17,12 @@ interface CircleDisplayProps {
   immersive?: boolean;
 }
 
+const layerStyleAt = (insetScale: number, breath: ReturnType<typeof breathAtPhase>): React.CSSProperties => ({
+  transform: `scale(${0.78 + (breath.scale - 0.9) * (insetScale / 0.2)})`,
+  opacity: breath.opacity * (0.85 + insetScale * 0.15),
+  transition: 'none',
+});
+
 const CircleDisplay: React.FC<CircleDisplayProps> = ({
   state,
   currentRep,
@@ -28,6 +34,13 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
 }) => {
   const countRef = useRef<HTMLHeadingElement>(null);
   const prevRep = useRef(currentRep);
+  const progressRingRef = useRef<SVGCircleElement>(null);
+  const progressPercentRef = useRef<HTMLParagraphElement>(null);
+  const breathOuterRef = useRef<HTMLDivElement>(null);
+  const breathMidRef = useRef<HTMLDivElement>(null);
+  const breathInnerRef = useRef<HTMLDivElement>(null);
+  const controlRef = useRef<HTMLDivElement>(null);
+  const animRefsRef = useRef({ currentRep, targetReps, delay, state });
   const gradientId = useId().replace(/:/g, '');
 
   const radius = 130;
@@ -39,22 +52,85 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
   const remaining = targetReps > 0 ? Math.max(0, targetReps - currentRep) : null;
   const estimatedTotal = targetReps > 0 ? targetReps * delay : null;
 
-  const phase = useRepCycle({ isRunning, isPaused, delay, currentRep });
-  const breath = isRunning ? breathAtPhase(phase) : isPaused ? breathAtPhase(phase) : breathAtPhase(0);
+  const { phaseRef, cycleStartRef, delayMs } = useRepCycle({ isRunning, isPaused, delay, currentRep });
+  const staticPhase = isRunning || isPaused ? phaseRef.current : 0;
+  const breath = breathAtPhase(staticPhase);
 
   const progressFraction =
     targetReps > 0
-      ? Math.min(1, (currentRep + (isRunning ? phase : 0)) / targetReps)
+      ? Math.min(1, (currentRep + (isRunning ? staticPhase : 0)) / targetReps)
       : 0;
   const strokeDashoffset = circumference - progressFraction * circumference;
-  const glowBlur = Math.round((6 + breath.glow * 22) * 10) / 10;
-  const glowAlpha = Math.round((0.25 + breath.glow * 0.55) * 100) / 100;
+  const ringOpacity = 0.72 + breath.glow * 0.28;
+  const breathMode = isRunning ? 'breath-sync' : isPaused ? 'breath-paused' : 'breath-idle';
+
+  animRefsRef.current = { currentRep, targetReps, delay, state };
+
+  const applyFrame = useCallback(() => {
+    const { currentRep: rep, targetReps: target, state: timerState } = animRefsRef.current;
+    if (timerState !== TimerState.Running || target <= 0) return;
+
+    const phase = phaseAtTime(cycleStartRef.current, delayMs);
+    phaseRef.current = phase;
+    const frameBreath = breathAtPhase(phase);
+    const fraction = Math.min(1, (rep + phase) / target);
+    const dashOffset = circumference - fraction * circumference;
+    const opacity = 0.72 + frameBreath.glow * 0.28;
+    const ring = progressRingRef.current;
+
+    if (ring) {
+      ring.setAttribute('stroke-dashoffset', String(dashOffset));
+      ring.style.opacity = String(opacity);
+    }
+
+    if (progressPercentRef.current) {
+      progressPercentRef.current.textContent = `${Math.min(100, Math.round(fraction * 100))}%`;
+    }
+
+    const outer = breathOuterRef.current;
+    const mid = breathMidRef.current;
+    const inner = breathInnerRef.current;
+    if (outer) Object.assign(outer.style, layerStyleAt(0.2, frameBreath));
+    if (mid) Object.assign(mid.style, layerStyleAt(0.14, frameBreath));
+    if (inner) Object.assign(inner.style, layerStyleAt(0.08, frameBreath));
+
+    if (countRef.current) {
+      countRef.current.style.transform = `scale(${1 + frameBreath.glow * 0.05})`;
+      countRef.current.style.textShadow = `0 0 ${frameBreath.glow * 28}px ${brandGlow(frameBreath.glow * 0.45)}`;
+    }
+
+    if (controlRef.current) {
+      controlRef.current.style.transform = `scale(${1 + frameBreath.glow * 0.06})`;
+      controlRef.current.style.boxShadow = `0 0 ${frameBreath.glow * 32}px ${brandGlow(frameBreath.glow * 0.35)}`;
+    }
+  }, [circumference, cycleStartRef, delayMs, phaseRef]);
+
+  useLayoutEffect(() => {
+    if (isRunning) applyFrame();
+  }, [isRunning, currentRep, applyFrame]);
+
+  useEffect(() => {
+    if (!isRunning) return;
+
+    let rafId = 0;
+
+    const tick = () => {
+      applyFrame();
+      rafId = requestAnimationFrame(tick);
+    };
+
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, [isRunning, applyFrame]);
 
   useEffect(() => {
     if (currentRep > prevRep.current && countRef.current) {
-      countRef.current.classList.remove('rep-pop');
-      void countRef.current.offsetWidth;
-      countRef.current.classList.add('rep-pop');
+      const el = countRef.current;
+      requestAnimationFrame(() => {
+        el.classList.remove('rep-pop');
+        void el.offsetWidth;
+        el.classList.add('rep-pop');
+      });
     }
     prevRep.current = currentRep;
   }, [currentRep]);
@@ -87,27 +163,33 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
     }
   };
 
-  const breathMode = isRunning ? 'breath-sync' : isPaused ? 'breath-paused' : 'breath-idle';
   const displayCount = currentRep > 0 ? currentRep.toLocaleString() : '0';
   const displayText =
     state === TimerState.Finished ? 'Done' : state === TimerState.Idle && currentRep === 0 ? 'Start' : displayCount;
   const progressPercent = Math.min(100, Math.round(progressFraction * 100));
 
-  const layerStyle = (insetScale: number): React.CSSProperties => ({
-    transform: `scale(${0.78 + (breath.scale - 0.9) * (insetScale / 0.2)})`,
-    opacity: breath.opacity * (0.85 + insetScale * 0.15),
-  });
-
   return (
     <div
-      className={`relative flex aspect-square items-center justify-center transition-all duration-500 ${
-        immersive ? 'w-[min(96vw,28rem)]' : 'w-[min(92vw,24rem)]'
-      }`}
+      className={`relative flex aspect-square items-center justify-center ${
+        isRunning || isPaused ? '' : 'transition-all duration-500'
+      } ${immersive ? 'w-[min(96vw,28rem)]' : 'w-[min(92vw,24rem)]'}`}
     >
       <div className={`breath-stack ${breathMode}`} aria-hidden="true">
-        <div className="breath-layer breath-layer-outer" style={isRunning || isPaused ? layerStyle(0.2) : undefined} />
-        <div className="breath-layer breath-layer-mid" style={isRunning || isPaused ? layerStyle(0.14) : undefined} />
-        <div className="breath-layer breath-layer-inner" style={isRunning || isPaused ? layerStyle(0.08) : undefined} />
+        <div
+          ref={breathOuterRef}
+          className="breath-layer breath-layer-outer"
+          style={isRunning || isPaused ? layerStyleAt(0.2, breath) : undefined}
+        />
+        <div
+          ref={breathMidRef}
+          className="breath-layer breath-layer-mid"
+          style={isRunning || isPaused ? layerStyleAt(0.14, breath) : undefined}
+        />
+        <div
+          ref={breathInnerRef}
+          className="breath-layer breath-layer-inner"
+          style={isRunning || isPaused ? layerStyleAt(0.08, breath) : undefined}
+        />
       </div>
 
       <svg
@@ -125,8 +207,8 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
             <stop offset="0%" stopColor="#6ee7b7" />
             <stop offset="100%" stopColor="#34d399" />
           </linearGradient>
-          <filter id={`ring-glow-${gradientId}`} x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation={glowBlur * 0.15} result="blur" />
+          <filter id={`ring-glow-${gradientId}`} x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="4" result="blur" />
             <feMerge>
               <feMergeNode in="blur" />
               <feMergeNode in="SourceGraphic" />
@@ -142,24 +224,21 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
           fill="transparent"
         />
         {targetReps > 0 && (
-          <>
-            <circle
-              cx={cx}
-              cy={cy}
-              r={radius}
-              strokeWidth="10"
-              strokeDasharray={circumference}
-              strokeDashoffset={strokeDashoffset}
-              stroke={state === TimerState.Finished ? `url(#complete-gradient-${gradientId})` : `url(#progress-gradient-${gradientId})`}
-              className="sync-progress-ring"
-              fill="transparent"
-              strokeLinecap="round"
-              style={{
-                filter: `drop-shadow(0 0 ${glowBlur}px ${brandGlow(glowAlpha)})`,
-                opacity: 0.72 + breath.glow * 0.28,
-              }}
-            />
-          </>
+          <circle
+            ref={progressRingRef}
+            cx={cx}
+            cy={cy}
+            r={radius}
+            strokeWidth="10"
+            strokeDasharray={circumference}
+            strokeDashoffset={strokeDashoffset}
+            stroke={state === TimerState.Finished ? `url(#complete-gradient-${gradientId})` : `url(#progress-gradient-${gradientId})`}
+            className="sync-progress-ring"
+            fill="transparent"
+            strokeLinecap="round"
+            filter={`url(#ring-glow-${gradientId})`}
+            style={{ opacity: ringOpacity }}
+          />
         )}
       </svg>
 
@@ -171,7 +250,7 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
           isFocusLocked ? 'cursor-default' : ''
         }`}
       >
-        <p className="mb-3 text-[11px] uppercase tracking-[0.35em] text-gray-500">
+        <p ref={progressPercentRef} className="mb-3 text-[11px] uppercase tracking-[0.35em] text-gray-500">
           {targetReps > 0 ? `${progressPercent}%` : 'Open count'}
         </p>
 
@@ -184,11 +263,13 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
           } ${isPaused ? 'text-amber-100/90' : state === TimerState.Idle && currentRep === 0 ? '' : 'text-white'}`}
           style={
             isRunning
-              ? {
-                  transform: `scale(${1 + breath.glow * 0.05})`,
-                  textShadow: `0 0 ${breath.glow * 28}px ${brandGlow(breath.glow * 0.45)}`,
-                }
-              : undefined
+              ? undefined
+              : isPaused
+                ? {
+                    transform: `scale(${1 + breath.glow * 0.05})`,
+                    textShadow: `0 0 ${breath.glow * 28}px ${brandGlow(breath.glow * 0.45)}`,
+                  }
+                : undefined
           }
         >
           {displayText}
@@ -208,6 +289,7 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
 
         {!isFocusLocked && (
           <div
+            ref={controlRef}
             className={`breath-control mt-8 flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-full shadow-lg ${
               isRunning
                 ? 'bg-cyan-500/20 ring-1 ring-cyan-400/30'
@@ -219,11 +301,13 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
             }`}
             style={
               isRunning
-                ? {
-                    transform: `scale(${1 + breath.glow * 0.06})`,
-                    boxShadow: `0 0 ${breath.glow * 32}px ${brandGlow(breath.glow * 0.35)}`,
-                  }
-                : undefined
+                ? undefined
+                : isPaused
+                  ? {
+                      transform: `scale(${1 + breath.glow * 0.06})`,
+                      boxShadow: `0 0 ${breath.glow * 32}px ${brandGlow(breath.glow * 0.35)}`,
+                    }
+                  : undefined
             }
           >
             {getButtonContent()}

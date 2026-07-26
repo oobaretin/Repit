@@ -16,7 +16,7 @@ export const SOUND_HINTS: Record<SoundOption, string> = {
   [SoundOption.Bowl]: 'Singing bowl',
   [SoundOption.Tap]: 'Light click',
   [SoundOption.Breath]: 'Soft exhale',
-  [SoundOption.Om]: 'Low hum',
+  [SoundOption.Om]: 'Tibetan Om',
   [SoundOption.None]: 'Haptics only',
 };
 

@@ -370,7 +370,7 @@ input[type='range']::-moz-range-thumb {
 
 .breath-running .breath-layer,
 .breath-sync .breath-layer {
-  transition: transform 80ms linear, opacity 80ms linear;
+  transition: none;
 }
 
 .breath-running .breath-layer-mid,
@@ -384,7 +384,11 @@ input[type='range']::-moz-range-thumb {
 }
 
 .sync-progress-ring {
-  transition: opacity 80ms linear;
+  transition: none;
+}
+
+.breath-sync .sync-progress-ring {
+  transition: none;
 }
 
 .breath-running .breath-layer {

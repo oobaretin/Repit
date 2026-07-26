@@ -51,6 +51,18 @@ class AudioService {
     return this.malaDecodePromise;
   }
 
+  private createWarmthShaper(): WaveShaperNode {
+    const curve = new Float32Array(256);
+    for (let i = 0; i < 256; i += 1) {
+      const x = (i * 2) / 256 - 1;
+      curve[i] = Math.tanh(x * 1.35) * 0.92;
+    }
+    const shaper = this.audioCtx!.createWaveShaper();
+    shaper.curve = curve;
+    shaper.oversample = '2x';
+    return shaper;
+  }
+
   private async resumeContext() {
     if (this.audioCtx?.state === 'suspended') {
       await this.audioCtx.resume();
@@ -116,7 +128,7 @@ class AudioService {
     this.track(osc);
   }
 
-  /** Soft attack + gentle fade (Om, subtle layers). */
+  /** Soft attack + gentle fade (subtle layers). */
   private playSoftTone(
     frequency: number,
     duration: number,
@@ -204,7 +216,7 @@ class AudioService {
     this.track(source);
   }
 
-  private playMalaFromBuffer(buffer: AudioBuffer) {
+  private playSampleFromBuffer(buffer: AudioBuffer) {
     const source = this.audioCtx!.createBufferSource();
     source.buffer = buffer;
     source.connect(this.audioCtx!.destination);
@@ -214,7 +226,7 @@ class AudioService {
 
   private async playMala() {
     const buffer = await this.decodeMalaBuffer();
-    if (buffer) this.playMalaFromBuffer(buffer);
+    if (buffer) this.playSampleFromBuffer(buffer);
   }
 
   /** Dry wooden block (mokugyo-style) — short knock ~0.35s. */
@@ -258,11 +270,100 @@ class AudioService {
     this.playSoftTone(220, 0.45, 0.035, { attack: 0.1 });
   }
 
-  /** Short Om — traditional ~136 Hz with soft harmonics ~1s. */
+  /** Deep Tibetan monk “Ommmm” — low pitch, vibrato, O→M formant morph ~1.5s. */
+  private playTibetanOm() {
+    const f0 = 92;
+    const duration = 1.55;
+    const t = this.now();
+
+    const vibratoOsc = this.audioCtx!.createOscillator();
+    vibratoOsc.type = 'sine';
+    vibratoOsc.frequency.value = 4.8;
+    const vibratoGain = this.audioCtx!.createGain();
+    vibratoGain.gain.value = 1.6;
+    vibratoOsc.connect(vibratoGain);
+
+    const osc = this.audioCtx!.createOscillator();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(f0, t);
+    osc.frequency.exponentialRampToValueAtTime(f0 * 0.94, t + duration);
+    vibratoGain.connect(osc.frequency);
+
+    const osc2 = this.audioCtx!.createOscillator();
+    osc2.type = 'triangle';
+    osc2.frequency.setValueAtTime(f0 * 1.003, t);
+    vibratoGain.connect(osc2.frequency);
+
+    const f1 = this.audioCtx!.createBiquadFilter();
+    f1.type = 'bandpass';
+    f1.frequency.setValueAtTime(480, t);
+    f1.frequency.exponentialRampToValueAtTime(260, t + duration * 0.72);
+    f1.Q.value = 5.5;
+
+    const f2 = this.audioCtx!.createBiquadFilter();
+    f2.type = 'bandpass';
+    f2.frequency.setValueAtTime(860, t);
+    f2.frequency.exponentialRampToValueAtTime(540, t + duration * 0.75);
+    f2.Q.value = 7.5;
+
+    const lp = this.audioCtx!.createBiquadFilter();
+    lp.type = 'lowpass';
+    lp.frequency.setValueAtTime(1100, t);
+    lp.frequency.exponentialRampToValueAtTime(680, t + duration);
+    lp.Q.value = 0.4;
+
+    const shaper = this.createWarmthShaper();
+    const gain = this.createGain(0.0001);
+
+    osc.connect(f1);
+    osc2.connect(f1);
+    f1.connect(f2);
+    f2.connect(lp);
+    lp.connect(shaper);
+    shaper.connect(gain);
+
+    const oEnd = t + duration * 0.38;
+    const mStart = t + duration * 0.32;
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.linearRampToValueAtTime(0.26, t + 0.22);
+    gain.gain.setValueAtTime(0.24, oEnd);
+    gain.gain.linearRampToValueAtTime(0.2, mStart + 0.18);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + duration);
+
+    vibratoOsc.start(t);
+    vibratoOsc.stop(t + duration + 0.05);
+    osc.start(t);
+    osc.stop(t + duration + 0.05);
+    osc2.start(t);
+    osc2.stop(t + duration + 0.05);
+    this.track(vibratoOsc);
+    this.track(osc);
+    this.track(osc2);
+
+    this.playSoftTone(f0 * 0.5, duration, 0.1, { attack: 0.24 });
+
+    const mOsc = this.audioCtx!.createOscillator();
+    mOsc.type = 'sine';
+    mOsc.frequency.setValueAtTime(f0, mStart);
+    const mFilter = this.audioCtx!.createBiquadFilter();
+    mFilter.type = 'bandpass';
+    mFilter.frequency.value = 320;
+    mFilter.Q.value = 5;
+    const mGain = this.createGain(0.0001);
+    mOsc.connect(mFilter);
+    mFilter.connect(mGain);
+    mGain.gain.setValueAtTime(0.0001, mStart);
+    mGain.gain.linearRampToValueAtTime(0.11, mStart + 0.16);
+    mGain.gain.exponentialRampToValueAtTime(0.0001, t + duration);
+    mOsc.start(mStart);
+    mOsc.stop(t + duration + 0.05);
+    this.track(mOsc);
+
+    this.playNoiseSwell(duration * 0.85, 0.022, 360, 0.28);
+  }
+
   private playOm() {
-    this.playSoftTone(136.1, 1.05, 0.23, { attack: 0.08 });
-    this.playSoftTone(272.2, 0.92, 0.09, { attack: 0.1 });
-    this.playSoftTone(408.3, 0.75, 0.03, { attack: 0.12 });
+    this.playTibetanOm();
   }
 
   public playSound(sound: SoundOption) {
