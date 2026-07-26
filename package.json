@@ -1,11 +1,11 @@
 {
   "name": "repit",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/embed-mala-audio.mjs && tsc && vite build",
+    "build": "node scripts/embed-sounds.mjs && tsc && vite build",
     "preview": "vite preview",
     "build:ios": "npm run build && npx cap sync ios",
     "open:ios": "npx cap open ios",

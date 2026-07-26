@@ -8,6 +8,7 @@ interface SessionCompleteProps {
   totalSessions: number;
   durationSec?: number | null;
   displayName?: string;
+  currentStreak?: number;
   onDismiss: () => void;
 }
 
@@ -16,6 +17,7 @@ const SessionComplete: React.FC<SessionCompleteProps> = ({
   totalSessions,
   durationSec,
   displayName = '',
+  currentStreak = 0,
   onDismiss,
 }) => (
   <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 backdrop-blur-md animate-fade-up sm:items-center">
@@ -46,6 +48,12 @@ const SessionComplete: React.FC<SessionCompleteProps> = ({
       </p>
       <p className="mt-2 text-center text-sm text-gray-500">
         {totalSessions} session{totalSessions === 1 ? '' : 's'} in your journey
+        {currentStreak > 1 && (
+          <>
+            {' '}
+            · <span className="text-cyan-400/90">{currentStreak}-day streak</span>
+          </>
+        )}
       </p>
       <button
         onClick={onDismiss}

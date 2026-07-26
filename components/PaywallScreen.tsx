@@ -85,7 +85,8 @@ const PaywallScreen: React.FC<PaywallScreenProps> = ({
             'Focus lock & Face ID app lock',
             'Ten calming tick sounds — Mala, Wood, Gong, Bell, Crystal, Bowl, Tap, Breath, Om',
             'Haptic feedback on every rep',
-            'Session stats on your device — no account',
+            'Practice history, streaks & custom presets',
+            'Everything on your device — no account',
           ].map((item) => (
             <li key={item} className="flex items-start gap-2.5">
               <span className="mt-0.5 text-cyan-400" aria-hidden="true">

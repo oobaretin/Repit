@@ -84,6 +84,57 @@ assert('Playable sound count is nine', sounds.filter((s) => s !== 'None').length
 const presets = [27, 54, 108, 1000];
 assert('Rep presets include 108', presets.includes(108));
 
+// Practice streaks (mirrors utils/practiceStats.ts)
+function localDateKey(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+function dateKeyFromIso(iso) {
+  return localDateKey(new Date(iso));
+}
+
+function previousDayKey(key) {
+  const [y, m, d] = key.split('-').map(Number);
+  const date = new Date(y, m - 1, d);
+  date.setDate(date.getDate() - 1);
+  return localDateKey(date);
+}
+
+function computeCurrentStreak(history) {
+  if (history.length === 0) return 0;
+  const daySet = new Set(history.map((r) => dateKeyFromIso(r.completedAt)));
+  const today = localDateKey(new Date());
+  let anchor = today;
+  if (!daySet.has(today)) {
+    anchor = previousDayKey(today);
+    if (!daySet.has(anchor)) return 0;
+  }
+  let streak = 0;
+  let cursor = anchor;
+  while (daySet.has(cursor)) {
+    streak += 1;
+    cursor = previousDayKey(cursor);
+  }
+  return streak;
+}
+
+{
+  const now = new Date();
+  const todayIso = now.toISOString();
+  const yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const history = [
+    { completedAt: todayIso },
+    { completedAt: yesterday.toISOString() },
+  ];
+  assert('Current streak counts today and yesterday', computeCurrentStreak(history) === 2);
+}
+
+assert('Empty history has zero streak', computeCurrentStreak([]) === 0);
+
 console.log('\nRepit core flow verification\n');
 console.log(`  Passed: ${PASS.length}`);
 PASS.forEach((n) => console.log(`    ✓ ${n}`));

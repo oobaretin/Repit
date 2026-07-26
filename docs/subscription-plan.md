@@ -8,24 +8,33 @@ Monetization model for v1: **7-day free trial** after onboarding, then **annual 
 
 ---
 
-## Pricing (launch)
+## Pricing (v1.1 — current in app)
 
 | Plan | US price | Effective monthly | App Store tier |
 |------|----------|-------------------|----------------|
-| **Annual** (default on paywall) | **$14.99/year** | ~$1.25/mo | Tier 15 |
-| **Monthly** (secondary option) | **$2.99/month** | $2.99/mo | Tier 3 |
+| **Annual** (default on paywall) | **$19.99/year** | ~$1.67/mo | Tier 20 |
+| **Monthly** (secondary option) | **$3.99/month** | $3.99/mo | Tier 4 |
 | **Free trial** | **7 days** | — | Introductory offer |
 
-Annual saves ~**58%** vs monthly ($35.88/year at monthly rate).
+Annual saves ~**58%** vs monthly ($47.88/year at monthly rate).
 
-### Premium tier (optional later)
-
-If reviews and conversion are strong, consider v1.1 pricing:
+### Launch pricing (v1.0 — reference)
 
 | Plan | US price |
 |------|----------|
-| Annual | $19.99/year |
-| Monthly | $3.99/month |
+| Annual | $14.99/year |
+| Monthly | $2.99/month |
+
+Use v1.0 tiers in App Store Connect only if you have not yet created products; otherwise create new price tiers or update existing products before shipping v1.1.
+
+### Premium tier (optional later)
+
+If reviews and conversion are strong after v1.1, consider:
+
+| Plan | US price |
+|------|----------|
+| Annual | $24.99/year |
+| Monthly | $4.99/month |
 
 ---
 
@@ -146,23 +155,24 @@ Shown after onboarding screen 3 (and when trial expires).
 - Focus lock & Face ID app lock  
 - Ten calming tick sounds (Mala, Wood, Gong, Bell, Crystal, Bowl, Tap, Breath, Om, or silent)  
 - Haptic feedback on every rep  
-- Session stats on your device — no account  
+- Practice history, streaks & custom presets  
+- Everything on your device — no account  
 
 ### Plan cards (annual first)
 
 **Annual — recommended badge**
 
 ```
-$14.99 / year
-7 days free, then $14.99/year
-Less than $1.25/month
+$19.99 / year
+7 days free, then $19.99/year
+Less than $1.70/month
 ```
 
 **Monthly — secondary**
 
 ```
-$2.99 / month
-7 days free, then $2.99/month
+$3.99 / month
+7 days free, then $3.99/month
 ```
 
 ### Primary button

@@ -1,11 +1,26 @@
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { TimerState, SoundOption, DEFAULT_SESSION_STATS, AppScreen } from './types';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import {
+  TimerState,
+  SoundOption,
+  DEFAULT_SESSION_STATS,
+  AppScreen,
+  MAX_SESSION_HISTORY,
+  MAX_CUSTOM_PRESETS,
+  type SessionRecord,
+  type CustomPreset,
+} from './types';
 import { normalizeSoundOption } from './constants/sounds';
 import { audioService } from './services/audioService';
 import { hapticsService } from './services/hapticsService';
 import { nativeService } from './services/nativeService';
 import { isBiometricAvailable } from './services/lockService';
+import {
+  appendSessionRecord,
+  computeCurrentStreak,
+  computeLongestStreak,
+  repsInLastDays,
+} from './utils/practiceStats';
 import CircleDisplay from './components/CircleDisplay';
 import SettingsPage from './components/SettingsPage';
 import SessionBar from './components/SessionBar';
@@ -66,6 +81,8 @@ const App: React.FC = () => {
   const [selectedSound, setSelectedSound] = usePersistentState<SoundOption>('repit-sound', SoundOption.Mala);
   const [hapticsEnabled, setHapticsEnabled] = usePersistentState('repit-haptics', true);
   const [sessionStats, setSessionStats] = usePersistentState('repit-sessionStats', DEFAULT_SESSION_STATS);
+  const [sessionHistory, setSessionHistory] = usePersistentState<SessionRecord[]>('repit-sessionHistory', []);
+  const [customPresets, setCustomPresets] = usePersistentState<CustomPreset[]>('repit-customPresets', []);
   const [lockOnLeave, setLockOnLeave] = usePersistentState('repit-lockOnLeave', true);
   const [autoFocusLock, setAutoFocusLock] = usePersistentState('repit-autoFocusLock', true);
   const [displayName, setDisplayName] = usePersistentState('repit-displayName', '');
@@ -73,6 +90,10 @@ const App: React.FC = () => {
   currentRepRef.current = currentRep;
   const isTimerActive = timerState === TimerState.Running || timerState === TimerState.Paused;
   const sessionSummary = `${targetReps.toLocaleString()} reps · ${delay.toFixed(1)}s · ${selectedSound}`;
+
+  const currentStreak = useMemo(() => computeCurrentStreak(sessionHistory), [sessionHistory]);
+  const longestStreak = useMemo(() => computeLongestStreak(sessionHistory), [sessionHistory]);
+  const repsThisWeek = useMemo(() => repsInLastDays(sessionHistory, 7), [sessionHistory]);
 
   const showTrialReminder =
     isPremium &&
@@ -144,17 +165,34 @@ const App: React.FC = () => {
     setCurrentRep(targetReps);
     setShowComplete(true);
     setFocusLocked(false);
+    const completedAt = new Date().toISOString();
+    let durationSec: number | null = null;
     if (sessionStartRef.current) {
-      setSessionDurationSec(Math.max(1, Math.round((Date.now() - sessionStartRef.current) / 1000)));
+      durationSec = Math.max(1, Math.round((Date.now() - sessionStartRef.current) / 1000));
+      setSessionDurationSec(durationSec);
       sessionStartRef.current = null;
     }
     setSessionStats((prev) => ({
       totalSessions: prev.totalSessions + 1,
       totalReps: prev.totalReps + targetReps,
-      lastSessionAt: new Date().toISOString(),
+      lastSessionAt: completedAt,
     }));
+    setSessionHistory((prev) =>
+      appendSessionRecord(
+        prev,
+        {
+          id: crypto.randomUUID(),
+          completedAt,
+          reps: targetReps,
+          delay,
+          sound: selectedSound,
+          durationSec,
+        },
+        MAX_SESSION_HISTORY,
+      ),
+    );
     playFeedback('success');
-  }, [playFeedback, setSessionStats, targetReps]);
+  }, [playFeedback, setSessionStats, setSessionHistory, targetReps, delay, selectedSound]);
 
   const handleTick = useCallback(() => {
     setCurrentRep((prev) => prev + 1);
@@ -190,12 +228,19 @@ const App: React.FC = () => {
 
     if (currentRep === 0) {
       sessionStartRef.current = Date.now();
-      await playFeedback('tap');
-    } else {
-      await hapticsService.medium();
     }
+
+    if (currentRep > 0) {
+      void hapticsService.medium();
+    }
+
     setTimerState(TimerState.Running);
-  }, [timerState, currentRep, playFeedback, focusLocked]);
+    if (currentRep === 0 && autoFocusLock) setFocusLocked(true);
+
+    if (currentRep === 0) {
+      void playFeedback('tap');
+    }
+  }, [timerState, currentRep, playFeedback, focusLocked, autoFocusLock]);
 
   const handleRestart = useCallback(async () => {
     setTimerState(TimerState.Idle);
@@ -237,6 +282,42 @@ const App: React.FC = () => {
     const result = await restore();
     return result;
   }, [restore]);
+
+  const handleSavePreset = useCallback(
+    (name: string) => {
+      if (customPresets.length >= MAX_CUSTOM_PRESETS) return;
+      setCustomPresets((prev) => [
+        ...prev,
+        {
+          id: crypto.randomUUID(),
+          name,
+          reps: targetReps,
+          delay,
+          sound: selectedSound,
+        },
+      ]);
+      void hapticsService.light();
+    },
+    [customPresets.length, targetReps, delay, selectedSound, setCustomPresets],
+  );
+
+  const handleApplyPreset = useCallback(
+    (preset: CustomPreset) => {
+      setTargetReps(preset.reps);
+      setDelay(preset.delay);
+      setSelectedSound(preset.sound);
+      void hapticsService.light();
+    },
+    [setTargetReps, setDelay, setSelectedSound],
+  );
+
+  const handleDeletePreset = useCallback(
+    (id: string) => {
+      setCustomPresets((prev) => prev.filter((p) => p.id !== id));
+      void hapticsService.light();
+    },
+    [setCustomPresets],
+  );
 
   if (subscriptionLoading) {
     return <BootstrapLoading />;
@@ -309,6 +390,14 @@ const App: React.FC = () => {
             isTimerActive={isTimerActive}
             totalSessions={sessionStats.totalSessions}
             totalReps={sessionStats.totalReps}
+            currentStreak={currentStreak}
+            longestStreak={longestStreak}
+            repsThisWeek={repsThisWeek}
+            sessionHistory={sessionHistory}
+            customPresets={customPresets}
+            onSavePreset={handleSavePreset}
+            onApplyPreset={handleApplyPreset}
+            onDeletePreset={handleDeletePreset}
           />
           </div>
         ) : (
@@ -385,6 +474,7 @@ const App: React.FC = () => {
           totalSessions={sessionStats.totalSessions}
           durationSec={sessionDurationSec}
           displayName={displayName}
+          currentStreak={currentStreak}
           onDismiss={dismissComplete}
         />
       )}

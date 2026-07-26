@@ -1,8 +1,9 @@
 
 import React, { useState } from 'react';
-import { REP_PRESETS, SettingsPageProps, SoundOption } from '../types';
+import { REP_PRESETS, SettingsPageProps, SoundOption, MAX_CUSTOM_PRESETS } from '../types';
 import { SOUND_GROUPS, SOUND_HINTS } from '../constants/sounds';
 import { formatDuration } from '../utils/formatDuration';
+import { formatHistoryDate } from '../utils/practiceStats';
 import { ChevronLeftIcon } from './icons';
 import packageJson from '../package.json';
 
@@ -82,10 +83,20 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
   isTimerActive,
   totalSessions,
   totalReps,
+  currentStreak,
+  longestStreak,
+  repsThisWeek,
+  sessionHistory,
+  customPresets,
+  onSavePreset,
+  onApplyPreset,
+  onDeletePreset,
 }) => {
   const estimatedSessionSec = targetReps > 0 ? targetReps * delay : 0;
   const [restoreMessage, setRestoreMessage] = useState('');
   const [restoreBusy, setRestoreBusy] = useState(false);
+  const [presetName, setPresetName] = useState('');
+  const [showPresetForm, setShowPresetForm] = useState(false);
 
   const handleRestore = async () => {
     setRestoreBusy(true);
@@ -98,6 +109,16 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
     }
     if (result.error) setRestoreMessage(result.error);
   };
+
+  const handleSavePreset = () => {
+    const trimmed = presetName.trim();
+    if (!trimmed) return;
+    onSavePreset(trimmed);
+    setPresetName('');
+    setShowPresetForm(false);
+  };
+
+  const recentHistory = sessionHistory.slice(0, 10);
 
   return (
     <div className="flex min-h-full flex-col">
@@ -128,12 +149,50 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
           <p className="mt-1 text-sm text-gray-300">
             {totalSessions} session{totalSessions === 1 ? '' : 's'} · {totalReps.toLocaleString()} reps
           </p>
+          <div className="mt-3 grid grid-cols-3 gap-2">
+            <div className="rounded-xl bg-gray-950/50 px-2 py-2.5 text-center ring-1 ring-gray-700/40">
+              <p className="text-lg font-semibold text-cyan-300">{currentStreak}</p>
+              <p className="text-[10px] uppercase tracking-wide text-gray-500">Day streak</p>
+            </div>
+            <div className="rounded-xl bg-gray-950/50 px-2 py-2.5 text-center ring-1 ring-gray-700/40">
+              <p className="text-lg font-semibold text-white">{longestStreak}</p>
+              <p className="text-[10px] uppercase tracking-wide text-gray-500">Best streak</p>
+            </div>
+            <div className="rounded-xl bg-gray-950/50 px-2 py-2.5 text-center ring-1 ring-gray-700/40">
+              <p className="text-lg font-semibold text-white">{repsThisWeek.toLocaleString()}</p>
+              <p className="text-[10px] uppercase tracking-wide text-gray-500">Reps (7d)</p>
+            </div>
+          </div>
           {targetReps > 0 && (
-            <p className="mt-2 text-xs text-gray-500">
+            <p className="mt-3 text-xs text-gray-500">
               Next session ~{formatDuration(estimatedSessionSec)}
             </p>
           )}
         </section>
+
+        {recentHistory.length > 0 && (
+          <section className="settings-card space-y-3">
+            <h2 className="settings-section-title">Recent sessions</h2>
+            <ul className="space-y-2">
+              {recentHistory.map((entry) => (
+                <li
+                  key={entry.id}
+                  className="flex items-center justify-between gap-3 rounded-xl bg-gray-950/40 px-3 py-2.5 text-sm ring-1 ring-gray-800/60"
+                >
+                  <div>
+                    <p className="font-medium text-gray-200">{formatHistoryDate(entry.completedAt)}</p>
+                    <p className="text-xs text-gray-500">
+                      {entry.reps.toLocaleString()} reps · {entry.delay.toFixed(1)}s · {entry.sound}
+                    </p>
+                  </div>
+                  {entry.durationSec != null && (
+                    <span className="shrink-0 text-xs text-gray-500">{formatDuration(entry.durationSec)}</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         <section className="settings-card space-y-3">
           <h2 className="settings-section-title">Practice</h2>
@@ -168,6 +227,82 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
               </button>
             ))}
           </div>
+
+          {(customPresets.length > 0 || showPresetForm) && (
+            <div className="space-y-2 border-t border-gray-800/80 pt-3">
+              <p className="settings-group-label">Saved presets</p>
+              <div className="flex flex-wrap gap-2">
+                {customPresets.map((preset) => (
+                  <div key={preset.id} className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => onApplyPreset(preset)}
+                      disabled={isTimerActive}
+                      className="rounded-xl bg-violet-500/15 px-3 py-2 text-sm font-medium text-violet-200 ring-1 ring-violet-400/25 active:bg-violet-500/25 disabled:opacity-40"
+                    >
+                      {preset.name}
+                    </button>
+                    {!isTimerActive && (
+                      <button
+                        type="button"
+                        onClick={() => onDeletePreset(preset.id)}
+                        className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-800 hover:text-gray-300"
+                        aria-label={`Delete preset ${preset.name}`}
+                      >
+                        ×
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {!isTimerActive && customPresets.length < MAX_CUSTOM_PRESETS && (
+            <div className="border-t border-gray-800/80 pt-3">
+              {showPresetForm ? (
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={presetName}
+                    onChange={(e) => setPresetName(e.target.value)}
+                    placeholder="Preset name"
+                    maxLength={24}
+                    className="min-w-0 flex-1 rounded-xl border border-gray-700 bg-gray-950/60 px-3 py-2.5 text-sm text-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/30"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleSavePreset();
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleSavePreset}
+                    disabled={!presetName.trim()}
+                    className="shrink-0 rounded-xl bg-cyan-500/20 px-4 py-2.5 text-sm font-medium text-cyan-300 ring-1 ring-cyan-400/30 disabled:opacity-40"
+                  >
+                    Save
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowPresetForm(false);
+                      setPresetName('');
+                    }}
+                    className="shrink-0 rounded-xl px-3 py-2.5 text-sm text-gray-500 hover:text-gray-300"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setShowPresetForm(true)}
+                  className="w-full rounded-xl border border-dashed border-gray-700 py-2.5 text-sm text-gray-400 hover:border-gray-600 hover:text-gray-300"
+                >
+                  + Save current as preset
+                </button>
+              )}
+            </div>
+          )}
         </section>
 
         <section className="settings-card space-y-3">

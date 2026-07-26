@@ -23,6 +23,9 @@ export type AppScreen = 'timer' | 'settings';
 
 export const REP_PRESETS = [27, 54, 108, 1000] as const;
 
+export const MAX_SESSION_HISTORY = 100;
+export const MAX_CUSTOM_PRESETS = 5;
+
 export interface SessionStats {
   totalSessions: number;
   totalReps: number;
@@ -34,6 +37,23 @@ export const DEFAULT_SESSION_STATS: SessionStats = {
   totalReps: 0,
   lastSessionAt: null,
 };
+
+export interface SessionRecord {
+  id: string;
+  completedAt: string;
+  reps: number;
+  delay: number;
+  sound: SoundOption;
+  durationSec: number | null;
+}
+
+export interface CustomPreset {
+  id: string;
+  name: string;
+  reps: number;
+  delay: number;
+  sound: SoundOption;
+}
 
 export interface SettingsPageProps {
   targetReps: number;
@@ -54,4 +74,12 @@ export interface SettingsPageProps {
   isTimerActive: boolean;
   totalSessions: number;
   totalReps: number;
+  currentStreak: number;
+  longestStreak: number;
+  repsThisWeek: number;
+  sessionHistory: SessionRecord[];
+  customPresets: CustomPreset[];
+  onSavePreset: (name: string) => void;
+  onApplyPreset: (preset: CustomPreset) => void;
+  onDeletePreset: (id: string) => void;
 }
