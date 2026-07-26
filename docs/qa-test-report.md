@@ -1,7 +1,7 @@
 # Repit — Core Flow QA Report
 
-**Date:** July 23, 2026  
-**Version:** 1.0.0  
+**Date:** July 26, 2026  
+**Version:** 1.1.0  
 **Build:** `npm run build:ios` (passing)
 
 ---
@@ -21,10 +21,12 @@ npm run verify
 | Open count (target 0) never auto-completes | ✓ Pass |
 | Minimum interval floor (100ms) | ✓ Pass |
 | Duration formatting | ✓ Pass |
-| Sound options (4) | ✓ Pass |
+| Ten sound options defined (9 playable + None) | ✓ Pass |
 | Rep presets include 108 | ✓ Pass |
+| Current streak counts today and yesterday | ✓ Pass |
+| Empty history has zero streak | ✓ Pass |
 
-**Run date:** July 23, 2026 — all 10 checks passed.
+**Run date:** July 26, 2026 — all 13 checks passed.
 
 ---
 
@@ -34,14 +36,26 @@ npm run verify
 
 | Flow | Expected behavior | Code reference |
 |------|-------------------|----------------|
-| Start | Tap circle → state `Running`, haptic tap if rep 0 | `App.tsx` `handleStartPauseResume` |
+| Start | Tap circle → state `Running`, timer starts before async audio/haptics | `App.tsx` `handleStartPauseResume` |
 | Tick | Every `delay` seconds (min 0.1s), rep increments, sound + light haptic | `useMeditationTimer.ts`, `handleTick` |
 | Pause | Tap while running → `Paused`, medium haptic | `handleStartPauseResume` |
 | Resume | Tap while paused → `Running` | same |
-| Complete | At `targetReps`, shows sheet, success haptic, duration recorded | `completeSession` |
+| Complete | At `targetReps`, shows sheet, success haptic, duration + history recorded | `completeSession` |
 | Restart | Settings or session bar → idle, rep 0 | `handleRestart` |
 | Background | App inactive while running → auto-pause | `nativeService.onAppStateChange` |
 | Keep awake | Screen stays on while running (iOS) | `nativeService.setKeepAwake` |
+| Progress ring | Smooth RAF-driven animation, no stutter at session start | `CircleDisplay.tsx`, `useRepCycle.ts` |
+
+### Practice tracking (v1.1)
+
+| Flow | Expected behavior |
+|------|-------------------|
+| Session complete | Appends entry to local session history (reps, delay, sound, duration) |
+| Lifetime stats | `totalSessions`, `totalReps`, `lastSessionAt` increment |
+| Streaks | Current streak, best streak, reps in last 7 days shown in Settings |
+| Session complete sheet | Shows streak when &gt; 1 day |
+| Custom presets | Save current config (up to 5), tap to apply, × to delete |
+| Data storage | All on-device via `localStorage`; no account or cloud sync |
 
 ### Focus lock
 
@@ -55,22 +69,22 @@ npm run verify
 
 ### Sounds
 
-Ten tick sounds grouped in Settings (Traditional, Bright, Soft, Silent). Mala uses the original embedded bead sample; all others use Web Audio synthesis.
+Ten tick sounds grouped in Settings (Traditional, Bright, Soft, Silent). Mala uses the original embedded bead sample; others use Web Audio synthesis.
 
 | Group | Sound | Behavior |
 |-------|-------|----------|
 | Traditional | **Mala** | Original Mixkit bead click (embedded MP3 → Web Audio buffer) |
-| Traditional | **Wood** | Mokugyo-style knock — noise + 196 / 392 Hz (~0.35s) |
+| Traditional | **Wood** | Mokugyo-style knock — retuned Web Audio (~0.35s) |
 | Traditional | **Gong** | Deep sine ~120 Hz, gentle fade (~1.8s) |
-| Traditional | **Bell** | Temple bell partials ~520 / 780 / 1170 Hz (~1.2s) |
+| Traditional | **Bell** | Temple bell partials — retuned (~1.2s) |
 | Bright | **Crystal** | Bright sine ~2200 Hz, gentle fade (~1.2s) |
-| Bright | **Bowl** | Singing bowl ~440 Hz with beat partial (~2s) |
-| Bright | **Tap** | Muted mallet — noise + ~290 Hz (~0.22s) |
-| Soft | **Breath** | Filtered air swell + soft low tone (~0.6s) |
-| Soft | **Om** | ~136 Hz Om with harmonics, soft attack (~1s) |
+| Bright | **Bowl** | Singing bowl — retuned (~2s) |
+| Bright | **Tap** | Muted mallet — retuned (~0.22s) |
+| Soft | **Breath** | Filtered air swell — retuned (~0.6s) |
+| Soft | **Om** | Tibetan monk-style synth — deep ~92 Hz, vibrato, O→M morph (~1.55s) |
 | Silent | **None** | No sound; haptics still fire if enabled |
 
-Preview in Settings plays the selected sound immediately. Overlapping ticks are stopped when the interval is shorter than the sound length.
+Tick sound section in Settings is **collapsible** (collapsed by default; tap header to expand). Preview plays selected sound immediately.
 
 ### Haptics
 
@@ -93,47 +107,77 @@ Preview in Settings plays the selected sound immediately. Overlapping ticks are 
 | Lock on leave | If enabled, switching apps triggers welcome splash on return |
 | Web | Biometric unavailable → “Tap to unlock” button |
 
+### Subscription & paywall
+
+| Flow | Expected behavior |
+|------|-------------------|
+| Onboarding | 3 screens → paywall (7-day trial) |
+| Dev mode | Without RevenueCat key, purchases simulated locally |
+| Paywall copy | $24.99/yr · $4.99/mo; practice history & presets listed |
+| Privacy link | Opens `https://oobaretin.github.io/Repit/` |
+| Restore | Settings → Restore purchases |
+
+**Note:** Live StoreKit purchases require Apple Developer enrollment + App Store Connect products + RevenueCat key in `.env`.
+
 ---
 
 ## Manual test checklist
 
-Completed on **iPhone (device)** — July 23, 2026.
-
-### Timer
+### Timer (July 23–25, 2026 — device)
 - [x] Idle shows **Start** and practice pill
 - [x] Start → rep increments at set interval
-- [x] Progress ring advances
+- [x] Progress ring advances smoothly (July 26 — ring stutter fix verified on device)
 - [x] Pause freezes breathing animation
 - [x] Resume continues counting
 - [x] Completion sheet shows reps + duration
 - [x] Close returns to idle
 
-### Focus lock
+### Focus lock (July 23, 2026 — device)
 - [x] Auto focus lock hides header on start
 - [x] Hold-to-unlock restores controls
 - [x] Session not reset after unlock
 
-### Sounds
+### Sounds (July 25, 2026 — device)
 - [x] All ten sounds play on tick (Mala: embedded original bead click; others synth)
 - [x] None is silent
-- [x] Full sound library verified on device (July 25, 2026)
+- [x] Om plays Tibetan monk-style tone (July 26 — device)
+- [x] Tick sound section folds/unfolds in Settings (July 26 — device)
 
-### Haptics (device recommended)
+### Haptics (July 23, 2026 — device)
 - [x] Light tap each rep
 - [x] Success pattern on complete
 
-### App lock / welcome splash
+### App lock / welcome splash (July 23, 2026 — device)
 - [x] Logout shows welcome splash with brand ring + “Welcome back”
 - [x] Ring and glow breathe in sync
 - [x] Face ID unlock works (device); timer fades in after unlock
 - [x] Lock on leave after backgrounding app
 - [x] Failed Face ID shows error message; retry works
 
-### Settings
+### Settings — core (July 23, 2026 — device)
 - [x] Presets 27 / 54 / 108 / 1000 apply
 - [x] Interval slider 0.5–10s
 - [x] Settings locked during active session
 - [x] Lifetime stats increment after session
+
+### Settings — v1.1 (July 26, 2026 — device)
+- [x] Streak stats visible (day streak, best streak, reps 7d)
+- [x] Recent sessions list appears after completing a session
+- [x] Recent sessions section folds/unfolds
+- [x] Save custom preset → applies reps, interval, sound
+- [x] Delete custom preset works
+- [x] Preferences section folds/unfolds
+- [x] Session complete shows streak when &gt; 1 day
+
+### Privacy & hosting
+- [x] Privacy policy live at `https://oobaretin.github.io/Repit/`
+- [x] Policy documents session history, presets, streaks, subscriptions
+- [x] Paywall privacy link opens GitHub Pages URL in app
+
+### Subscription (pending Apple Developer)
+- [ ] Sandbox purchase — 7-day trial start
+- [ ] Trial expiry → paywall blocks app
+- [ ] Restore purchases with sandbox account
 
 ---
 
@@ -143,12 +187,13 @@ Completed on **iPhone (device)** — July 23, 2026.
 2. **Simulator haptics** — No physical feedback; code path still runs without error.
 3. **Face ID** — Must test on real device with biometrics enrolled.
 4. **Free Apple ID signing** — App expires after 7 days; re-run from Xcode.
+5. **GitHub Actions** — Privacy deploy workflow may fail if account billing is locked; branch deploy from `/docs` works as fallback.
 
 ---
 
 ## Issues found
 
-None. Device QA pass — July 23, 2026.
+None blocking for TestFlight prep.
 
 | # | Screen / flow | Issue | Severity | Status |
 |---|---------------|-------|----------|--------|
@@ -158,10 +203,13 @@ None. Device QA pass — July 23, 2026.
 
 ## Sign-off
 
-- [x] All manual checklist items passed on device
-- [x] No blocking issues open
+- [x] All v1.0 manual checklist items passed on device
+- [x] v1.1 practice tracking, presets, and collapsible Settings verified on device (July 26)
+- [x] Privacy policy updated and live on GitHub Pages
+- [ ] Subscription sandbox flow (blocked on Apple Developer enrollment)
 - [x] Ready for App Store screenshots
+- [ ] Ready for TestFlight / App Store submission (pending Apple Developer + subscription products)
 
 **Tester:** osagie obaretin  
 **Device / iOS:** iPhone (physical device)  
-**Date:** July 23, 2026
+**Last updated:** July 26, 2026
