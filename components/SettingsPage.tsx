@@ -1,29 +1,38 @@
 
 import React, { useState } from 'react';
 import { REP_PRESETS, SettingsPageProps, SoundOption } from '../types';
-import { SOUND_GROUPS } from '../constants/sounds';
+import { SOUND_GROUPS, SOUND_HINTS } from '../constants/sounds';
 import { formatDuration } from '../utils/formatDuration';
 import { ChevronLeftIcon } from './icons';
 import packageJson from '../package.json';
 
+const SOUND_GRID_CLASS = {
+  1: 'sound-grid-1',
+  2: 'sound-grid-2',
+  3: 'sound-grid-3',
+} as const;
+
 const SoundButton: React.FC<{
-  option: string;
+  option: SoundOption;
   selected: boolean;
   onClick: () => void;
   disabled?: boolean;
-}> = ({ option, selected, onClick, disabled }) => (
-  <button
-    onClick={onClick}
-    disabled={disabled}
-    className={`min-w-[calc(50%-0.25rem)] flex-1 rounded-2xl px-3 py-3 text-sm min-h-[48px] transition sm:min-w-[calc(33.333%-0.35rem)] ${
-      selected
-        ? 'bg-cyan-500 font-semibold text-gray-950 shadow-md shadow-cyan-500/20'
-        : 'bg-gray-800/80 text-gray-300 active:bg-gray-700'
-    } disabled:opacity-40`}
-  >
-    {option}
-  </button>
-);
+}> = ({ option, selected, onClick, disabled }) => {
+  const isSilent = option === SoundOption.None;
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      aria-pressed={selected}
+      className={`sound-chip ${selected ? 'sound-chip--selected' : ''} ${isSilent ? 'sound-chip--silent' : ''}`}
+    >
+      <span className="sound-chip__label">{option}</span>
+      <span className="sound-chip__hint">{SOUND_HINTS[option]}</span>
+    </button>
+  );
+};
 
 const Toggle: React.FC<{
   checked: boolean;
@@ -113,9 +122,9 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
         </p>
       )}
 
-      <div className="mt-5 flex-1 space-y-6 overflow-y-auto pb-6">
-        <section className="rounded-2xl border border-gray-700/40 bg-gray-800/40 px-4 py-4">
-          <p className="text-[11px] uppercase tracking-[0.2em] text-gray-500">Lifetime</p>
+      <div className="mt-5 flex-1 space-y-5 overflow-y-auto pb-6">
+        <section className="settings-card">
+          <p className="settings-group-label">Lifetime</p>
           <p className="mt-1 text-sm text-gray-300">
             {totalSessions} session{totalSessions === 1 ? '' : 's'} · {totalReps.toLocaleString()} reps
           </p>
@@ -126,8 +135,8 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
           )}
         </section>
 
-        <section className="space-y-3">
-          <h2 className="text-sm font-medium text-gray-200">Practice</h2>
+        <section className="settings-card space-y-3">
+          <h2 className="settings-section-title">Practice</h2>
           <label htmlFor="target-reps" className="block text-sm text-gray-400">
             Target repetitions
           </label>
@@ -161,9 +170,9 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
           </div>
         </section>
 
-        <section className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-medium text-gray-200">Interval</h2>
+        <section className="settings-card space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="settings-section-title">Interval</h2>
             <span className="rounded-full bg-cyan-500/15 px-2.5 py-1 text-xs font-semibold text-cyan-300">
               {delay.toFixed(1)}s
             </span>
@@ -185,12 +194,21 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
           </div>
         </section>
 
-        <section className="space-y-4">
-          <h2 className="text-sm font-medium text-gray-200">Sound</h2>
+        <section className="settings-card space-y-4">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <h2 className="settings-section-title">Tick sound</h2>
+              <p className="mt-1 text-xs text-gray-500">Tap to preview · plays each rep</p>
+            </div>
+            <span className="shrink-0 rounded-full bg-cyan-500/15 px-2.5 py-1 text-xs font-semibold text-cyan-300">
+              {selectedSound}
+            </span>
+          </div>
+
           {SOUND_GROUPS.map((group) => (
             <div key={group.id} className="space-y-2">
-              <p className="text-[11px] uppercase tracking-[0.18em] text-gray-500">{group.label}</p>
-              <div className="flex flex-wrap gap-2">
+              <p className="settings-group-label">{group.label}</p>
+              <div className={SOUND_GRID_CLASS[group.columns ?? 2]}>
                 {group.options.map((option) => (
                   <SoundButton
                     key={option}
@@ -204,8 +222,8 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
           ))}
         </section>
 
-        <section className="space-y-4 rounded-2xl border border-gray-700/40 bg-gray-800/40 p-4">
-          <h2 className="text-sm font-medium text-gray-200">Preferences</h2>
+        <section className="settings-card space-y-4">
+          <h2 className="settings-section-title">Preferences</h2>
           <Toggle
             checked={hapticsEnabled}
             onChange={() => setHapticsEnabled(!hapticsEnabled)}
@@ -226,8 +244,8 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
           />
         </section>
 
-        <section className="space-y-3 rounded-2xl border border-gray-700/40 bg-gray-800/40 p-4">
-          <h2 className="text-sm font-medium text-gray-200">Subscription</h2>
+        <section className="settings-card space-y-3">
+          <h2 className="settings-section-title">Subscription</h2>
           <p className="text-xs text-gray-500">
             Manage or cancel in Settings → Apple ID → Subscriptions on your iPhone.
           </p>

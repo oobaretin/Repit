@@ -147,8 +147,9 @@ async function main() {
     console.log('4/6 Settings');
     await loadApp(page);
     await page.getByRole('button', { name: 'Open settings' }).click();
-    await page.getByRole('heading', { name: 'Sound' }).waitFor();
-    await page.waitForTimeout(400);
+    await page.getByRole('heading', { name: 'Tick sound' }).waitFor();
+    await page.getByRole('heading', { name: 'Tick sound' }).scrollIntoViewIfNeeded();
+    await page.waitForTimeout(500);
     await capture(page, '04-settings.png');
 
     console.log('5/6 Session complete');
