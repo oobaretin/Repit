@@ -36,8 +36,8 @@ export const SOUND_GROUPS: SoundGroup[] = [
   {
     id: 'soft',
     label: 'Soft',
-    columns: 2,
     options: [SoundOption.Breath, SoundOption.Om],
+    columns: 2,
   },
   {
     id: 'silent',
@@ -58,5 +58,3 @@ export function normalizeSoundOption(value: unknown): SoundOption {
   }
   return SoundOption.Mala;
 }
-
-export const MALA_SOUND_PATH = '/sounds/mala.mp3';

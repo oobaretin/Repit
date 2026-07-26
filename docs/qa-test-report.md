@@ -55,11 +55,11 @@ npm run verify
 
 ### Sounds
 
-Ten tick sounds grouped in Settings (Traditional, Bright, Soft, Silent). All playback is on-device — Mala uses a bundled MP3; the rest use Web Audio synthesis.
+Ten tick sounds grouped in Settings (Traditional, Bright, Soft, Silent). Mala uses the original embedded bead sample; all others use Web Audio synthesis.
 
 | Group | Sound | Behavior |
 |-------|-------|----------|
-| Traditional | **Mala** | Bundled MP3 (`public/sounds/mala.mp3`) |
+| Traditional | **Mala** | Original Mixkit bead click (embedded MP3 → Web Audio buffer) |
 | Traditional | **Wood** | Filtered noise + low triangle (~180 Hz) |
 | Traditional | **Gong** | Deep sine partials (~120 / 60 Hz) |
 | Traditional | **Bell** | Dual sine (~520 / 780 Hz) |
@@ -114,9 +114,9 @@ Completed on **iPhone (device)** — July 23, 2026.
 - [x] Session not reset after unlock
 
 ### Sounds
-- [x] All ten sounds play on tick (Mala bundled; others synth)
+- [x] All ten sounds play on tick (Mala: embedded original bead click; others synth)
 - [x] None is silent
-- [ ] Re-test full library on device after sound expansion (July 25, 2026)
+- [x] Full sound library verified on device (July 25, 2026)
 
 ### Haptics (device recommended)
 - [x] Light tap each rep
@@ -139,7 +139,7 @@ Completed on **iPhone (device)** — July 23, 2026.
 
 ## Known platform notes
 
-1. **Simulator audio** — Works; all sounds play offline (Mala bundled locally).
+1. **Simulator audio** — Works; all sounds play offline via Web Audio.
 2. **Simulator haptics** — No physical feedback; code path still runs without error.
 3. **Face ID** — Must test on real device with biometrics enrolled.
 4. **Free Apple ID signing** — App expires after 7 days; re-run from Xcode.
