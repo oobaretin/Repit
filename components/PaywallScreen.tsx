@@ -83,7 +83,7 @@ const PaywallScreen: React.FC<PaywallScreenProps> = ({
           {[
             'Unlimited repetition sessions',
             'Focus lock & Face ID app lock',
-            'Mala, Gong, and Crystal sounds',
+            'Ten calming tick sounds — Mala, Wood, Gong, Bell, Crystal, Bowl, Tap, Breath, Om',
             'Haptic feedback on every rep',
             'Session stats on your device — no account',
           ].map((item) => (

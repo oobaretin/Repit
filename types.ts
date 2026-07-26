@@ -8,8 +8,14 @@ export enum TimerState {
 
 export enum SoundOption {
   Mala = 'Mala',
+  Wood = 'Wood',
   Gong = 'Gong',
+  Bell = 'Bell',
   Crystal = 'Crystal',
+  Bowl = 'Bowl',
+  Tap = 'Tap',
+  Breath = 'Breath',
+  Om = 'Om',
   None = 'None',
 }
 

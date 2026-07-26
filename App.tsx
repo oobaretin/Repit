@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { TimerState, SoundOption, DEFAULT_SESSION_STATS, AppScreen } from './types';
+import { normalizeSoundOption } from './constants/sounds';
 import { audioService } from './services/audioService';
 import { hapticsService } from './services/hapticsService';
 import { nativeService } from './services/nativeService';
@@ -79,6 +80,11 @@ const App: React.FC = () => {
     trialDaysLeft <= 2 &&
     trialDaysLeft > 0 &&
     !trialReminderDismissed;
+
+  useEffect(() => {
+    const normalized = normalizeSoundOption(selectedSound);
+    if (normalized !== selectedSound) setSelectedSound(normalized);
+  }, [selectedSound, setSelectedSound]);
 
   useEffect(() => {
     if (isPremium) setEverPremium(true);

@@ -144,7 +144,7 @@ Shown after onboarding screen 3 (and when trial expires).
 
 - Unlimited repetition sessions  
 - Focus lock & Face ID app lock  
-- Mala, Gong, and Crystal sounds  
+- Ten calming tick sounds (Mala, Wood, Gong, Bell, Crystal, Bowl, Tap, Breath, Om, or silent)  
 - Haptic feedback on every rep  
 - Session stats on your device — no account  
 

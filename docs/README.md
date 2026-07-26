@@ -27,6 +27,7 @@ After editing `docs/index.html`, run `npm run sync:privacy-site` and push (Netli
 | `subscription-plan.md` | Pricing, onboarding, paywall copy, StoreKit setup |
 | [revenuecat-setup.md](./revenuecat-setup.md) | **Step-by-step** App Store Connect + RevenueCat setup |
 | `screenshot-guide.md` | Screenshot layouts and capture steps |
+| `sound-library-plan.md` | Grouped 10+ sound expansion plan |
 | `qa-test-report.md` | Core flow test results and manual checklist |
 
 ---

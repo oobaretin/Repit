@@ -57,7 +57,7 @@ FEATURES
 • Repetition timer — set any target count and interval from 0.5 to 10 seconds
 • Quick presets — 27, 54, 108, and 1000 for traditional practice lengths
 • Breathing circle — visual rhythm synced to your interval
-• Sounds — Mala bead, Gong, Crystal, or silent
+• Sounds — Ten calming ticks: Mala, Wood, Gong, Bell, Crystal, Bowl, Tap, Breath, Om, or silent
 • Haptic feedback — light tap on each repetition (iPhone)
 • Focus lock — hide controls during a session; hold to unlock when needed
 • Session tracking — lifetime sessions and total reps stored on your device
@@ -110,7 +110,7 @@ Welcome to Repit — a mindfulness repetition timer for mantra, affirmations, an
 • 7-day free trial, then annual or monthly subscription
 • Configurable reps and interval
 • Breathing circle synced to your pace
-• Mala, Gong, and Crystal sounds
+• Ten calming tick sounds — Traditional, Bright, Soft, or silent
 • Focus lock and Face ID app lock
 • Session stats stored on device
 ```

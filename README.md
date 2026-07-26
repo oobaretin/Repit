@@ -6,7 +6,7 @@ A mindfulness repetition timer for mantra practice, affirmations, and breath cou
 
 - **Repetition timer** — configurable target count and interval
 - **Quick presets** — 27, 54, 108, 1000
-- **Sounds** — Mala, Gong, Crystal, or silent
+- **Sounds** — Ten calming ticks (Traditional / Bright / Soft) or silent
 - **Haptic feedback** — light tap on each rep (iOS)
 - **Session tracking** — lifetime sessions and reps
 - **iOS native shell** — Capacitor with keep-awake, safe areas, status bar

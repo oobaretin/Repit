@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { REP_PRESETS, SettingsPageProps, SoundOption } from '../types';
+import { SOUND_GROUPS } from '../constants/sounds';
 import { formatDuration } from '../utils/formatDuration';
 import { ChevronLeftIcon } from './icons';
 import packageJson from '../package.json';
@@ -14,7 +15,7 @@ const SoundButton: React.FC<{
   <button
     onClick={onClick}
     disabled={disabled}
-    className={`flex-1 min-w-[calc(50%-0.25rem)] rounded-2xl px-3 py-3 text-sm min-h-[48px] transition ${
+    className={`min-w-[calc(50%-0.25rem)] flex-1 rounded-2xl px-3 py-3 text-sm min-h-[48px] transition sm:min-w-[calc(33.333%-0.35rem)] ${
       selected
         ? 'bg-cyan-500 font-semibold text-gray-950 shadow-md shadow-cyan-500/20'
         : 'bg-gray-800/80 text-gray-300 active:bg-gray-700'
@@ -73,7 +74,6 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
   totalSessions,
   totalReps,
 }) => {
-  const soundOptions = Object.values(SoundOption);
   const estimatedSessionSec = targetReps > 0 ? targetReps * delay : 0;
   const [restoreMessage, setRestoreMessage] = useState('');
   const [restoreBusy, setRestoreBusy] = useState(false);
@@ -185,18 +185,23 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
           </div>
         </section>
 
-        <section className="space-y-3">
+        <section className="space-y-4">
           <h2 className="text-sm font-medium text-gray-200">Sound</h2>
-          <div className="flex flex-wrap gap-2">
-            {soundOptions.map((option) => (
-              <SoundButton
-                key={option}
-                option={option}
-                selected={selectedSound === option}
-                onClick={() => setSelectedSound(option)}
-              />
-            ))}
-          </div>
+          {SOUND_GROUPS.map((group) => (
+            <div key={group.id} className="space-y-2">
+              <p className="text-[11px] uppercase tracking-[0.18em] text-gray-500">{group.label}</p>
+              <div className="flex flex-wrap gap-2">
+                {group.options.map((option) => (
+                  <SoundButton
+                    key={option}
+                    option={option}
+                    selected={selectedSound === option}
+                    onClick={() => setSelectedSound(option)}
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
         </section>
 
         <section className="space-y-4 rounded-2xl border border-gray-700/40 bg-gray-800/40 p-4">

@@ -55,14 +55,22 @@ npm run verify
 
 ### Sounds
 
-| Sound | Behavior |
-|-------|----------|
-| **Mala** | Fetches MP3 from Mixkit CDN (network on first play) |
-| **Gong** | On-device Web Audio sine synth (~120 Hz) |
-| **Crystal** | On-device Web Audio sine synth (~2200 Hz) |
-| **None** | Silent; haptics still fire if enabled |
+Ten tick sounds grouped in Settings (Traditional, Bright, Soft, Silent). All playback is on-device — Mala uses a bundled MP3; the rest use Web Audio synthesis.
 
-Preview in Settings plays selected sound immediately.
+| Group | Sound | Behavior |
+|-------|-------|----------|
+| Traditional | **Mala** | Bundled MP3 (`public/sounds/mala.mp3`) |
+| Traditional | **Wood** | Filtered noise + low triangle (~180 Hz) |
+| Traditional | **Gong** | Deep sine partials (~120 / 60 Hz) |
+| Traditional | **Bell** | Dual sine (~520 / 780 Hz) |
+| Bright | **Crystal** | Bright sine + shimmer (~2200 / 4400 Hz) |
+| Bright | **Bowl** | Singing-bowl sine (~440 / 880 Hz) |
+| Bright | **Tap** | Short noise + triangle click |
+| Soft | **Breath** | Soft noise + low sine |
+| Soft | **Om** | Low harmonic sine (~136 / 272 Hz) |
+| Silent | **None** | No sound; haptics still fire if enabled |
+
+Preview in Settings plays the selected sound immediately. Overlapping ticks are stopped when the interval is shorter than the sound length.
 
 ### Haptics
 
@@ -106,9 +114,9 @@ Completed on **iPhone (device)** — July 23, 2026.
 - [x] Session not reset after unlock
 
 ### Sounds
-- [x] Mala plays on tick (network on first load)
-- [x] Gong / Crystal play on tick
+- [x] All ten sounds play on tick (Mala bundled; others synth)
 - [x] None is silent
+- [ ] Re-test full library on device after sound expansion (July 25, 2026)
 
 ### Haptics (device recommended)
 - [x] Light tap each rep
@@ -131,7 +139,7 @@ Completed on **iPhone (device)** — July 23, 2026.
 
 ## Known platform notes
 
-1. **Simulator audio** — Works; Mala requires network on first load.
+1. **Simulator audio** — Works; all sounds play offline (Mala bundled locally).
 2. **Simulator haptics** — No physical feedback; code path still runs without error.
 3. **Face ID** — Must test on real device with biometrics enrolled.
 4. **Free Apple ID signing** — App expires after 7 days; re-run from Xcode.
