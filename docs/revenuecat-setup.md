@@ -8,8 +8,8 @@ Step-by-step guide to enable real subscriptions. Product IDs and entitlement nam
 | Entitlement | `premium` |
 | Annual product | `com.repit.app.premium.annual` |
 | Monthly product | `com.repit.app.premium.monthly` |
-| Annual price | $14.99/year |
-| Monthly price | $2.99/month |
+| Annual price | $24.99/year |
+| Monthly price | $4.99/month |
 | Free trial | 7 days (both products) |
 
 ---
@@ -48,7 +48,7 @@ Step-by-step guide to enable real subscriptions. Product IDs and entitlement nam
 | Product ID | `com.repit.app.premium.annual` |
 | Subscription duration | 1 year |
 
-3. **Subscription prices** → add **$14.99** (USD Tier 15)
+3. **Subscription prices** → add **$24.99** (USD Tier 25)
 4. **App Store localization** → display name e.g. **Repit Premium (Annual)**
 5. **Review information** → screenshot of paywall (optional for review)
 6. **Introductory offers** → **+**:
@@ -66,7 +66,7 @@ Repeat with:
 | Reference name | Repit Premium Monthly |
 | Product ID | `com.repit.app.premium.monthly` |
 | Subscription duration | 1 month |
-| Price | $2.99 (Tier 3) |
+| Price | $4.99 (Tier 5) |
 | Intro offer | 7-day free trial |
 
 ### 5. Subscription group order

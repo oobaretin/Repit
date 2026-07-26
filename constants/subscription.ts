@@ -18,14 +18,14 @@ export interface PlanDisplay {
 export const PLAN_DISPLAY: Record<SubscriptionPlan, Omit<PlanDisplay, 'id'>> = {
   annual: {
     title: 'Annual',
-    priceLabel: '$19.99 / year',
-    detail: '7 days free, then $19.99/year · Less than $1.70/month',
+    priceLabel: '$24.99 / year',
+    detail: '7 days free, then $24.99/year · Less than $2.10/month',
     badge: 'Best value',
   },
   monthly: {
     title: 'Monthly',
-    priceLabel: '$3.99 / month',
-    detail: '7 days free, then $3.99/month',
+    priceLabel: '$4.99 / month',
+    detail: '7 days free, then $4.99/month',
   },
 };
 

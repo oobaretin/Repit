@@ -12,11 +12,18 @@ Monetization model for v1: **7-day free trial** after onboarding, then **annual 
 
 | Plan | US price | Effective monthly | App Store tier |
 |------|----------|-------------------|----------------|
-| **Annual** (default on paywall) | **$19.99/year** | ~$1.67/mo | Tier 20 |
-| **Monthly** (secondary option) | **$3.99/month** | $3.99/mo | Tier 4 |
+| **Annual** (default on paywall) | **$24.99/year** | ~$2.08/mo | Tier 25 |
+| **Monthly** (secondary option) | **$4.99/month** | $4.99/mo | Tier 5 |
 | **Free trial** | **7 days** | — | Introductory offer |
 
-Annual saves ~**58%** vs monthly ($47.88/year at monthly rate).
+Annual saves ~**58%** vs monthly ($59.88/year at monthly rate).
+
+### v1.1 interim pricing (reference)
+
+| Plan | US price |
+|------|----------|
+| Annual | $19.99/year |
+| Monthly | $3.99/month |
 
 ### Launch pricing (v1.0 — reference)
 
@@ -25,16 +32,16 @@ Annual saves ~**58%** vs monthly ($47.88/year at monthly rate).
 | Annual | $14.99/year |
 | Monthly | $2.99/month |
 
-Use v1.0 tiers in App Store Connect only if you have not yet created products; otherwise create new price tiers or update existing products before shipping v1.1.
+Use **$24.99 / $4.99** tiers in App Store Connect when creating products. If products already exist at a lower tier, update prices before shipping or grandfather existing subscribers.
 
 ### Premium tier (optional later)
 
-If reviews and conversion are strong after v1.1, consider:
+If reviews and conversion stay strong after Watch/widgets ship:
 
 | Plan | US price |
 |------|----------|
-| Annual | $24.99/year |
-| Monthly | $4.99/month |
+| Annual | $29.99/year |
+| Monthly | $5.99/month |
 
 ---
 
@@ -163,16 +170,16 @@ Shown after onboarding screen 3 (and when trial expires).
 **Annual — recommended badge**
 
 ```
-$19.99 / year
-7 days free, then $19.99/year
-Less than $1.70/month
+$24.99 / year
+7 days free, then $24.99/year
+Less than $2.10/month
 ```
 
 **Monthly — secondary**
 
 ```
-$3.99 / month
-7 days free, then $3.99/month
+$4.99 / month
+7 days free, then $4.99/month
 ```
 
 ### Primary button

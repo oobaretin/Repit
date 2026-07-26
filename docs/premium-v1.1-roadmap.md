@@ -2,7 +2,7 @@
 
 Strategy for raising perceived value **without cloud backup or accounts**. Aligns with Repit’s privacy-first positioning: *“No account required. Your settings and session stats stay on your device.”*
 
-**Target pricing (v1.1):** $19.99/year · $3.99/month (see [subscription-plan.md](./subscription-plan.md))
+**Target pricing (v1.1):** $24.99/year · $4.99/month (see [subscription-plan.md](./subscription-plan.md))
 
 ---
 
@@ -143,8 +143,8 @@ Do **not** promise cloud sync until it exists.
 | Version | Annual | Monthly | Justification |
 |---------|--------|---------|---------------|
 | **v1 launch** | $14.99 | $2.99 | Core timer + sounds + lock — get reviews |
-| **v1.1** | $19.99 | $3.99 | History + streaks + custom presets (+ widget if ready) |
-| **v1.2+** | $24.99 | $4.99 | Watch + widgets + export — only after shipped |
+| **v1.1** | $24.99 | $4.99 | History + streaks + custom presets |
+| **v1.2+** | $29.99 | $5.99 | Watch + widgets + export — only after shipped |
 
 Existing subscribers: grandfather at launch price or honor App Store price tiers — decide before first price increase.
 
@@ -154,7 +154,7 @@ Existing subscribers: grandfather at launch price or honor App Store price tiers
 
 ```
 v1.0  → Launch (current feature set, $14.99/yr)
-v1.1a → History + streaks + custom presets ($19.99/yr for new subs)
+v1.1  → History + streaks + custom presets ($24.99/yr)
 v1.1b → Home Screen widget
 v1.2  → Watch companion OR export/import (pick based on user feedback)
 ```

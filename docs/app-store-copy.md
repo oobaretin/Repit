@@ -1,7 +1,7 @@
 # Repit — App Store Copy
 
 Use this when creating the listing in App Store Connect.  
-**Bundle ID:** `com.repit.app` · **Category:** Health & Fitness · **Version:** 1.0.0
+**Bundle ID:** `com.repit.app` · **Category:** Health & Fitness · **Version:** 1.1.0
 
 ---
 
@@ -27,7 +27,7 @@ Use this when creating the listing in App Store Connect.
 
 ## Monetization
 
-**Model:** Free download · **7-day free trial** · **$14.99/year** or **$2.99/month** after trial.
+**Model:** Free download · **7-day free trial** · **$24.99/year** or **$4.99/month** after trial.
 
 Full plan, onboarding, and paywall copy: [subscription-plan.md](./subscription-plan.md).
 
@@ -48,7 +48,7 @@ Optional. Can be updated without a new app review.
 ```
 Repit is a minimal repetition timer for mantra practice, affirmations, breath counting, and any mindful practice that uses a steady count.
 
-Start with a 7-day free trial. After that, choose annual ($14.99/year) or monthly ($2.99/month). Cancel anytime in your Apple ID subscription settings.
+Start with a 7-day free trial. After that, choose annual ($24.99/year) or monthly ($4.99/month). Cancel anytime in your Apple ID subscription settings.
 
 Set your target repetitions and interval, tap Start, and follow the breathing circle. Each rep brings a gentle sound and haptic tap so you can stay present without watching the screen.
 
@@ -60,7 +60,8 @@ FEATURES
 • Sounds — Ten calming ticks: Mala, Wood, Gong, Bell, Crystal, Bowl, Tap, Breath, Om, or silent
 • Haptic feedback — light tap on each repetition (iPhone)
 • Focus lock — hide controls during a session; hold to unlock when needed
-• Session tracking — lifetime sessions and total reps stored on your device
+• Practice tracking — session history, day streaks, and lifetime stats on your device
+• Custom presets — save your favorite rep count, interval, and sound
 • Privacy first — no account required; Face ID unlock stays on your device
 
 SUBSCRIPTION
