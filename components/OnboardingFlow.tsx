@@ -2,11 +2,54 @@ import React, { useState } from 'react';
 import BrandRing from './BrandRing';
 import { ONBOARDING_STEPS } from '../constants/subscription';
 import { normalizeDisplayName } from '../utils/displayName';
+import { LockIcon } from './icons';
 
 interface OnboardingFlowProps {
   onComplete: () => void;
   setDisplayName: (name: string) => void;
 }
+
+const OnboardingRhythmPreview: React.FC = () => (
+  <div className="onboarding-rhythm-preview relative mb-10 flex aspect-square w-[min(72vw,14rem)] items-center justify-center">
+    <div className="absolute inset-0 rounded-full bg-cyan-500/5 ring-1 ring-cyan-400/15" aria-hidden="true" />
+    <div className="absolute inset-[12%] rounded-full bg-cyan-500/10 ring-1 ring-cyan-400/25" aria-hidden="true" />
+    <svg className="absolute h-full w-full -rotate-90" viewBox="0 0 200 200" aria-hidden="true">
+      <circle cx="100" cy="100" r="88" stroke="rgba(55,65,81,0.8)" strokeWidth="6" fill="transparent" />
+      <circle
+        cx="100"
+        cy="100"
+        r="88"
+        stroke="url(#onboard-ring)"
+        strokeWidth="7"
+        fill="transparent"
+        strokeLinecap="round"
+        strokeDasharray="553"
+        strokeDashoffset="420"
+      />
+      <defs>
+        <linearGradient id="onboard-ring" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#22d3ee" />
+          <stop offset="100%" stopColor="#0891b2" />
+        </linearGradient>
+      </defs>
+    </svg>
+    <div className="relative text-center">
+      <p className="text-[10px] uppercase tracking-[0.35em] text-gray-500">24 remaining</p>
+      <p className="mt-1 text-5xl font-semibold tabular-nums tracking-tight text-white">84</p>
+    </div>
+  </div>
+);
+
+const OnboardingLockPreview: React.FC = () => (
+  <div className="mb-8 flex flex-col items-center gap-4">
+    <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-cyan-500/10 ring-1 ring-cyan-400/25 shadow-[0_0_40px_rgba(34,211,238,0.12)]">
+      <LockIcon className="h-10 w-10 text-cyan-300" />
+    </div>
+    <div className="rounded-full bg-gray-900/80 px-4 py-2 text-xs text-gray-400 ring-1 ring-gray-700/60">
+      Hold to unlock · ~1.2s
+    </div>
+  </div>
+);
 
 const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, setDisplayName }) => {
   const [step, setStep] = useState(0);
@@ -63,19 +106,9 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, setDisplayN
             </div>
           )}
 
-          {step === 1 && (
-            <div className="mb-10 flex h-40 w-40 items-center justify-center rounded-full border border-cyan-500/20 bg-cyan-500/5">
-              <div className="h-24 w-24 rounded-full border-2 border-cyan-400/40 bg-cyan-400/10 shadow-[0_0_40px_rgba(34,211,238,0.25)]" />
-            </div>
-          )}
+          {step === 1 && <OnboardingRhythmPreview />}
 
-          {step === 2 && (
-            <div className="mb-8 flex h-20 w-20 items-center justify-center rounded-2xl bg-cyan-500/10 ring-1 ring-cyan-400/25">
-              <span className="text-3xl" aria-hidden="true">
-                🔒
-              </span>
-            </div>
-          )}
+          {step === 2 && <OnboardingLockPreview />}
 
           <h1 className="max-w-sm text-2xl font-semibold tracking-tight text-white">{current.headline}</h1>
           <p className="mt-4 max-w-sm text-base leading-relaxed text-gray-400">{current.body}</p>

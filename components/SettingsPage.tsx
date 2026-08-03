@@ -455,7 +455,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
             onClick={onLogout}
             className="w-full rounded-xl bg-rose-500/15 py-3.5 text-sm font-medium text-rose-300 ring-1 ring-rose-400/25 active:bg-rose-500/25"
           >
-            Logout
+            Lock app
           </button>
         </section>
 

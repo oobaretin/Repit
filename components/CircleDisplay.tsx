@@ -12,6 +12,7 @@ interface CircleDisplayProps {
   currentRep: number;
   targetReps: number;
   delay: number;
+  soundLabel?: string;
   onClick: () => void;
   isFocusLocked?: boolean;
   immersive?: boolean;
@@ -28,6 +29,7 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
   currentRep,
   targetReps,
   delay,
+  soundLabel = '',
   onClick,
   isFocusLocked = false,
   immersive = false,
@@ -83,7 +85,7 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
       ring.style.opacity = String(opacity);
     }
 
-    if (progressPercentRef.current) {
+    if (progressPercentRef.current && timerState !== TimerState.Running) {
       progressPercentRef.current.textContent = `${Math.min(100, Math.round(fraction * 100))}%`;
     }
 
@@ -164,9 +166,25 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
   };
 
   const displayCount = currentRep > 0 ? currentRep.toLocaleString() : '0';
+  const isIdleReady = state === TimerState.Idle && currentRep === 0;
   const displayText =
-    state === TimerState.Finished ? 'Done' : state === TimerState.Idle && currentRep === 0 ? 'Start' : displayCount;
+    state === TimerState.Finished
+      ? 'Done'
+      : isIdleReady
+        ? targetReps > 0
+          ? targetReps.toLocaleString()
+          : '0'
+        : displayCount;
   const progressPercent = Math.min(100, Math.round(progressFraction * 100));
+  const topLabel = isIdleReady
+    ? 'Tap to begin'
+    : isRunning || isPaused
+      ? null
+      : state === TimerState.Finished
+        ? 'Complete'
+        : targetReps > 0
+          ? `${progressPercent}%`
+          : 'Open count';
 
   return (
     <div
@@ -250,8 +268,13 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
           isFocusLocked ? 'cursor-default' : ''
         }`}
       >
-        <p ref={progressPercentRef} className="mb-3 text-[11px] uppercase tracking-[0.35em] text-gray-500">
-          {targetReps > 0 ? `${progressPercent}%` : 'Open count'}
+        <p
+          ref={progressPercentRef}
+          className={`mb-3 min-h-[1rem] text-[11px] uppercase tracking-[0.35em] text-gray-500 ${
+            topLabel ? '' : 'invisible'
+          }`}
+        >
+          {topLabel ?? '\u00A0'}
         </p>
 
         <h1
@@ -283,8 +306,11 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
           </p>
         )}
 
-        {state === TimerState.Idle && estimatedTotal !== null && currentRep === 0 && (
-          <p className="mt-1 text-xs text-gray-500">~{formatDuration(estimatedTotal)} session</p>
+        {isIdleReady && estimatedTotal !== null && (
+          <p className="mt-1 text-xs text-gray-500">
+            ~{formatDuration(estimatedTotal)}
+            {soundLabel ? ` · ${soundLabel}` : ''}
+          </p>
         )}
 
         {!isFocusLocked && (

@@ -10,6 +10,7 @@ interface SessionCompleteProps {
   displayName?: string;
   currentStreak?: number;
   onDismiss: () => void;
+  onSameAgain: () => void;
 }
 
 const SessionComplete: React.FC<SessionCompleteProps> = ({
@@ -19,6 +20,7 @@ const SessionComplete: React.FC<SessionCompleteProps> = ({
   displayName = '',
   currentStreak = 0,
   onDismiss,
+  onSameAgain,
 }) => (
   <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 backdrop-blur-md animate-fade-up sm:items-center">
     <div
@@ -56,10 +58,16 @@ const SessionComplete: React.FC<SessionCompleteProps> = ({
         )}
       </p>
       <button
-        onClick={onDismiss}
+        onClick={onSameAgain}
         className="mt-6 w-full rounded-2xl bg-emerald-500 py-4 text-base font-semibold text-gray-950 transition active:scale-[0.98] active:bg-emerald-400"
       >
-        Close
+        Same again
+      </button>
+      <button
+        onClick={onDismiss}
+        className="mt-3 w-full rounded-2xl py-3.5 text-base font-medium text-gray-400 transition active:text-gray-300"
+      >
+        Done
       </button>
     </div>
   </div>

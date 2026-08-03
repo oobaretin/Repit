@@ -30,6 +30,7 @@ import UnlockWelcomeScreen from './components/UnlockWelcomeScreen';
 import FocusLockOverlay from './components/FocusLockOverlay';
 import BrandMark from './components/BrandMark';
 import ConfigPill from './components/ConfigPill';
+import PracticeTodayStrip from './components/PracticeTodayStrip';
 import OnboardingFlow from './components/OnboardingFlow';
 import PaywallScreen from './components/PaywallScreen';
 import TrialReminderBanner from './components/TrialReminderBanner';
@@ -261,6 +262,18 @@ const App: React.FC = () => {
     await hapticsService.light();
   }, []);
 
+  const handleSameAgain = useCallback(async () => {
+    setShowComplete(false);
+    setCurrentRep(0);
+    setSessionDurationSec(null);
+    setFocusLocked(false);
+    sessionStartRef.current = Date.now();
+    audioService.initialize();
+    setTimerState(TimerState.Running);
+    if (autoFocusLock) setFocusLocked(true);
+    await playFeedback('tap');
+  }, [autoFocusLock, playFeedback]);
+
   const handleLogout = useCallback(async () => {
     setAppUnlocked(false);
     await hapticsService.medium();
@@ -405,13 +418,7 @@ const App: React.FC = () => {
           <>
             {!focusLocked && (
               <header className="flex items-center justify-between px-1 pb-3 pt-1">
-                <div className="flex items-center gap-3">
-                  <BrandMark size={36} className="shrink-0 rounded-[10px] shadow-lg shadow-cyan-500/10" />
-                  <div>
-                    <p className="text-sm font-semibold tracking-tight text-white">Repit</p>
-                    <p className="text-[11px] text-gray-500">Mindfulness timer</p>
-                  </div>
-                </div>
+                <BrandMark size={32} className="shrink-0 rounded-[9px] shadow-lg shadow-cyan-500/10" aria-label="Repit" />
                 <div className="flex items-center gap-2">
                   {isTimerActive && (
                     <button
@@ -446,6 +453,7 @@ const App: React.FC = () => {
                 currentRep={currentRep}
                 targetReps={targetReps}
                 delay={delay}
+                soundLabel={selectedSound}
                 onClick={handleStartPauseResume}
                 isFocusLocked={focusLocked}
                 immersive={focusLocked}
@@ -456,7 +464,14 @@ const App: React.FC = () => {
               )}
 
               {!focusLocked && timerState === TimerState.Idle && !showComplete && (
-                <ConfigPill summary={sessionSummary} onPress={openSettings} />
+                <>
+                  <PracticeTodayStrip
+                    currentStreak={currentStreak}
+                    repsThisWeek={repsThisWeek}
+                    totalSessions={sessionStats.totalSessions}
+                  />
+                  <ConfigPill summary={sessionSummary} onPress={openSettings} />
+                </>
               )}
             </div>
           </>
@@ -476,6 +491,7 @@ const App: React.FC = () => {
           displayName={displayName}
           currentStreak={currentStreak}
           onDismiss={dismissComplete}
+          onSameAgain={handleSameAgain}
         />
       )}
     </main>
