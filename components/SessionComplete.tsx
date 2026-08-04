@@ -8,6 +8,7 @@ interface SessionCompleteProps {
   totalSessions: number;
   durationSec?: number | null;
   displayName?: string;
+  practiceIntention?: string;
   currentStreak?: number;
   onDismiss: () => void;
   onSameAgain?: () => void;
@@ -19,6 +20,7 @@ const SessionComplete: React.FC<SessionCompleteProps> = ({
   totalSessions,
   durationSec,
   displayName = '',
+  practiceIntention = '',
   currentStreak = 0,
   onDismiss,
   onSameAgain,
@@ -50,6 +52,11 @@ const SessionComplete: React.FC<SessionCompleteProps> = ({
           '.'
         )}
       </p>
+      {practiceIntention ? (
+        <p className="mt-3 text-center text-sm italic text-cyan-300/70">
+          &ldquo;{practiceIntention}&rdquo;
+        </p>
+      ) : null}
       <p className="mt-2 text-center text-sm text-gray-500">
         {totalSessions} session{totalSessions === 1 ? '' : 's'} in your journey
         {currentStreak > 1 && (

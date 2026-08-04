@@ -25,7 +25,6 @@ export interface FlowerBreathVisual {
   ringOpacity: number;
   nodeScale: number;
   centerGlow: number;
-  blur: number;
 }
 
 /** Same period as the previous slow idle pulse (~28s). */
@@ -46,7 +45,6 @@ function flowerVisualAtPhase(t: number): FlowerBreathVisual {
     ringOpacity: 0.34 + breath.glow * 0.18,
     nodeScale: 0.94 + breath.glow * 0.06,
     centerGlow: 0.16 + breath.glow * 0.22,
-    blur: 0.35 + breath.glow * 0.55,
   };
 }
 

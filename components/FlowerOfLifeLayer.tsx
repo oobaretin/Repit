@@ -23,8 +23,6 @@ interface FlowerOfLifeLayerProps {
 const FlowerOfLifeLayer = forwardRef<FlowerOfLifeHandle, FlowerOfLifeLayerProps>(
   function FlowerOfLifeLayer({ filterId }, ref) {
     const motionRef = useRef<SVGGElement>(null);
-    const blurRef = useRef<SVGFEGaussianBlurElement>(null);
-    const bloomRef = useRef<SVGFEGaussianBlurElement>(null);
     const nodesRef = useRef<SVGGElement>(null);
     const ringsRef = useRef<SVGGElement>(null);
     const centerRef = useRef<SVGCircleElement>(null);
@@ -39,13 +37,6 @@ const FlowerOfLifeLayer = forwardRef<FlowerOfLifeHandle, FlowerOfLifeLayerProps>
         const s = breath.scale * geometry.fitScale;
         g.setAttribute('transform', `scale(${s})`);
         g.style.opacity = String(breath.opacity);
-
-        if (blurRef.current) {
-          blurRef.current.setAttribute('stdDeviation', String(breath.blur));
-        }
-        if (bloomRef.current) {
-          bloomRef.current.setAttribute('stdDeviation', String(1.5 + breath.glow * 3.5));
-        }
 
         if (ringsRef.current) {
           ringsRef.current.setAttribute('stroke-opacity', String(breath.ringOpacity));
@@ -84,8 +75,8 @@ const FlowerOfLifeLayer = forwardRef<FlowerOfLifeHandle, FlowerOfLifeLayerProps>
             <stop offset="100%" stopColor={BRAND_COLORS.cyanDeep} stopOpacity="0" />
           </radialGradient>
           <filter id={glowFilterId} x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur ref={bloomRef} stdDeviation="2" result="bloom" />
-            <feGaussianBlur ref={blurRef} in="SourceGraphic" stdDeviation="0.8" result="blur" />
+            <feGaussianBlur stdDeviation="2" result="bloom" />
+            <feGaussianBlur in="SourceGraphic" stdDeviation="0.8" result="blur" />
             <feMerge>
               <feMergeNode in="bloom" />
               <feMergeNode in="blur" />

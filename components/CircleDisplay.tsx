@@ -15,6 +15,7 @@ interface CircleDisplayProps {
   targetReps: number;
   delay: number;
   soundLabel?: string;
+  practiceIntention?: string;
   onClick: () => void;
   isFocusLocked?: boolean;
   immersive?: boolean;
@@ -26,6 +27,7 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
   targetReps,
   delay,
   soundLabel = '',
+  practiceIntention = '',
   onClick,
   isFocusLocked = false,
   immersive = false,
@@ -163,7 +165,7 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
     if (isFocusLocked) return 'Focus locked · hold below to unlock';
     switch (state) {
       case TimerState.Running:
-        return 'Breathe with the circle';
+        return 'Follow the circle';
       case TimerState.Paused:
         return 'Tap to resume';
       case TimerState.Finished:
@@ -297,6 +299,16 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
             {remaining !== null && remaining > 0
               ? `${remaining.toLocaleString()} remaining`
               : `of ${targetReps.toLocaleString()}`}
+          </p>
+        )}
+
+        {practiceIntention && (isRunning || isPaused || isIdleReady) && (
+          <p
+            className={`mt-2 max-w-[12rem] truncate text-center text-xs italic text-cyan-300/60 ${
+              isFocusLocked ? 'opacity-80' : ''
+            }`}
+          >
+            {practiceIntention}
           </p>
         )}
 

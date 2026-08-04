@@ -127,6 +127,8 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
   repsThisWeek,
   sessionHistory,
   customPresets,
+  practiceIntention,
+  setPracticeIntention,
   onSavePreset,
   onApplyPreset,
   onDeletePreset,
@@ -250,6 +252,19 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
 
         <section className="settings-card space-y-3">
           <h2 className="settings-section-title">Practice</h2>
+          <label htmlFor="practice-intention" className="block text-sm text-gray-400">
+            Mantra or intention
+          </label>
+          <input
+            id="practice-intention"
+            type="text"
+            value={practiceIntention}
+            onChange={(e) => setPracticeIntention(e.target.value)}
+            placeholder="Optional — shown during practice"
+            maxLength={48}
+            disabled={isTimerActive}
+            className="w-full rounded-2xl border border-gray-700 bg-gray-950/60 px-3.5 py-3 text-sm text-white placeholder:text-gray-600 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/30 disabled:opacity-40"
+          />
           <label htmlFor="target-reps" className="block text-sm text-gray-400">
             Target repetitions
           </label>

@@ -31,12 +31,12 @@ import UnlockWelcomeScreen from './components/UnlockWelcomeScreen';
 import FocusLockOverlay from './components/FocusLockOverlay';
 import BrandMark from './components/BrandMark';
 import ConfigPill from './components/ConfigPill';
-import PracticeTodayStrip from './components/PracticeTodayStrip';
 import OnboardingFlow from './components/OnboardingFlow';
 import PaywallScreen from './components/PaywallScreen';
 import TrialReminderBanner from './components/TrialReminderBanner';
 import BootstrapLoading from './components/BootstrapLoading';
 import usePersistentState from './hooks/usePersistentState';
+import { normalizePracticeIntention } from './utils/practiceIntention';
 import { useMeditationTimer } from './hooks/useMeditationTimer';
 import { useSubscription } from './hooks/useSubscription';
 import { LockIcon, SettingsIcon } from './components/icons';
@@ -79,7 +79,7 @@ const App: React.FC = () => {
   const sessionStartRef = useRef<number | null>(null);
 
   const [targetReps, setTargetReps] = usePersistentState('repit-targetReps', 108);
-  const [delay, setDelay] = usePersistentState('repit-delay', 2.0);
+  const [delay, setDelay] = usePersistentState('repit-delay', 1.5);
   const [selectedSound, setSelectedSound] = usePersistentState<SoundOption>('repit-sound', SoundOption.Mala);
   const [hapticsEnabled, setHapticsEnabled] = usePersistentState('repit-haptics', true);
   const [sessionStats, setSessionStats] = usePersistentState('repit-sessionStats', DEFAULT_SESSION_STATS);
@@ -88,6 +88,11 @@ const App: React.FC = () => {
   const [lockOnLeave, setLockOnLeave] = usePersistentState('repit-lockOnLeave', true);
   const [autoFocusLock, setAutoFocusLock] = usePersistentState('repit-autoFocusLock', true);
   const [displayName, setDisplayName] = usePersistentState('repit-displayName', '');
+  const [practiceIntention, setPracticeIntentionRaw] = usePersistentState('repit-practiceIntention', '');
+
+  const setPracticeIntention = useCallback((value: string) => {
+    setPracticeIntentionRaw(normalizePracticeIntention(value));
+  }, [setPracticeIntentionRaw]);
 
   currentRepRef.current = currentRep;
   const isTimerActive = timerState === TimerState.Running || timerState === TimerState.Paused;
@@ -436,6 +441,8 @@ const App: React.FC = () => {
             repsThisWeek={repsThisWeek}
             sessionHistory={sessionHistory}
             customPresets={customPresets}
+            practiceIntention={practiceIntention}
+            setPracticeIntention={setPracticeIntention}
             onSavePreset={handleSavePreset}
             onApplyPreset={handleApplyPreset}
             onDeletePreset={handleDeletePreset}
@@ -482,6 +489,7 @@ const App: React.FC = () => {
                 targetReps={targetReps}
                 delay={delay}
                 soundLabel={selectedSound}
+                practiceIntention={practiceIntention}
                 onClick={handleStartPauseResume}
                 isFocusLocked={focusLocked}
                 immersive={focusLocked}
@@ -492,14 +500,13 @@ const App: React.FC = () => {
               )}
 
               {!focusLocked && timerState === TimerState.Idle && !showComplete && (
-                <>
-                  <PracticeTodayStrip
-                    currentStreak={currentStreak}
-                    repsThisWeek={repsThisWeek}
-                    totalSessions={sessionStats.totalSessions}
-                  />
-                  <ConfigPill summary={sessionSummary} onPress={openSettings} />
-                </>
+                <ConfigPill
+                  summary={sessionSummary}
+                  intention={practiceIntention}
+                  currentStreak={currentStreak}
+                  repsThisWeek={repsThisWeek}
+                  onPress={openSettings}
+                />
               )}
             </div>
           </>
@@ -517,6 +524,7 @@ const App: React.FC = () => {
           totalSessions={sessionStats.totalSessions}
           durationSec={sessionDurationSec}
           displayName={displayName}
+          practiceIntention={practiceIntention}
           currentStreak={currentStreak}
           onDismiss={dismissComplete}
           onSameAgain={handleSameAgain}

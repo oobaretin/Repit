@@ -35,8 +35,8 @@ export const ONBOARDING_STEPS = [
     body: 'Repit is a calm timer for japa mantra, mala counting, and breath rounds. Set your reps — 27, 54, 108, or any count — and follow the circle.',
   },
   {
-    headline: 'A steady rhythm for your practice',
-    body: 'Choose your count and interval. Each rep brings a gentle sound and haptic tap — Mala, Gong, Crystal, or Bowl. Focus lock keeps distractions away.',
+    headline: 'Feel the rhythm',
+    body: 'Each bead. Each breath. Each sound. Watch a few reps — this is how practice feels in Repit.',
   },
   {
     headline: 'Private by design',

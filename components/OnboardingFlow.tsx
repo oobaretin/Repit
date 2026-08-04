@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import BrandRing from './BrandRing';
+import OnboardingRhythmDemo from './OnboardingRhythmDemo';
 import { ONBOARDING_STEPS } from '../constants/subscription';
 import { normalizeDisplayName } from '../utils/displayName';
 import { LockIcon } from './icons';
+import { audioService } from '../services/audioService';
 
 interface OnboardingFlowProps {
   onComplete: () => void;
   setDisplayName: (name: string) => void;
 }
 
-const OnboardingRhythmPreview: React.FC = () => (
+const OnboardingRhythmPreviewStatic: React.FC = () => (
   <div className="onboarding-rhythm-preview relative mb-10 flex aspect-square w-[min(72vw,14rem)] items-center justify-center">
     <div className="absolute inset-0 rounded-full bg-cyan-500/5 ring-1 ring-cyan-400/15" aria-hidden="true" />
     <div className="absolute inset-[12%] rounded-full bg-cyan-500/10 ring-1 ring-cyan-400/25" aria-hidden="true" />
@@ -19,7 +21,7 @@ const OnboardingRhythmPreview: React.FC = () => (
         cx="100"
         cy="100"
         r="88"
-        stroke="url(#onboard-ring)"
+        stroke="url(#onboard-ring-static)"
         strokeWidth="7"
         fill="transparent"
         strokeLinecap="round"
@@ -27,15 +29,15 @@ const OnboardingRhythmPreview: React.FC = () => (
         strokeDashoffset="420"
       />
       <defs>
-        <linearGradient id="onboard-ring" x1="0%" y1="0%" x2="100%" y2="100%">
+        <linearGradient id="onboard-ring-static" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stopColor="#22d3ee" />
           <stop offset="100%" stopColor="#0891b2" />
         </linearGradient>
       </defs>
     </svg>
     <div className="relative text-center">
-      <p className="text-[10px] uppercase tracking-[0.35em] text-gray-500">24 remaining</p>
-      <p className="mt-1 text-5xl font-semibold tabular-nums tracking-tight text-white">84</p>
+      <p className="text-[10px] uppercase tracking-[0.35em] text-gray-500">3 remaining</p>
+      <p className="mt-1 text-5xl font-semibold tabular-nums tracking-tight text-white">2</p>
     </div>
   </div>
 );
@@ -66,12 +68,18 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, setDisplayN
   };
 
   const handleNext = () => {
+    if (step === 0) {
+      void audioService.unlock();
+    }
     if (isLast) {
       finish(true);
       return;
     }
     setStep((s) => s + 1);
   };
+
+  const prefersReducedMotion =
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   return (
     <div
@@ -106,7 +114,8 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, setDisplayN
             </div>
           )}
 
-          {step === 1 && <OnboardingRhythmPreview />}
+          {step === 1 &&
+            (prefersReducedMotion ? <OnboardingRhythmPreviewStatic /> : <OnboardingRhythmDemo />)}
 
           {step === 2 && <OnboardingLockPreview />}
 

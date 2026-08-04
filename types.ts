@@ -74,6 +74,8 @@ export interface SettingsPageProps {
   repsThisWeek: number;
   sessionHistory: SessionRecord[];
   customPresets: CustomPreset[];
+  practiceIntention: string;
+  setPracticeIntention: (value: string) => void;
   onSavePreset: (name: string) => void;
   onApplyPreset: (preset: CustomPreset) => void;
   onDeletePreset: (id: string) => void;
