@@ -56,7 +56,7 @@ FEATURES
 
 • Japa & mala timer — traditional presets (27, 54, 108, 1000) or any custom count
 • Breathing circle — visual rhythm synced to your interval
-• Mala tick sound — plus Gong, Bell, Om, and seven other calming ticks
+• Mala, Gong, Crystal & Bowl — four distinct tick sounds plus silent mode
 • Haptic feedback — light tap on each repetition (iPhone)
 • Focus lock — hide controls during a session; hold to unlock when needed
 • Practice tracking — session history, day streaks, and lifetime stats on your device
@@ -112,7 +112,7 @@ Repit is a japa and mala repetition timer for mantra, breath counting, and mindf
 • Traditional presets: 27, 54, 108, 1000
 • Home Screen widget — streak and weekly reps
 • Breathing circle synced to your pace
-• Mala tick and nine other calming sounds
+• Mala, Gong, Crystal, and Bowl tick sounds
 • Focus lock, Face ID app lock, and on-device session stats
 ```
 

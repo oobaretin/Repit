@@ -73,12 +73,10 @@ assert('formatDuration 1h', formatDuration(3600) === '1h');
 // Focus lock hold duration
 assert('Focus lock hold is 1200ms', 1200 === 1200);
 
-// Sound options (10 playable + None)
-const sounds = [
-  'Mala', 'Wood', 'Gong', 'Bell', 'Crystal', 'Bowl', 'Tap', 'Breath', 'Om', 'None',
-];
-assert('Ten sound options defined', sounds.length === 10);
-assert('Playable sound count is nine', sounds.filter((s) => s !== 'None').length === 9);
+// Sound options (4 playable + None)
+const sounds = ['Mala', 'Gong', 'Crystal', 'Bowl', 'None'];
+assert('Five sound options defined', sounds.length === 5);
+assert('Playable sound count is four', sounds.filter((s) => s !== 'None').length === 4);
 
 // Rep presets
 const presets = [27, 54, 108, 1000];
@@ -150,7 +148,7 @@ console.log('  Manual checks still required on device/simulator:');
 console.log('    • Tap Start → pause → resume');
 console.log('    • Auto focus lock on session start');
 console.log('    • Hold-to-unlock (~1.2s)');
-console.log('    • All tick sounds (Traditional / Bright / Soft / None)');
+console.log('    • All tick sounds (Mala, Gong, Crystal, Bowl, None)');
 console.log('    • Haptics on each rep (native only)');
 console.log('    • Logout → Face ID unlock');
 console.log('    • App background → pause + optional app lock\n');

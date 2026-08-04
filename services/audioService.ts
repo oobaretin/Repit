@@ -17,10 +17,17 @@ class AudioService {
     try {
       this.audioCtx = new (window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext!)();
       this.isInitialized = true;
-      void this.decodeMalaBuffer();
     } catch (e) {
       console.error('Web Audio API is not supported in this browser', e);
     }
+  }
+
+  /** Resume AudioContext — must run during (or right after) a user gesture on iOS. */
+  public async unlock(): Promise<void> {
+    this.initialize();
+    if (!this.audioCtx) return;
+    await this.resumeContext();
+    void this.decodeMalaBuffer();
   }
 
   private decodeBase64(base64: string): ArrayBuffer {
@@ -49,18 +56,6 @@ class AudioService {
       })();
     }
     return this.malaDecodePromise;
-  }
-
-  private createWarmthShaper(): WaveShaperNode {
-    const curve = new Float32Array(256);
-    for (let i = 0; i < 256; i += 1) {
-      const x = (i * 2) / 256 - 1;
-      curve[i] = Math.tanh(x * 1.35) * 0.92;
-    }
-    const shaper = this.audioCtx!.createWaveShaper();
-    shaper.curve = curve;
-    shaper.oversample = '2x';
-    return shaper;
   }
 
   private async resumeContext() {
@@ -113,7 +108,7 @@ class AudioService {
     return gain;
   }
 
-  /** Immediate peak + gentle exponential fade (Gong, Crystal, bell partials). */
+  /** Immediate peak + gentle exponential fade (Gong, Crystal, bowl partials). */
   private playClassicTone(frequency: number, duration: number, peak: number) {
     const osc = this.audioCtx!.createOscillator();
     const gain = this.createGain(peak);
@@ -128,98 +123,12 @@ class AudioService {
     this.track(osc);
   }
 
-  /** Soft attack + gentle fade (subtle layers). */
-  private playSoftTone(
-    frequency: number,
-    duration: number,
-    peak: number,
-    options?: { type?: OscillatorType; attack?: number; pitchEnd?: number },
-  ) {
-    const osc = this.audioCtx!.createOscillator();
-    const gain = this.createGain(0.0001);
-    const type = options?.type ?? 'sine';
-    const attack = options?.attack ?? 0.012;
-    osc.type = type;
-    osc.frequency.setValueAtTime(frequency, this.now());
-    if (options?.pitchEnd) {
-      osc.frequency.exponentialRampToValueAtTime(Math.max(options.pitchEnd, 1), this.now() + duration);
-    }
-    osc.connect(gain);
-    const t = this.now();
-    gain.gain.setValueAtTime(0.0001, t);
-    gain.gain.linearRampToValueAtTime(peak, t + attack);
-    gain.gain.exponentialRampToValueAtTime(0.0001, t + duration);
-    osc.start(t);
-    osc.stop(t + duration + 0.02);
-    this.track(osc);
-  }
-
-  private playNoise(
-    duration: number,
-    peak: number,
-    filterFreq: number,
-    q = 1.2,
-    attack = 0.006,
-  ) {
-    const bufferSize = Math.max(1, Math.floor(this.audioCtx!.sampleRate * duration));
-    const buffer = this.audioCtx!.createBuffer(1, bufferSize, this.audioCtx!.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i += 1) {
-      data[i] = Math.random() * 2 - 1;
-    }
-
-    const source = this.audioCtx!.createBufferSource();
-    source.buffer = buffer;
-    const filter = this.audioCtx!.createBiquadFilter();
-    filter.type = 'bandpass';
-    filter.frequency.value = filterFreq;
-    filter.Q.value = q;
-    const gain = this.createGain(0.0001);
-    source.connect(filter);
-    filter.connect(gain);
-    const t = this.now();
-    gain.gain.setValueAtTime(0.0001, t);
-    gain.gain.linearRampToValueAtTime(peak, t + attack);
-    gain.gain.exponentialRampToValueAtTime(0.0001, t + duration);
-    source.start(t);
-    source.stop(t + duration + 0.02);
-    this.track(source);
-  }
-
-  /** Filtered noise with slow swell — breath / air tone. */
-  private playNoiseSwell(duration: number, peak: number, filterFreq: number, attack: number) {
-    const bufferSize = Math.max(1, Math.floor(this.audioCtx!.sampleRate * duration));
-    const buffer = this.audioCtx!.createBuffer(1, bufferSize, this.audioCtx!.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i += 1) {
-      data[i] = Math.random() * 2 - 1;
-    }
-
-    const source = this.audioCtx!.createBufferSource();
-    source.buffer = buffer;
-    const filter = this.audioCtx!.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.value = filterFreq;
-    filter.Q.value = 0.6;
-    const gain = this.createGain(0.0001);
-    source.connect(filter);
-    filter.connect(gain);
-    const t = this.now();
-    const sustainAt = t + attack;
-    const releaseStart = t + duration * 0.55;
-    gain.gain.setValueAtTime(0.0001, t);
-    gain.gain.linearRampToValueAtTime(peak, sustainAt);
-    gain.gain.setValueAtTime(peak * 0.85, releaseStart);
-    gain.gain.exponentialRampToValueAtTime(0.0001, t + duration);
-    source.start(t);
-    source.stop(t + duration + 0.02);
-    this.track(source);
-  }
-
   private playSampleFromBuffer(buffer: AudioBuffer) {
+    const output = this.getOutput();
+    if (!output) return;
     const source = this.audioCtx!.createBufferSource();
     source.buffer = buffer;
-    source.connect(this.audioCtx!.destination);
+    source.connect(output);
     source.start(0);
     this.track(source);
   }
@@ -229,22 +138,8 @@ class AudioService {
     if (buffer) this.playSampleFromBuffer(buffer);
   }
 
-  /** Dry wooden block (mokugyo-style) — short knock ~0.35s. */
-  private playWood() {
-    this.playNoise(0.07, 0.34, 340, 3.2, 0.002);
-    this.playClassicTone(196, 0.34, 0.4);
-    this.playClassicTone(392, 0.18, 0.07);
-  }
-
   private playGong() {
     this.playClassicTone(120, 1.8, 0.5);
-  }
-
-  /** Single temple bell — inharmonic partials, ~1.2s ring. */
-  private playBell() {
-    this.playClassicTone(520, 1.2, 0.38);
-    this.playClassicTone(780, 1.0, 0.17);
-    this.playClassicTone(1170, 0.72, 0.07);
   }
 
   private playCrystal() {
@@ -258,156 +153,29 @@ class AudioService {
     this.playClassicTone(880, 1.55, 0.07);
   }
 
-  /** Soft felt mallet — very short muted tap ~0.22s. */
-  private playTap() {
-    this.playNoise(0.05, 0.15, 580, 2.5, 0.002);
-    this.playClassicTone(290, 0.2, 0.13);
-  }
-
-  /** Gentle exhale — quiet filtered air swell ~0.6s. */
-  private playBreath() {
-    this.playNoiseSwell(0.6, 0.13, 820, 0.14);
-    this.playSoftTone(220, 0.45, 0.035, { attack: 0.1 });
-  }
-
-  /** Deep Tibetan monk “Ommmm” — low pitch, vibrato, O→M formant morph ~1.5s. */
-  private playTibetanOm() {
-    const f0 = 92;
-    const duration = 1.55;
-    const t = this.now();
-
-    const vibratoOsc = this.audioCtx!.createOscillator();
-    vibratoOsc.type = 'sine';
-    vibratoOsc.frequency.value = 4.8;
-    const vibratoGain = this.audioCtx!.createGain();
-    vibratoGain.gain.value = 1.6;
-    vibratoOsc.connect(vibratoGain);
-
-    const osc = this.audioCtx!.createOscillator();
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(f0, t);
-    osc.frequency.exponentialRampToValueAtTime(f0 * 0.94, t + duration);
-    vibratoGain.connect(osc.frequency);
-
-    const osc2 = this.audioCtx!.createOscillator();
-    osc2.type = 'triangle';
-    osc2.frequency.setValueAtTime(f0 * 1.003, t);
-    vibratoGain.connect(osc2.frequency);
-
-    const f1 = this.audioCtx!.createBiquadFilter();
-    f1.type = 'bandpass';
-    f1.frequency.setValueAtTime(480, t);
-    f1.frequency.exponentialRampToValueAtTime(260, t + duration * 0.72);
-    f1.Q.value = 5.5;
-
-    const f2 = this.audioCtx!.createBiquadFilter();
-    f2.type = 'bandpass';
-    f2.frequency.setValueAtTime(860, t);
-    f2.frequency.exponentialRampToValueAtTime(540, t + duration * 0.75);
-    f2.Q.value = 7.5;
-
-    const lp = this.audioCtx!.createBiquadFilter();
-    lp.type = 'lowpass';
-    lp.frequency.setValueAtTime(1100, t);
-    lp.frequency.exponentialRampToValueAtTime(680, t + duration);
-    lp.Q.value = 0.4;
-
-    const shaper = this.createWarmthShaper();
-    const gain = this.createGain(0.0001);
-
-    osc.connect(f1);
-    osc2.connect(f1);
-    f1.connect(f2);
-    f2.connect(lp);
-    lp.connect(shaper);
-    shaper.connect(gain);
-
-    const oEnd = t + duration * 0.38;
-    const mStart = t + duration * 0.32;
-    gain.gain.setValueAtTime(0.0001, t);
-    gain.gain.linearRampToValueAtTime(0.26, t + 0.22);
-    gain.gain.setValueAtTime(0.24, oEnd);
-    gain.gain.linearRampToValueAtTime(0.2, mStart + 0.18);
-    gain.gain.exponentialRampToValueAtTime(0.0001, t + duration);
-
-    vibratoOsc.start(t);
-    vibratoOsc.stop(t + duration + 0.05);
-    osc.start(t);
-    osc.stop(t + duration + 0.05);
-    osc2.start(t);
-    osc2.stop(t + duration + 0.05);
-    this.track(vibratoOsc);
-    this.track(osc);
-    this.track(osc2);
-
-    this.playSoftTone(f0 * 0.5, duration, 0.1, { attack: 0.24 });
-
-    const mOsc = this.audioCtx!.createOscillator();
-    mOsc.type = 'sine';
-    mOsc.frequency.setValueAtTime(f0, mStart);
-    const mFilter = this.audioCtx!.createBiquadFilter();
-    mFilter.type = 'bandpass';
-    mFilter.frequency.value = 320;
-    mFilter.Q.value = 5;
-    const mGain = this.createGain(0.0001);
-    mOsc.connect(mFilter);
-    mFilter.connect(mGain);
-    mGain.gain.setValueAtTime(0.0001, mStart);
-    mGain.gain.linearRampToValueAtTime(0.11, mStart + 0.16);
-    mGain.gain.exponentialRampToValueAtTime(0.0001, t + duration);
-    mOsc.start(mStart);
-    mOsc.stop(t + duration + 0.05);
-    this.track(mOsc);
-
-    this.playNoiseSwell(duration * 0.85, 0.022, 360, 0.28);
-  }
-
-  private playOm() {
-    this.playTibetanOm();
-  }
-
-  public playSound(sound: SoundOption) {
+  public async playSound(sound: SoundOption): Promise<void> {
     this.initialize();
     if (!this.isInitialized || !this.audioCtx || sound === SoundOption.None) return;
 
-    void this.audioCtx.resume();
+    await this.unlock();
+    this.clearActive();
 
-    void this.resumeContext().then(() => {
-      if (!this.audioCtx) return;
-      this.clearActive();
-
-      switch (sound) {
-        case SoundOption.Mala:
-          void this.playMala();
-          break;
-        case SoundOption.Wood:
-          this.playWood();
-          break;
-        case SoundOption.Gong:
-          this.playGong();
-          break;
-        case SoundOption.Bell:
-          this.playBell();
-          break;
-        case SoundOption.Crystal:
-          this.playCrystal();
-          break;
-        case SoundOption.Bowl:
-          this.playBowl();
-          break;
-        case SoundOption.Tap:
-          this.playTap();
-          break;
-        case SoundOption.Breath:
-          this.playBreath();
-          break;
-        case SoundOption.Om:
-          this.playOm();
-          break;
-        default:
-          break;
-      }
-    });
+    switch (sound) {
+      case SoundOption.Mala:
+        await this.playMala();
+        break;
+      case SoundOption.Gong:
+        this.playGong();
+        break;
+      case SoundOption.Crystal:
+        this.playCrystal();
+        break;
+      case SoundOption.Bowl:
+        this.playBowl();
+        break;
+      default:
+        break;
+    }
   }
 }
 

@@ -36,7 +36,7 @@ export const ONBOARDING_STEPS = [
   },
   {
     headline: 'A steady rhythm for your practice',
-    body: 'Choose your count and interval. Each rep brings a gentle sound and haptic tap — including a Mala tick tuned for traditional counting. Focus lock keeps distractions away.',
+    body: 'Choose your count and interval. Each rep brings a gentle sound and haptic tap — Mala, Gong, Crystal, or Bowl. Focus lock keeps distractions away.',
   },
   {
     headline: 'Private by design',

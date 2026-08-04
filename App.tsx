@@ -128,6 +128,16 @@ const App: React.FC = () => {
   useEffect(() => {
     nativeService.initialize();
     isBiometricAvailable().then(setBiometricAvailable);
+
+    const unlockOnGesture = () => {
+      void audioService.unlock();
+    };
+    document.addEventListener('pointerdown', unlockOnGesture, { once: true });
+    document.addEventListener('touchstart', unlockOnGesture, { once: true });
+    return () => {
+      document.removeEventListener('pointerdown', unlockOnGesture);
+      document.removeEventListener('touchstart', unlockOnGesture);
+    };
   }, []);
 
   useEffect(() => {
@@ -161,17 +171,16 @@ const App: React.FC = () => {
   }, [timerState, lockOnLeave]);
 
   const playFeedback = useCallback(async (kind: 'tick' | 'success' | 'tap') => {
-    if (selectedSound !== SoundOption.None) audioService.playSound(selectedSound);
+    if (selectedSound !== SoundOption.None) await audioService.playSound(selectedSound);
     if (kind === 'success') await hapticsService.success();
     else if (kind === 'tick') await hapticsService.light();
     else await hapticsService.medium();
   }, [selectedSound]);
 
-  const handleSoundSelection = useCallback((sound: SoundOption) => {
-    audioService.initialize();
+  const handleSoundSelection = useCallback(async (sound: SoundOption) => {
     setSelectedSound(sound);
-    if (sound !== SoundOption.None) audioService.playSound(sound);
-    hapticsService.light();
+    if (sound !== SoundOption.None) await audioService.playSound(sound);
+    await hapticsService.light();
   }, [setSelectedSound]);
 
   const completeSession = useCallback(() => {
@@ -252,6 +261,7 @@ const App: React.FC = () => {
     if (currentRep === 0 && autoFocusLock) setFocusLocked(true);
 
     if (currentRep === 0) {
+      await audioService.unlock();
       void playFeedback('tap');
     }
   }, [timerState, currentRep, playFeedback, focusLocked, autoFocusLock]);

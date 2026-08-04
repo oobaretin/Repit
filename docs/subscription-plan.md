@@ -162,7 +162,7 @@ Shown after onboarding screen 3 (and when trial expires).
 
 - Unlimited repetition sessions  
 - Focus lock & Face ID app lock  
-- Ten calming tick sounds (Mala, Wood, Gong, Bell, Crystal, Bowl, Tap, Breath, Om, or silent)  
+- Four calming tick sounds (Mala, Gong, Crystal, Bowl, or silent)  
 - Haptic feedback on every rep  
 - Practice history, streaks & custom presets  
 - Everything on your device — no account  
