@@ -31,12 +31,12 @@ export const PLAN_DISPLAY: Record<SubscriptionPlan, Omit<PlanDisplay, 'id'>> = {
 
 export const ONBOARDING_STEPS = [
   {
-    headline: 'Mindful repetition, simplified',
-    body: 'Repit is a calm timer for mantra, affirmations, and breath counting. Set your reps, follow the circle, stay present.',
+    headline: 'Japa & mala, simplified',
+    body: 'Repit is a calm timer for japa mantra, mala counting, and breath rounds. Set your reps — 27, 54, 108, or any count — and follow the circle.',
   },
   {
     headline: 'A steady rhythm for your practice',
-    body: 'Choose your count and interval. Each rep brings a gentle sound and haptic tap. Focus lock keeps distractions away.',
+    body: 'Choose your count and interval. Each rep brings a gentle sound and haptic tap — including a Mala tick tuned for traditional counting. Focus lock keeps distractions away.',
   },
   {
     headline: 'Private by design',

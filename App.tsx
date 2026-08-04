@@ -15,6 +15,7 @@ import { audioService } from './services/audioService';
 import { hapticsService } from './services/hapticsService';
 import { nativeService } from './services/nativeService';
 import { isBiometricAvailable } from './services/lockService';
+import { syncWidgetData } from './services/widgetSyncService';
 import {
   appendSessionRecord,
   computeCurrentStreak,
@@ -115,6 +116,14 @@ const App: React.FC = () => {
   useEffect(() => {
     if (isPremium) setEverPremium(true);
   }, [isPremium, setEverPremium]);
+
+  useEffect(() => {
+    void syncWidgetData({
+      currentStreak,
+      repsThisWeek,
+      totalSessions: sessionStats.totalSessions,
+    });
+  }, [currentStreak, repsThisWeek, sessionStats.totalSessions]);
 
   useEffect(() => {
     nativeService.initialize();

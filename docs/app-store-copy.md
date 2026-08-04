@@ -15,13 +15,13 @@ Use this when creating the listing in App Store Connect.
 
 ## Subtitle
 
+**Japa Mantra & Mala Timer**
+
+(30 characters max — current: 24)
+
+**Alternate (broader):**
+
 **Mindfulness Repetition Timer**
-
-(30 characters max — current: 28)
-
-**Alternate (subscription-forward):**
-
-**Daily Mantra & Breath Timer**
 
 ---
 
@@ -37,7 +37,7 @@ Full plan, onboarding, and paywall copy: [subscription-plan.md](./subscription-p
 
 Optional. Can be updated without a new app review.
 
-> Start a 7-day free trial — count mantras, affirmations, or breaths with a calm repetition timer. Focus lock, sounds, haptics, and on-device Face ID.
+> Count japa, mala rounds, and breath reps with a calm timer. 108 presets, focus lock, streaks, and a Home Screen widget. Try one session free.
 
 (158 characters)
 
@@ -46,34 +46,34 @@ Optional. Can be updated without a new app review.
 ## Description
 
 ```
-Repit is a minimal repetition timer for mantra practice, affirmations, breath counting, and any mindful practice that uses a steady count.
+Repit is a minimal japa and mala timer for mantra practice, breath counting, and any repetition-based mindfulness routine.
 
-Start with a 7-day free trial. After that, choose annual ($24.99/year) or monthly ($4.99/month). Cancel anytime in your Apple ID subscription settings.
+Try your first session free. After that, start a 7-day free trial — then choose annual ($24.99/year) or monthly ($4.99/month). Cancel anytime in your Apple ID subscription settings.
 
-Set your target repetitions and interval, tap Start, and follow the breathing circle. Each rep brings a gentle sound and haptic tap so you can stay present without watching the screen.
+Set your target — 27, 54, 108, 1000, or any count — tap Start, and follow the breathing circle. Each rep brings a gentle sound and haptic tap so you can stay present without watching the screen.
 
 FEATURES
 
-• Repetition timer — set any target count and interval from 0.5 to 10 seconds
-• Quick presets — 27, 54, 108, and 1000 for traditional practice lengths
+• Japa & mala timer — traditional presets (27, 54, 108, 1000) or any custom count
 • Breathing circle — visual rhythm synced to your interval
-• Sounds — Ten calming ticks: Mala, Wood, Gong, Bell, Crystal, Bowl, Tap, Breath, Om, or silent
+• Mala tick sound — plus Gong, Bell, Om, and seven other calming ticks
 • Haptic feedback — light tap on each repetition (iPhone)
 • Focus lock — hide controls during a session; hold to unlock when needed
 • Practice tracking — session history, day streaks, and lifetime stats on your device
+• Home Screen widget — streak and weekly reps at a glance
 • Custom presets — save your favorite rep count, interval, and sound
 • Privacy first — no account required; Face ID unlock stays on your device
 
 SUBSCRIPTION
 
-Repit requires a subscription after the 7-day free trial. Payment is charged to your Apple ID. Subscriptions renew automatically unless canceled at least 24 hours before the end of the current period. Manage subscriptions in Settings → Apple ID → Subscriptions.
+Repit requires a subscription after your first free session and 7-day trial. Payment is charged to your Apple ID. Subscriptions renew automatically unless canceled at least 24 hours before the end of the current period. Manage subscriptions in Settings → Apple ID → Subscriptions.
 
 WHO IT'S FOR
 
-• Mantra and japa meditation
-• Affirmation practice
-• Breath counting
-• Mala bead counting without physical beads
+• Japa mantra meditation
+• Mala bead counting — digital mala when beads aren't at hand
+• 108-round practice and traditional counts
+• Affirmation and breath counting
 • Any repetition-based mindfulness routine
 
 Repit stays out of your way: dark, elegant, and designed for uninterrupted practice.
@@ -90,7 +90,7 @@ Questions or feedback? Contact us through the support link in the listing.
 Apple allows up to **100 characters**. No spaces after commas. Do not repeat words from the app name or subtitle.
 
 ```
-mantra,meditation,breath,mala,affirmation,mindfulness,japa,108,count,repetition,focus,calm,timer
+japa,mala,mantra,108,meditation,breath,beads,count,repetition,timer,focus,calm,widget
 ```
 
 (96 characters)
@@ -106,14 +106,14 @@ mantra,meditation,timer,breath counting,mala beads,affirmation,japa,108,repetiti
 ## What's New (Version 1.0)
 
 ```
-Welcome to Repit — a mindfulness repetition timer for mantra, affirmations, and breath counting.
+Repit is a japa and mala repetition timer for mantra, breath counting, and mindful practice.
 
-• 7-day free trial, then annual or monthly subscription
-• Configurable reps and interval
+• First session free, then 7-day trial — annual or monthly subscription
+• Traditional presets: 27, 54, 108, 1000
+• Home Screen widget — streak and weekly reps
 • Breathing circle synced to your pace
-• Ten calming tick sounds — Traditional, Bright, Soft, or silent
-• Focus lock and Face ID app lock
-• Session stats stored on device
+• Mala tick and nine other calming sounds
+• Focus lock, Face ID app lock, and on-device session stats
 ```
 
 ---
@@ -172,14 +172,16 @@ Replace with your legal name before submission.
 Optional field when submitting:
 
 ```
-Repit is a repetition timer for mindfulness practice. No account is required.
+Repit is a japa and mala repetition timer. No account is required.
 
-Subscriptions: complete onboarding → tap "Start free trial" → sign in with sandbox Apple ID when prompted.
+Subscriptions: complete onboarding → tap "Begin practice" → finish one free session → paywall appears → start 7-day trial with sandbox Apple ID when prompted.
 Products: com.repit.app.premium.annual and com.repit.app.premium.monthly (7-day free trial each).
 Restore purchases is on the paywall.
 
-To test Face ID lock: open Settings → tap Logout → unlock with Face ID.
+Home Screen widget: complete a session → add Repit "Practice" widget from the Home Screen gallery.
+
+To test Face ID lock: open Settings → tap Lock app → unlock with Face ID.
 To test focus lock: start a session → controls hide automatically → hold the unlock button at the bottom for ~1.2 seconds.
 
-All session data is stored locally on the device.
+All session data is stored locally on the device and shared with the widget via App Group group.com.repit.app.
 ```
