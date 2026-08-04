@@ -140,7 +140,7 @@ async function main() {
     console.log('3/6 Focus lock');
     await loadApp(page, { 'repit-delay': '2', 'repit-autoFocusLock': 'true' });
     await page.getByRole('button', { name: 'Tap to begin' }).click();
-    await page.getByRole('button', { name: 'Hold to unlock controls' }).waitFor({ timeout: 5000 });
+    await page.getByRole('button', { name: 'Hold to exit practice mode' }).waitFor({ timeout: 5000 });
     await page.waitForTimeout(500);
     await capture(page, '03-focus-lock.png');
 

@@ -48,7 +48,7 @@ const OnboardingLockPreview: React.FC = () => (
       <LockIcon className="h-10 w-10 text-cyan-300" />
     </div>
     <div className="rounded-full bg-gray-900/80 px-4 py-2 text-xs text-gray-400 ring-1 ring-gray-700/60">
-      Hold to unlock · ~1.2s
+      Hold to exit · ~1.2s
     </div>
   </div>
 );

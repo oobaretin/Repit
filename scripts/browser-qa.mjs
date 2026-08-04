@@ -106,7 +106,7 @@ async function main() {
     await loadApp(page);
     const idleHeading = page.locator('main h1').first();
     assert('Idle shows target reps (108)', (await idleHeading.textContent())?.includes('108'));
-    assert('Adjust practice pill visible', await page.getByRole('button', { name: /Adjust practice/i }).isVisible());
+    assert('Quick count chips visible', await page.getByRole('button', { name: '27' }).isVisible());
 
     await page.getByRole('button', { name: 'Open settings' }).click();
     await page.getByRole('heading', { name: 'Settings' }).waitFor();

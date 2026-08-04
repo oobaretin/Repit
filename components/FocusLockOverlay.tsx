@@ -52,7 +52,7 @@ const FocusLockOverlay: React.FC<FocusLockOverlayProps> = ({ onUnlock }) => {
         onPointerLeave={clearHold}
         onPointerCancel={clearHold}
         className="pointer-events-auto flex flex-col items-center gap-3 rounded-3xl bg-gray-950/80 px-8 py-5 backdrop-blur-md ring-1 ring-white/10"
-        aria-label="Hold to unlock controls"
+        aria-label="Hold to exit practice mode"
       >
         <div className="relative flex h-12 w-12 items-center justify-center">
           <svg className="absolute h-12 w-12 -rotate-90" viewBox="0 0 48 48" aria-hidden="true">
@@ -72,7 +72,7 @@ const FocusLockOverlay: React.FC<FocusLockOverlayProps> = ({ onUnlock }) => {
           </svg>
           <LockOpenIcon className="relative h-5 w-5 text-cyan-300" />
         </div>
-        <span className="text-xs text-gray-400">Hold to unlock</span>
+        <span className="text-xs text-gray-400">Hold to exit practice mode</span>
       </button>
     </div>
   );

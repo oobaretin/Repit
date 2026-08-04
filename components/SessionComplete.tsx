@@ -39,7 +39,8 @@ const SessionComplete: React.FC<SessionCompleteProps> = ({
       <h2 id="session-complete-title" className="text-center text-2xl font-semibold text-white">
         {sessionCompleteGreeting(displayName)}
       </h2>
-      <p className="mt-2 text-center text-gray-300">
+      <p className="mt-2 text-center text-sm text-gray-400">Rest here a moment.</p>
+      <p className="mt-3 text-center text-gray-300">
         You completed{' '}
         <span className="font-semibold text-emerald-300">{reps.toLocaleString()}</span>{' '}
         repetitions
@@ -71,7 +72,7 @@ const SessionComplete: React.FC<SessionCompleteProps> = ({
           onClick={onSameAgain}
           className="mt-6 w-full rounded-2xl bg-emerald-500 py-4 text-base font-semibold text-gray-950 transition active:scale-[0.98] active:bg-emerald-400"
         >
-          Same again
+          Same practice again
         </button>
       )}
       <button

@@ -163,7 +163,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
 
   const preferenceSummary = [
     hapticsEnabled && 'Haptics on',
-    autoFocusLock && 'Focus lock',
+    autoFocusLock && 'Practice mode',
     lockOnLeave && 'App lock',
   ]
     .filter(Boolean)
@@ -433,8 +433,8 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
           <Toggle
             checked={autoFocusLock}
             onChange={() => setAutoFocusLock(!autoFocusLock)}
-            label="Auto focus lock"
-            description="Hide timer controls when session starts"
+            label="Practice mode on start"
+            description="Immersive circle — hold bottom to exit"
           />
           <Toggle
             checked={lockOnLeave}

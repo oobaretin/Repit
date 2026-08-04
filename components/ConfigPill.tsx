@@ -8,6 +8,7 @@ interface ConfigPillProps {
   intention?: string;
   currentStreak?: number;
   repsThisWeek?: number;
+  isNewPractitioner?: boolean;
 }
 
 const ConfigPill: React.FC<ConfigPillProps> = ({
@@ -16,6 +17,7 @@ const ConfigPill: React.FC<ConfigPillProps> = ({
   intention = '',
   currentStreak = 0,
   repsThisWeek = 0,
+  isNewPractitioner = false,
 }) => {
   const statsLine = [
     currentStreak > 0 ? `${currentStreak}-day streak` : '',
@@ -33,6 +35,9 @@ const ConfigPill: React.FC<ConfigPillProps> = ({
       <div className="min-w-0 flex-1">
         <p className="text-[11px] uppercase tracking-[0.2em] text-gray-500">Adjust practice</p>
         <p className="mt-0.5 truncate text-sm text-gray-200">{summary}</p>
+        {isNewPractitioner && !intention ? (
+          <p className="mt-1 text-xs text-gray-500">Set reps, sound, and optional mantra</p>
+        ) : null}
         {intention ? (
           <p className="mt-1 truncate text-xs italic text-cyan-300/70">&ldquo;{intention}&rdquo;</p>
         ) : null}

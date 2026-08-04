@@ -31,6 +31,7 @@ import UnlockWelcomeScreen from './components/UnlockWelcomeScreen';
 import FocusLockOverlay from './components/FocusLockOverlay';
 import BrandMark from './components/BrandMark';
 import ConfigPill from './components/ConfigPill';
+import QuickPracticeChips from './components/QuickPracticeChips';
 import OnboardingFlow from './components/OnboardingFlow';
 import PaywallScreen from './components/PaywallScreen';
 import TrialReminderBanner from './components/TrialReminderBanner';
@@ -356,6 +357,11 @@ const App: React.FC = () => {
     [setTargetReps, setDelay, setSelectedSound],
   );
 
+  const handleQuickReps = useCallback((reps: number) => {
+    setTargetReps(reps);
+    void hapticsService.light();
+  }, [setTargetReps]);
+
   const handleDeletePreset = useCallback(
     (id: string) => {
       setCustomPresets((prev) => prev.filter((p) => p.id !== id));
@@ -460,7 +466,7 @@ const App: React.FC = () => {
                       type="button"
                       onClick={() => setFocusLocked(true)}
                       className="btn-icon"
-                      aria-label="Lock focus mode"
+                      aria-label="Enter practice mode"
                     >
                       <LockIcon className="h-4 w-4" />
                     </button>
@@ -500,13 +506,17 @@ const App: React.FC = () => {
               )}
 
               {!focusLocked && timerState === TimerState.Idle && !showComplete && (
-                <ConfigPill
-                  summary={sessionSummary}
-                  intention={practiceIntention}
-                  currentStreak={currentStreak}
-                  repsThisWeek={repsThisWeek}
-                  onPress={openSettings}
-                />
+                <div className="flex w-full max-w-md flex-col items-center gap-4">
+                  <QuickPracticeChips targetReps={targetReps} onSelect={handleQuickReps} />
+                  <ConfigPill
+                    summary={sessionSummary}
+                    intention={practiceIntention}
+                    currentStreak={currentStreak}
+                    repsThisWeek={repsThisWeek}
+                    isNewPractitioner={sessionStats.totalSessions === 0}
+                    onPress={openSettings}
+                  />
+                </div>
               )}
             </div>
           </>

@@ -196,6 +196,8 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
           ? `${progressPercent}%`
           : 'Open count';
 
+  const showHint = !isRunning && !isFocusLocked;
+
   return (
     <div
       className={`relative flex aspect-square items-center justify-center ${
@@ -266,9 +268,9 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
       >
         <p
           ref={progressPercentRef}
-          className={`mb-3 min-h-[1rem] text-[11px] uppercase tracking-[0.35em] text-gray-500 ${
-            topLabel ? '' : 'invisible'
-          }`}
+          className={`mb-3 min-h-[1rem] text-[11px] uppercase tracking-[0.35em] ${
+            isIdleReady ? 'text-cyan-400/80' : 'text-gray-500'
+          } ${topLabel ? '' : 'invisible'}`}
         >
           {topLabel ?? '\u00A0'}
         </p>
@@ -304,8 +306,8 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
 
         {practiceIntention && (isRunning || isPaused) && (
           <p
-            className={`mt-2 max-w-[12rem] truncate text-center text-xs italic text-cyan-300/60 ${
-              isFocusLocked ? 'opacity-80' : ''
+            className={`mt-2 max-w-[14rem] truncate text-center text-xs italic ${
+              isFocusLocked ? 'text-cyan-300/75' : 'text-cyan-300/60'
             }`}
           >
             {practiceIntention}
@@ -346,7 +348,9 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
           </div>
         )}
 
-        <p className="mt-4 max-w-[12rem] text-center text-xs text-gray-500">{getHint()}</p>
+        {showHint ? (
+          <p className="mt-4 max-w-[12rem] text-center text-xs text-gray-500">{getHint()}</p>
+        ) : null}
       </button>
     </div>
   );
