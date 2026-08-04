@@ -12,7 +12,24 @@ interface PaywallScreenProps {
   onRestore: () => Promise<{ success: boolean; error?: string }>;
   devMode?: boolean;
   expired?: boolean;
+  /** Shown right after the user's first free session */
+  afterFirstSession?: boolean;
 }
+
+const PAYWALL_COPY = {
+  expired: {
+    title: 'Your free trial has ended',
+    subtitle: 'Subscribe to continue your practice with Repit.',
+  },
+  afterFirstSession: {
+    title: 'You finished your first session',
+    subtitle: 'Start a 7-day free trial to keep your streak, history, and daily practice.',
+  },
+  default: {
+    title: 'Start your 7-day free trial',
+    subtitle: 'Full access to Repit. Cancel anytime before the trial ends.',
+  },
+} as const;
 
 const PaywallScreen: React.FC<PaywallScreenProps> = ({
   onSubscribed,
@@ -20,6 +37,7 @@ const PaywallScreen: React.FC<PaywallScreenProps> = ({
   onRestore,
   devMode = false,
   expired = false,
+  afterFirstSession = false,
 }) => {
   const [plan, setPlan] = useState<SubscriptionPlan>('annual');
   const [busy, setBusy] = useState(false);
@@ -54,6 +72,12 @@ const PaywallScreen: React.FC<PaywallScreenProps> = ({
 
   const plans: SubscriptionPlan[] = showMonthly ? ['annual', 'monthly'] : ['annual'];
 
+  const copy = expired
+    ? PAYWALL_COPY.expired
+    : afterFirstSession
+      ? PAYWALL_COPY.afterFirstSession
+      : PAYWALL_COPY.default;
+
   return (
     <div
       className="paywall-shell fixed inset-0 z-[110] flex flex-col overflow-y-auto bg-[var(--brand-bg)] text-white"
@@ -69,14 +93,8 @@ const PaywallScreen: React.FC<PaywallScreenProps> = ({
 
       <div className="relative z-10 mx-auto flex w-full max-w-md flex-1 flex-col py-4">
         <header className="mb-6 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight">
-            {expired ? 'Your free trial has ended' : 'Start your 7-day free trial'}
-          </h1>
-          <p className="mt-2 text-sm text-gray-400">
-            {expired
-              ? 'Subscribe to continue your practice with Repit.'
-              : 'Full access to Repit. Cancel anytime before the trial ends.'}
-          </p>
+          <h1 className="text-2xl font-semibold tracking-tight">{copy.title}</h1>
+          <p className="mt-2 text-sm text-gray-400">{copy.subtitle}</p>
         </header>
 
         <ul className="mb-6 space-y-2.5 text-sm text-gray-300">

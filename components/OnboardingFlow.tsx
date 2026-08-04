@@ -140,7 +140,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, setDisplayN
             onClick={handleNext}
             className="welcome-unlock-btn w-full rounded-2xl py-4 text-base font-semibold"
           >
-            {isLast ? 'Start free trial' : 'Continue'}
+            {isLast ? 'Begin practice' : 'Continue'}
           </button>
 
           {isLast && (

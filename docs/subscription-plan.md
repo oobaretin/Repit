@@ -85,14 +85,16 @@ When subscriptions ship, purchases are handled by **Apple** — you do not store
 
 ```
 Install (free)
-    → Onboarding (3 screens, no paywall yet)
+    → Onboarding (3 screens — “Begin practice”, no paywall)
+    → First session free (full app access)
+    → Session complete → Paywall (“You finished your first session”)
     → Start 7-day trial (StoreKit purchase with intro offer)
     → Full app access during trial
-    → Day 5–6: soft reminder (in-app banner or sheet)
-    → Trial ends → must subscribe to continue (or read-only / locked — pick one at implementation)
+    → Day 5–6: soft reminder (in-app banner)
+    → Trial ends → must subscribe to continue
 ```
 
-**Trial starts after onboarding**, not on first launch — user sees value before committing.
+**Trial starts after the first free session**, not on first launch — user feels value before committing.
 
 ---
 

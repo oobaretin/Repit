@@ -96,6 +96,10 @@ const App: React.FC = () => {
   const longestStreak = useMemo(() => computeLongestStreak(sessionHistory), [sessionHistory]);
   const repsThisWeek = useMemo(() => repsInLastDays(sessionHistory, 7), [sessionHistory]);
 
+  const hasFreeSessionRemaining = sessionStats.totalSessions === 0;
+  const requiresSubscription = !isPremium && !hasFreeSessionRemaining;
+  const paywallAfterFirstSession = requiresSubscription && sessionStats.totalSessions === 1 && !everPremium;
+
   const showTrialReminder =
     isPremium &&
     trialDaysLeft !== null &&
@@ -263,6 +267,10 @@ const App: React.FC = () => {
   }, []);
 
   const handleSameAgain = useCallback(async () => {
+    if (requiresSubscription) {
+      setShowComplete(false);
+      return;
+    }
     setShowComplete(false);
     setCurrentRep(0);
     setSessionDurationSec(null);
@@ -272,7 +280,7 @@ const App: React.FC = () => {
     setTimerState(TimerState.Running);
     if (autoFocusLock) setFocusLocked(true);
     await playFeedback('tap');
-  }, [autoFocusLock, playFeedback]);
+  }, [autoFocusLock, playFeedback, requiresSubscription]);
 
   const handleLogout = useCallback(async () => {
     setAppUnlocked(false);
@@ -340,10 +348,11 @@ const App: React.FC = () => {
     return <OnboardingFlow onComplete={() => setOnboardingComplete(true)} setDisplayName={setDisplayName} />;
   }
 
-  if (!isPremium) {
+  if (requiresSubscription && !showComplete) {
     return (
       <PaywallScreen
         expired={everPremium}
+        afterFirstSession={paywallAfterFirstSession}
         devMode={devMode}
         onSubscribed={() => void refresh()}
         onPurchase={purchase}
@@ -492,6 +501,7 @@ const App: React.FC = () => {
           currentStreak={currentStreak}
           onDismiss={dismissComplete}
           onSameAgain={handleSameAgain}
+          showSameAgain={isPremium}
         />
       )}
     </main>
