@@ -6,6 +6,8 @@ import { breathAtPhase } from '../utils/repCycle';
 import { phaseAtTime, useRepCycle } from '../hooks/useRepCycle';
 import { BRAND_GRADIENT_STOPS, brandGlow } from '../utils/brandColors';
 import { PlayIcon, PauseIcon, CheckIcon } from './icons';
+import FlowerOfLifeLayer, { type FlowerOfLifeHandle } from './FlowerOfLifeLayer';
+import { flowerBreathAtPhase, flowerIdleBreath } from '../utils/flowerOfLife';
 
 interface CircleDisplayProps {
   state: TimerState;
@@ -17,12 +19,6 @@ interface CircleDisplayProps {
   isFocusLocked?: boolean;
   immersive?: boolean;
 }
-
-const layerStyleAt = (insetScale: number, breath: ReturnType<typeof breathAtPhase>): React.CSSProperties => ({
-  transform: `scale(${0.78 + (breath.scale - 0.9) * (insetScale / 0.2)})`,
-  opacity: breath.opacity * (0.85 + insetScale * 0.15),
-  transition: 'none',
-});
 
 const CircleDisplay: React.FC<CircleDisplayProps> = ({
   state,
@@ -38,9 +34,7 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
   const prevRep = useRef(currentRep);
   const progressRingRef = useRef<SVGCircleElement>(null);
   const progressPercentRef = useRef<HTMLParagraphElement>(null);
-  const breathOuterRef = useRef<HTMLDivElement>(null);
-  const breathMidRef = useRef<HTMLDivElement>(null);
-  const breathInnerRef = useRef<HTMLDivElement>(null);
+  const flowerRef = useRef<FlowerOfLifeHandle>(null);
   const controlRef = useRef<HTMLDivElement>(null);
   const animRefsRef = useRef({ currentRep, targetReps, delay, state });
   const gradientId = useId().replace(/:/g, '');
@@ -89,12 +83,7 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
       progressPercentRef.current.textContent = `${Math.min(100, Math.round(fraction * 100))}%`;
     }
 
-    const outer = breathOuterRef.current;
-    const mid = breathMidRef.current;
-    const inner = breathInnerRef.current;
-    if (outer) Object.assign(outer.style, layerStyleAt(0.2, frameBreath));
-    if (mid) Object.assign(mid.style, layerStyleAt(0.14, frameBreath));
-    if (inner) Object.assign(inner.style, layerStyleAt(0.08, frameBreath));
+    flowerRef.current?.applyBreath(flowerBreathAtPhase(phase));
 
     if (countRef.current) {
       countRef.current.style.transform = `scale(${1 + frameBreath.glow * 0.05})`;
@@ -110,6 +99,25 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
   useLayoutEffect(() => {
     if (isRunning) applyFrame();
   }, [isRunning, currentRep, applyFrame]);
+
+  useEffect(() => {
+    if (isRunning) return;
+
+    let rafId = 0;
+    const start = performance.now();
+
+    const tick = (now: number) => {
+      if (isPaused) {
+        flowerRef.current?.applyBreath(flowerBreathAtPhase(staticPhase));
+      } else {
+        flowerRef.current?.applyBreath(flowerIdleBreath((now - start) / 1000));
+      }
+      rafId = requestAnimationFrame(tick);
+    };
+
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, [isRunning, isPaused, staticPhase]);
 
   useEffect(() => {
     if (!isRunning) return;
@@ -192,22 +200,8 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
         isRunning || isPaused ? '' : 'transition-all duration-500'
       } ${immersive ? 'w-[min(96vw,28rem)]' : 'w-[min(92vw,24rem)]'}`}
     >
-      <div className={`breath-stack ${breathMode}`} aria-hidden="true">
-        <div
-          ref={breathOuterRef}
-          className="breath-layer breath-layer-outer"
-          style={isRunning || isPaused ? layerStyleAt(0.2, breath) : undefined}
-        />
-        <div
-          ref={breathMidRef}
-          className="breath-layer breath-layer-mid"
-          style={isRunning || isPaused ? layerStyleAt(0.14, breath) : undefined}
-        />
-        <div
-          ref={breathInnerRef}
-          className="breath-layer breath-layer-inner"
-          style={isRunning || isPaused ? layerStyleAt(0.08, breath) : undefined}
-        />
+      <div className={`breath-stack flower-stack ${breathMode}`} aria-hidden="true">
+        <FlowerOfLifeLayer ref={flowerRef} filterId={gradientId} />
       </div>
 
       <svg
