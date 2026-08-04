@@ -133,6 +133,30 @@ function computeCurrentStreak(history) {
 
 assert('Empty history has zero streak', computeCurrentStreak([]) === 0);
 
+// Practice intention (mirrors utils/practiceIntention.ts)
+function normalizePracticeIntention(value) {
+  return value.trim().slice(0, 48);
+}
+
+assert('Practice intention trims whitespace', normalizePracticeIntention('  om  ') === 'om');
+assert('Practice intention caps at 48 chars', normalizePracticeIntention('x'.repeat(60)).length === 48);
+
+// Flower breath scale mapping (mirrors utils/flowerOfLife.ts)
+function breathAtPhase(t) {
+  const peak = Math.exp(-t * 8);
+  const ease = t * t * (3 - 2 * t);
+  return 0.9 + peak * 0.2 + ease * 0.19;
+}
+
+function flowerScaleAt(t) {
+  const scale = breathAtPhase(t);
+  const open = Math.min(1, Math.max(0, (scale - 0.9) / 0.2));
+  return 0.8 + open * 0.2;
+}
+
+assert('Flower full at tick', Math.abs(flowerScaleAt(0) - 1) < 0.02);
+assert('Flower constricts mid-interval', flowerScaleAt(0.5) < 0.92);
+
 console.log('\nRepit core flow verification\n');
 console.log(`  Passed: ${PASS.length}`);
 PASS.forEach((n) => console.log(`    ✓ ${n}`));

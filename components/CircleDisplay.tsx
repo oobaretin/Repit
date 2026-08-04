@@ -165,7 +165,7 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
     if (isFocusLocked) return 'Focus locked · hold below to unlock';
     switch (state) {
       case TimerState.Running:
-        return 'Follow the circle';
+        return 'Tap to pause · follow the circle';
       case TimerState.Paused:
         return 'Tap to resume';
       case TimerState.Finished:
@@ -302,7 +302,7 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
           </p>
         )}
 
-        {practiceIntention && (isRunning || isPaused || isIdleReady) && (
+        {practiceIntention && (isRunning || isPaused) && (
           <p
             className={`mt-2 max-w-[12rem] truncate text-center text-xs italic text-cyan-300/60 ${
               isFocusLocked ? 'opacity-80' : ''

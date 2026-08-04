@@ -495,7 +495,7 @@ const App: React.FC = () => {
                 immersive={focusLocked}
               />
 
-              {!focusLocked && isTimerActive && (
+              {!focusLocked && timerState === TimerState.Paused && (
                 <SessionBar summary={sessionSummary} onRestart={handleRestart} />
               )}
 

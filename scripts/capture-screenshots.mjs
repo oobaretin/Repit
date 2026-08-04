@@ -16,7 +16,7 @@ const baseUrl = `http://127.0.0.1:${previewPort}`;
 
 const DEFAULT_PREFS = {
   'repit-targetReps': '108',
-  'repit-delay': '2',
+  'repit-delay': '1.5',
   'repit-sound': 'Mala',
   'repit-haptics': 'true',
   'repit-autoFocusLock': 'true',

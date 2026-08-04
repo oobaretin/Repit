@@ -12,6 +12,8 @@
     "sync:ios": "npx cap sync ios",
     "generate:icons": "node brand/generate-icons.mjs",
     "verify": "node scripts/verify-core-flows.mjs",
+    "qa:browser": "npm run build && node scripts/browser-qa.mjs",
+    "qa": "npm run verify && npm run qa:browser",
     "sync:privacy-site": "node scripts/sync-privacy-site.mjs",
     "screenshots": "npm run build && node scripts/capture-screenshots.mjs"
   },
