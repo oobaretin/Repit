@@ -328,6 +328,134 @@ input[type='range']::-moz-range-thumb {
   pointer-events: none;
 }
 
+.flower-stack-lite::before {
+  box-shadow: inset 0 0 72px rgba(34, 211, 238, 0.12);
+  background: radial-gradient(circle at 50% 45%, rgba(34, 211, 238, 0.12) 0%, transparent 62%);
+}
+
+.flower-motion-lite {
+  will-change: transform, opacity;
+}
+
+.flower-stack-lite + svg .sync-progress-ring {
+  will-change: stroke-dashoffset, opacity;
+}
+
+.circle-display-lite .flower-stack {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.sync-progress-svg-lite {
+  transform: rotate(-90deg) translateZ(0);
+  backface-visibility: hidden;
+}
+
+.sync-progress-svg:not(.sync-progress-svg-lite) {
+  transform: rotate(-90deg);
+}
+
+.sync-progress-svg-lite .sync-progress-ring {
+  will-change: stroke-dashoffset, opacity;
+}
+
+@keyframes native-flower-breath {
+  0%,
+  100% {
+    transform: scale(0.8);
+    opacity: 0.16;
+  }
+  10% {
+    transform: scale(1);
+    opacity: 0.34;
+  }
+}
+
+@keyframes native-flower-idle {
+  0%,
+  100% {
+    transform: scale(0.82);
+    opacity: 0.18;
+  }
+  50% {
+    transform: scale(0.96);
+    opacity: 0.28;
+  }
+}
+
+@keyframes native-ring-glow {
+  0%,
+  100% {
+    opacity: 0.74;
+  }
+  10% {
+    opacity: 1;
+  }
+}
+
+.breath-native-css .flower-motion-lite {
+  will-change: transform, opacity;
+}
+
+.native-breath-glow {
+  position: absolute;
+  inset: 7%;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0.35;
+  border: 1px solid rgba(34, 211, 238, 0.15);
+  box-shadow:
+    0 0 32px rgba(34, 211, 238, 0.12),
+    inset 0 0 48px rgba(34, 211, 238, 0.06);
+  will-change: transform, opacity;
+  transform: translateZ(0);
+}
+
+.breath-sync.breath-native-css .native-breath-glow {
+  animation: native-flower-breath var(--breath-duration, 2s) cubic-bezier(0.45, 0.05, 0.25, 1) infinite;
+  opacity: 0.28;
+}
+
+.breath-idle.breath-native-css .native-breath-glow {
+  animation: native-flower-idle 28s ease-in-out infinite;
+}
+
+@keyframes native-rep-dash {
+  from {
+    stroke-dashoffset: var(--dash-start);
+  }
+  to {
+    stroke-dashoffset: var(--dash-end);
+  }
+}
+
+.sync-progress-ring-rep-anim {
+  animation: native-rep-dash var(--rep-anim-duration, var(--breath-duration, 2s)) linear forwards;
+}
+
+.breath-sync.breath-native-css .sync-progress-ring-native {
+  animation: native-ring-glow var(--breath-duration, 2s) cubic-bezier(0.45, 0.05, 0.25, 1) infinite;
+}
+
+.breath-sync.breath-native-css .sync-progress-ring-native.sync-progress-ring-rep-anim {
+  animation:
+    native-rep-dash var(--rep-anim-duration, var(--breath-duration, 2s)) linear forwards,
+    native-ring-glow var(--breath-duration, 2s) cubic-bezier(0.45, 0.05, 0.25, 1) infinite;
+}
+
+.breath-sync.breath-native-css .sync-progress-ring-native {
+  opacity: 0.92;
+}
+
+.breath-sync.breath-native-css .flower-motion-lite,
+.breath-idle.breath-native-css .flower-motion-lite {
+  animation: none;
+}
+
+.breath-paused.breath-native-css .native-breath-glow {
+  animation-play-state: paused;
+}
+
 .flower-stack .flower-layer {
   position: absolute;
   inset: 0;

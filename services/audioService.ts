@@ -157,7 +157,11 @@ class AudioService {
     this.initialize();
     if (!this.isInitialized || !this.audioCtx || sound === SoundOption.None) return;
 
-    await this.unlock();
+    if (this.audioCtx.state === 'suspended') {
+      await this.unlock();
+    } else {
+      void this.decodeMalaBuffer();
+    }
     this.clearActive();
 
     switch (sound) {

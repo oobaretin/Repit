@@ -18,35 +18,48 @@ export interface FlowerOfLifeHandle {
 
 interface FlowerOfLifeLayerProps {
   filterId: string;
+  lite?: boolean;
+}
+
+function breathChanged(a: FlowerBreathVisual, b: FlowerBreathVisual, lite: boolean): boolean {
+  if (Math.abs(a.scale - b.scale) > 0.002) return true;
+  if (Math.abs(a.opacity - b.opacity) > 0.01) return true;
+  if (Math.abs(a.ringOpacity - b.ringOpacity) > 0.01) return true;
+  if (!lite && Math.abs(a.nodeScale - b.nodeScale) > 0.002) return true;
+  if (!lite && Math.abs(a.glow - b.glow) > 0.02) return true;
+  if (Math.abs(a.centerGlow - b.centerGlow) > 0.02) return true;
+  return false;
 }
 
 const FlowerOfLifeLayer = forwardRef<FlowerOfLifeHandle, FlowerOfLifeLayerProps>(
-  function FlowerOfLifeLayer({ filterId }, ref) {
+  function FlowerOfLifeLayer({ filterId, lite = false }, ref) {
     const motionRef = useRef<SVGGElement>(null);
     const nodesRef = useRef<SVGGElement>(null);
     const ringsRef = useRef<SVGGElement>(null);
     const centerRef = useRef<SVGCircleElement>(null);
+    const lastBreathRef = useRef<FlowerBreathVisual | null>(null);
 
     const geometry = useMemo(() => getFlowerOfLifeGeometry(PATTERN_RADIUS), []);
 
     useImperativeHandle(ref, () => ({
       applyBreath(breath) {
+        const last = lastBreathRef.current;
+        if (last && !breathChanged(last, breath, lite)) return;
+        lastBreathRef.current = breath;
+
         const g = motionRef.current;
         if (!g) return;
 
         const s = breath.scale * geometry.fitScale;
-        g.setAttribute('transform', `scale(${s})`);
+        g.style.transform = `scale(${s})`;
         g.style.opacity = String(breath.opacity);
 
         if (ringsRef.current) {
           ringsRef.current.setAttribute('stroke-opacity', String(breath.ringOpacity));
         }
 
-        if (nodesRef.current) {
-          nodesRef.current.setAttribute(
-            'transform',
-            `scale(${breath.nodeScale})`,
-          );
+        if (!lite && nodesRef.current) {
+          nodesRef.current.style.transform = `scale(${breath.nodeScale})`;
           nodesRef.current.style.opacity = String(0.22 + breath.glow * 0.35);
         }
 
@@ -74,20 +87,26 @@ const FlowerOfLifeLayer = forwardRef<FlowerOfLifeHandle, FlowerOfLifeLayerProps>
             <stop offset="45%" stopColor={BRAND_COLORS.cyan} stopOpacity="0.18" />
             <stop offset="100%" stopColor={BRAND_COLORS.cyanDeep} stopOpacity="0" />
           </radialGradient>
-          <filter id={glowFilterId} x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="2" result="bloom" />
-            <feGaussianBlur in="SourceGraphic" stdDeviation="0.8" result="blur" />
-            <feMerge>
-              <feMergeNode in="bloom" />
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
+          {!lite && (
+            <filter id={glowFilterId} x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="2" result="bloom" />
+              <feGaussianBlur in="SourceGraphic" stdDeviation="0.8" result="blur" />
+              <feMerge>
+                <feMergeNode in="bloom" />
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          )}
         </defs>
 
         <g clipPath={`url(#${clipId})`}>
           <g transform={`translate(${CENTER}, ${CENTER})`}>
-            <g ref={motionRef} className="flower-motion" filter={`url(#${glowFilterId})`}>
+            <g
+              ref={motionRef}
+              className={`flower-motion${lite ? ' flower-motion-lite' : ''}`}
+              filter={lite ? undefined : `url(#${glowFilterId})`}
+            >
               <circle
                 ref={centerRef}
                 cx={0}
@@ -110,17 +129,19 @@ const FlowerOfLifeLayer = forwardRef<FlowerOfLifeHandle, FlowerOfLifeLayerProps>
                   />
                 ))}
               </g>
-              <g ref={nodesRef} className="flower-nodes">
-                {geometry.nodes.map((node, index) => (
-                  <circle
-                    key={`flower-n-${index}`}
-                    cx={node.x}
-                    cy={node.y}
-                    r={index === 0 ? 0.1 : 0.065}
-                    fill={BRAND_COLORS.cyanLight}
-                  />
-                ))}
-              </g>
+              {!lite && (
+                <g ref={nodesRef} className="flower-nodes">
+                  {geometry.nodes.map((node, index) => (
+                    <circle
+                      key={`flower-n-${index}`}
+                      cx={node.x}
+                      cy={node.y}
+                      r={index === 0 ? 0.1 : 0.065}
+                      fill={BRAND_COLORS.cyanLight}
+                    />
+                  ))}
+                </g>
+              )}
             </g>
           </g>
         </g>

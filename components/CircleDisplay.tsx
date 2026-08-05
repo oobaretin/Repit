@@ -8,6 +8,7 @@ import { BRAND_GRADIENT_STOPS, brandGlow } from '../utils/brandColors';
 import { PlayIcon, PauseIcon, CheckIcon } from './icons';
 import FlowerOfLifeLayer, { type FlowerOfLifeHandle } from './FlowerOfLifeLayer';
 import { flowerBreathAtPhase, flowerIdleBreath } from '../utils/flowerOfLife';
+import { preferLiteVisuals, shouldRenderFrame, useCssBreathOnNative, nativeFrameBudgetMs } from '../utils/visualPerf';
 
 interface CircleDisplayProps {
   state: TimerState;
@@ -40,11 +41,39 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
   const controlRef = useRef<HTMLDivElement>(null);
   const animRefsRef = useRef({ currentRep, targetReps, delay, state });
   const gradientId = useId().replace(/:/g, '');
+  const liteVisuals = preferLiteVisuals();
+  const cssBreath = useCssBreathOnNative();
+  const rafGateRef = useRef(0);
+  const lastRepAnimRef = useRef(-1);
+  const wasPausedRef = useRef(false);
 
   const radius = 130;
   const cx = 150;
   const cy = 150;
   const circumference = 2 * Math.PI * radius;
+
+  const kickNativeRepRingAnim = useCallback(
+    (rep: number, target: number, durationSec: number, fromPhase = 0) => {
+      const ring = progressRingRef.current;
+      if (!ring || target <= 0) return;
+
+      const startFraction = (rep + fromPhase) / target;
+      const endFraction = Math.min(1, (rep + 1) / target);
+      const startOffset = circumference - startFraction * circumference;
+      const endOffset = circumference - endFraction * circumference;
+      const remainingSec = Math.max(0.05, (1 - fromPhase) * durationSec);
+
+      ring.style.setProperty('--dash-start', String(startOffset));
+      ring.style.setProperty('--dash-end', String(endOffset));
+      ring.style.setProperty('--rep-anim-duration', `${remainingSec}s`);
+      ring.style.strokeDashoffset = String(startOffset);
+      ring.classList.remove('sync-progress-ring-rep-anim');
+      void ring.getBoundingClientRect();
+      ring.classList.add('sync-progress-ring-rep-anim');
+    },
+    [circumference],
+  );
+
   const isRunning = state === TimerState.Running;
   const isPaused = state === TimerState.Paused;
   const remaining = targetReps > 0 ? Math.max(0, targetReps - currentRep) : null;
@@ -70,14 +99,20 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
 
     const phase = phaseAtTime(cycleStartRef.current, delayMs);
     phaseRef.current = phase;
-    const frameBreath = breathAtPhase(phase);
     const fraction = Math.min(1, (rep + phase) / target);
     const dashOffset = circumference - fraction * circumference;
-    const opacity = 0.72 + frameBreath.glow * 0.28;
     const ring = progressRingRef.current;
 
+    if (cssBreath) {
+      flowerRef.current?.applyBreath(flowerBreathAtPhase(phase));
+      return;
+    }
+
+    const frameBreath = breathAtPhase(phase);
+    const opacity = 0.72 + frameBreath.glow * 0.28;
+
     if (ring) {
-      ring.setAttribute('stroke-dashoffset', String(dashOffset));
+      ring.style.strokeDashoffset = String(dashOffset);
       ring.style.opacity = String(opacity);
     }
 
@@ -89,18 +124,66 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
 
     if (countRef.current) {
       countRef.current.style.transform = `scale(${1 + frameBreath.glow * 0.05})`;
-      countRef.current.style.textShadow = `0 0 ${frameBreath.glow * 28}px ${brandGlow(frameBreath.glow * 0.45)}`;
+      if (!liteVisuals) {
+        countRef.current.style.textShadow = `0 0 ${frameBreath.glow * 28}px ${brandGlow(frameBreath.glow * 0.45)}`;
+      }
     }
 
-    if (controlRef.current) {
+    if (controlRef.current && !liteVisuals) {
       controlRef.current.style.transform = `scale(${1 + frameBreath.glow * 0.06})`;
       controlRef.current.style.boxShadow = `0 0 ${frameBreath.glow * 32}px ${brandGlow(frameBreath.glow * 0.35)}`;
     }
-  }, [circumference, cycleStartRef, delayMs, phaseRef]);
+  }, [circumference, cssBreath, cycleStartRef, delayMs, liteVisuals, phaseRef]);
 
   useLayoutEffect(() => {
-    if (isRunning) applyFrame();
-  }, [isRunning, currentRep, applyFrame]);
+    if (!cssBreath || !isRunning || targetReps <= 0) return;
+    if (isPaused) {
+      wasPausedRef.current = true;
+      return;
+    }
+    if (wasPausedRef.current) {
+      wasPausedRef.current = false;
+      kickNativeRepRingAnim(currentRep, targetReps, delay, phaseRef.current);
+      lastRepAnimRef.current = currentRep;
+      return;
+    }
+    if (lastRepAnimRef.current === currentRep) return;
+    lastRepAnimRef.current = currentRep;
+    kickNativeRepRingAnim(currentRep, targetReps, delay, 0);
+  }, [cssBreath, isRunning, isPaused, currentRep, targetReps, delay, kickNativeRepRingAnim, phaseRef]);
+
+  useLayoutEffect(() => {
+    if (!isRunning) {
+      lastRepAnimRef.current = -1;
+    }
+  }, [isRunning]);
+
+  useLayoutEffect(() => {
+    const ring = progressRingRef.current;
+    if (!ring) return;
+
+    if (state === TimerState.Finished && targetReps > 0) {
+      ring.classList.remove('sync-progress-ring-rep-anim');
+      ring.style.strokeDashoffset = '0';
+      return;
+    }
+
+    if (cssBreath && !isRunning && targetReps > 0 && currentRep >= targetReps) {
+      ring.classList.remove('sync-progress-ring-rep-anim');
+      ring.style.strokeDashoffset = '0';
+    }
+  }, [cssBreath, state, isRunning, currentRep, targetReps]);
+
+  useLayoutEffect(() => {
+    if (!cssBreath || !isPaused || !progressRingRef.current) return;
+    progressRingRef.current.classList.remove('sync-progress-ring-rep-anim');
+    progressRingRef.current.style.strokeDashoffset = String(strokeDashoffset);
+  }, [cssBreath, isPaused, strokeDashoffset]);
+
+  useLayoutEffect(() => {
+    if (!isRunning || cssBreath) return;
+    applyFrame();
+  }, [isRunning, currentRep, applyFrame, cssBreath]);
 
   useEffect(() => {
     if (isRunning) return;
@@ -109,6 +192,13 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
     const start = performance.now();
 
     const tick = (now: number) => {
+      const flowerBudget = cssBreath ? nativeFrameBudgetMs() : 200;
+      if (!shouldRenderFrame(rafGateRef.current, now, flowerBudget)) {
+        rafId = requestAnimationFrame(tick);
+        return;
+      }
+      rafGateRef.current = now;
+
       if (isPaused) {
         flowerRef.current?.applyBreath(flowerBreathAtPhase(staticPhase));
       } else {
@@ -119,14 +209,19 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
 
     rafId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(rafId);
-  }, [isRunning, isPaused, staticPhase]);
+  }, [isRunning, isPaused, staticPhase, cssBreath]);
 
   useEffect(() => {
     if (!isRunning) return;
 
     let rafId = 0;
 
-    const tick = () => {
+    const tick = (now: number) => {
+      if (!shouldRenderFrame(rafGateRef.current, now, nativeFrameBudgetMs())) {
+        rafId = requestAnimationFrame(tick);
+        return;
+      }
+      rafGateRef.current = now;
       applyFrame();
       rafId = requestAnimationFrame(tick);
     };
@@ -202,14 +297,19 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
     <div
       className={`relative flex aspect-square items-center justify-center ${
         isRunning || isPaused ? '' : 'transition-all duration-500'
-      } ${immersive ? 'w-[min(96vw,28rem)]' : 'w-[min(92vw,24rem)]'}`}
+      } ${immersive ? 'w-[min(96vw,28rem)]' : 'w-[min(92vw,24rem)]'}${liteVisuals ? ' circle-display-lite' : ''}`}
+      style={cssBreath ? ({ ['--breath-duration' as string]: `${delay}s` } as React.CSSProperties) : undefined}
     >
-      <div className={`breath-stack flower-stack ${breathMode}`} aria-hidden="true">
-        <FlowerOfLifeLayer ref={flowerRef} filterId={gradientId} />
+      <div
+        className={`breath-stack flower-stack ${breathMode}${liteVisuals ? ' flower-stack-lite' : ''}${cssBreath ? ' breath-native-css' : ''}`}
+        aria-hidden="true"
+      >
+        {cssBreath ? <div className="native-breath-glow" aria-hidden="true" /> : null}
+        <FlowerOfLifeLayer ref={flowerRef} filterId={gradientId} lite={liteVisuals} />
       </div>
 
       <svg
-        className="absolute h-full w-full -rotate-90"
+        className={`absolute h-full w-full sync-progress-svg${liteVisuals ? ' sync-progress-svg-lite' : ' -rotate-90'}`}
         viewBox="0 0 300 300"
         aria-hidden="true"
       >
@@ -247,13 +347,19 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
             r={radius}
             strokeWidth="10"
             strokeDasharray={circumference}
-            strokeDashoffset={strokeDashoffset}
+            strokeDashoffset={
+              cssBreath && isRunning
+                ? undefined
+                : state === TimerState.Finished
+                  ? 0
+                  : strokeDashoffset
+            }
             stroke={state === TimerState.Finished ? `url(#complete-gradient-${gradientId})` : `url(#progress-gradient-${gradientId})`}
-            className="sync-progress-ring"
+            className={`sync-progress-ring${cssBreath && isRunning ? ' sync-progress-ring-native' : ''}`}
             fill="transparent"
             strokeLinecap="round"
-            filter={`url(#ring-glow-${gradientId})`}
-            style={{ opacity: ringOpacity }}
+            filter={liteVisuals ? undefined : `url(#ring-glow-${gradientId})`}
+            style={cssBreath && (isRunning || isPaused) ? { opacity: 0.92 } : { opacity: ringOpacity }}
           />
         )}
       </svg>
@@ -288,7 +394,9 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
               : isPaused
                 ? {
                     transform: `scale(${1 + breath.glow * 0.05})`,
-                    textShadow: `0 0 ${breath.glow * 28}px ${brandGlow(breath.glow * 0.45)}`,
+                    ...(liteVisuals
+                      ? {}
+                      : { textShadow: `0 0 ${breath.glow * 28}px ${brandGlow(breath.glow * 0.45)}` }),
                   }
                 : undefined
           }
@@ -339,7 +447,9 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
                 : isPaused
                   ? {
                       transform: `scale(${1 + breath.glow * 0.06})`,
-                      boxShadow: `0 0 ${breath.glow * 32}px ${brandGlow(breath.glow * 0.35)}`,
+                      ...(liteVisuals
+                        ? {}
+                        : { boxShadow: `0 0 ${breath.glow * 32}px ${brandGlow(breath.glow * 0.35)}` }),
                     }
                   : undefined
             }
