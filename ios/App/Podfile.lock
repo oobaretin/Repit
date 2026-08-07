@@ -10,6 +10,8 @@ PODS:
     - Capacitor
   - CapacitorKeyboard (7.0.1):
     - Capacitor
+  - CapacitorLocalNotifications (7.0.1):
+    - Capacitor
   - CapacitorStatusBar (7.0.1):
     - Capacitor
   - CapgoCapacitorNativeBiometric (7.1.13):
@@ -28,6 +30,7 @@ DEPENDENCIES:
   - "CapacitorCordova (from `../../node_modules/@capacitor/ios`)"
   - "CapacitorHaptics (from `../../node_modules/@capacitor/haptics`)"
   - "CapacitorKeyboard (from `../../node_modules/@capacitor/keyboard`)"
+  - "CapacitorLocalNotifications (from `../../node_modules/@capacitor/local-notifications`)"
   - "CapacitorStatusBar (from `../../node_modules/@capacitor/status-bar`)"
   - "CapgoCapacitorNativeBiometric (from `../../node_modules/@capgo/capacitor-native-biometric`)"
   - "RevenuecatPurchasesCapacitor (from `../../node_modules/@revenuecat/purchases-capacitor`)"
@@ -50,6 +53,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/haptics"
   CapacitorKeyboard:
     :path: "../../node_modules/@capacitor/keyboard"
+  CapacitorLocalNotifications:
+    :path: "../../node_modules/@capacitor/local-notifications"
   CapacitorStatusBar:
     :path: "../../node_modules/@capacitor/status-bar"
   CapgoCapacitorNativeBiometric:
@@ -64,12 +69,13 @@ SPEC CHECKSUMS:
   CapacitorCordova: 5967b9ba03915ef1d585469d6e31f31dc49be96f
   CapacitorHaptics: 70e47470fa1a6bd6338cd102552e3846b7f9a1b3
   CapacitorKeyboard: 969647d0ca2e5c737d7300088e2517aa832434e2
+  CapacitorLocalNotifications: 4ea60b9347eac60b37cb4daaf62d12060bb00972
   CapacitorStatusBar: 275cbf2f4dfc00388f519ef80c7ec22edda342c9
   CapgoCapacitorNativeBiometric: 6031a14a466096ab5b6de34e8ef1c8a189745234
   PurchasesHybridCommon: 6a79a873ab52f777bfa36e9516f3fcd84d3b3428
   RevenueCat: eab035bbab271faccfef5c36eaff2a1ffef14dc0
   RevenuecatPurchasesCapacitor: 17db9f0b99ec5c4055d84af83d38bc5038f50ff2
 
-PODFILE CHECKSUM: cdb34c1a68c7eed0f2a14d9c19faa4a681528242
+PODFILE CHECKSUM: d6b906b69611aee3f249775be701b09f8e4d726f
 
-COCOAPODS: 1.10.2
+COCOAPODS: 1.16.2

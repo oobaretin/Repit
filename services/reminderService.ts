@@ -1,4 +1,5 @@
 import { Capacitor } from '@capacitor/core';
+import { LocalNotifications } from '@capacitor/local-notifications';
 
 export interface PracticeReminderSettings {
   enabled: boolean;
@@ -37,31 +38,65 @@ export function reminderTimeInputValue(hour: number, minute: number): string {
   return `${pad2(hour)}:${pad2(minute)}`;
 }
 
-/** Stub until @capacitor/local-notifications is added with Apple Developer entitlements. */
+function clampReminderTime(hour: number, minute: number): { hour: number; minute: number } {
+  return {
+    hour: Math.min(23, Math.max(0, Math.floor(hour))),
+    minute: Math.min(59, Math.max(0, Math.floor(minute))),
+  };
+}
+
 class ReminderService {
+  private async cancelReminder(): Promise<void> {
+    if (!Capacitor.isNativePlatform()) return;
+    await LocalNotifications.cancel({ notifications: [{ id: REMINDER_ID }] });
+  }
+
   async sync(settings: PracticeReminderSettings): Promise<ReminderSyncResult> {
     if (!settings.enabled) {
+      await this.cancelReminder();
       return {
         ok: true,
         message: 'Daily reminder off.',
       };
     }
 
-    const at = formatReminderTime(settings.hour, settings.minute);
+    const { hour, minute } = clampReminderTime(settings.hour, settings.minute);
+    const at = formatReminderTime(hour, minute);
 
     if (!Capacitor.isNativePlatform()) {
       return {
         ok: true,
-        message: `Saved for ${at} daily — notifications fire on iOS after the next native update.`,
+        message: `Saved for ${at} daily — reminders schedule on iOS and iPad.`,
       };
     }
 
-    // Reserved for Local Notifications plugin (id REMINDER_ID).
-    void REMINDER_ID;
+    const permission = await LocalNotifications.requestPermissions();
+    if (permission.display !== 'granted') {
+      return {
+        ok: false,
+        message: 'Allow notifications in Settings to enable your daily reminder.',
+      };
+    }
+
+    await this.cancelReminder();
+    await LocalNotifications.schedule({
+      notifications: [
+        {
+          id: REMINDER_ID,
+          title: 'Time for practice',
+          body: 'Open Repit for your daily repetition session.',
+          schedule: {
+            on: { hour, minute },
+            repeats: true,
+            allowWhileIdle: true,
+          },
+        },
+      ],
+    });
 
     return {
       ok: true,
-      message: `Saved for ${at} daily — push scheduling ships with the notifications update.`,
+      message: `Daily reminder set for ${at}.`,
     };
   }
 }

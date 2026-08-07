@@ -3,6 +3,11 @@
  * Lightweight verification of Repit core timer logic (no DOM).
  * Run: node scripts/verify-core-flows.mjs
  */
+import { readFileSync } from 'node:fs';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 const PASS = [];
 const FAIL = [];
@@ -189,6 +194,12 @@ assert('Flower constricts mid-interval', flowerScaleAt(0.5) < 0.92);
   assert('One free session after two completed', remaining(2) === 1);
   assert('Paywall after third session', requiresPaid(false, 3));
   assert('Premium skips paywall', !requiresPaid(true, 10));
+}
+
+{
+  const reminderSource = readFileSync(join(root, 'services/reminderService.ts'), 'utf8');
+  assert('Reminder service schedules local notifications', reminderSource.includes('LocalNotifications.schedule'));
+  assert('Reminder service requests notification permission', reminderSource.includes('LocalNotifications.requestPermissions'));
 }
 
 console.log('\nRepit core flow verification\n');

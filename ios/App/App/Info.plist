@@ -45,6 +45,8 @@
 	</array>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Unlock Repit with Face ID or Touch ID</string>
+	<key>NSUserNotificationsUsageDescription</key>
+	<string>Repit sends a daily reminder at the time you choose for your practice.</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
 	<key>CFBundleURLTypes</key>

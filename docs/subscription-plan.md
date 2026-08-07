@@ -1,6 +1,6 @@
 # Repit — Subscription Plan
 
-Monetization model for v1: **7-day free trial** after onboarding, then **annual (recommended)** or **monthly** subscription. No free tier after trial ends.
+Monetization model for v1.1: **3 free practice sessions** after onboarding, then **7-day free trial** (via StoreKit intro offer), then **annual (recommended)** or **monthly** subscription. No access after free sessions or trial without subscribing.
 
 **Bundle ID:** `com.repit.app`
 
@@ -85,16 +85,19 @@ When subscriptions ship, purchases are handled by **Apple** — you do not store
 
 ```
 Install (free)
-    → Onboarding (3 screens — “Begin practice”, no paywall)
-    → First session free (full app access)
-    → Session complete → Paywall (“You finished your first session”)
+    → Onboarding (3 screens — interactive tap-along on step 2 → “Begin practice”)
+    → Sessions 1–3 free (full app access)
+    → Session complete shows streak + “X free sessions remaining”
+    → After session 3 complete → Paywall (“Your free sessions are complete”)
     → Start 7-day trial (StoreKit purchase with intro offer)
     → Full app access during trial
     → Day 5–6: soft reminder (in-app banner)
     → Trial ends → must subscribe to continue
 ```
 
-**Trial starts after the first free session**, not on first launch — user feels value before committing.
+**Trial starts after the third free session**, not on first launch — user feels value before committing.
+
+Settings and history stay accessible after free sessions; starting session 4 (or “Same practice again” when unsubscribed) shows the paywall.
 
 ---
 
@@ -119,12 +122,12 @@ Keep it short. Match Repit’s dark brand (`#060912`, cyan accent, Inter Tight).
 ### Screen 2 — How it works
 
 **Headline:**  
-`A steady rhythm for your practice`
+`Feel the rhythm`
 
 **Body:**  
-`Choose your count and interval. Each rep brings a gentle sound and haptic tap. Focus lock keeps distractions away.`
+`Watch a few reps, then tap the circle three times yourself. This is how practice feels in Repit.`
 
-**Visual:** Timer running (~24/108) or idle with practice pill
+**Visual:** Interactive tap-along demo (lite Flower of Life)
 
 **CTA:** `Continue`
 
@@ -140,23 +143,31 @@ Keep it short. Match Repit’s dark brand (`#060912`, cyan accent, Inter Tight).
 
 **Visual:** Settings toggles or Face ID welcome ring
 
-**Primary CTA:** `Start free trial` → **Paywall / StoreKit**
+**Primary CTA:** `Begin practice` → **Timer (no paywall yet)**
 
-**Secondary:** `Restore purchases` (small link)
+**Secondary:** `Restore purchases` (small link on paywall when shown later)
 
 ---
 
 ## Paywall copy
 
-Shown after onboarding screen 3 (and when trial expires).
+Shown after the **third free session** (and when trial expires, or when starting session 4 without a subscription).
 
-### Headline
+### Headline (after free sessions)
+
+`Your free sessions are complete`
+
+### Subhead (after free sessions)
+
+`You’ve practiced 3 times with Repit. Start a 7-day free trial to keep your streak, history, and daily practice.`
+
+### Headline (default / from settings)
 
 `Start your 7-day free trial`
 
-### Subhead
+### Subhead (default)
 
-`Full access to Repit. Cancel anytime in Settings before the trial ends.`
+`Full access to Repit. Cancel anytime before the trial ends.`
 
 ### Value bullets
 
@@ -237,35 +248,42 @@ Link **Privacy Policy** to `https://oobaretin.github.io/Repit/`.
 
 ## Implementation notes
 
-Not built yet — use when ready to ship subscriptions.
+Subscriptions and reminders are implemented in-app; App Store Connect products and sandbox/device QA remain.
 
 | Piece | Recommendation |
 |-------|------------------|
-| StoreKit wrapper | [RevenueCat](https://www.revenuecat.com) + Capacitor (fastest) or `@capgo/capacitor-purchases` |
-| Entitlement | `premium` — gate timer after trial/sub lapse |
+| StoreKit wrapper | [RevenueCat](https://www.revenuecat.com) + Capacitor (implemented) |
+| Entitlement | `premium` — gate timer after 3 free sessions / trial lapse |
+| Free tier | `FREE_SESSION_LIMIT = 3` in `constants/subscription.ts` |
 | Restore | Required on paywall and settings |
+| Daily reminder | `@capacitor/local-notifications` — scheduled in `reminderService.ts` |
 | Sandbox testing | App Store Connect sandbox Apple ID |
 | Receipt / status | Cached on device; refresh on launch and after purchase |
 
-### Suggested file structure (future)
+### Implemented files
 
 ```
+constants/subscription.ts         — FREE_SESSION_LIMIT, plan copy
+utils/subscriptionAccess.ts       — freeSessionsRemaining, paywall gates
 services/subscriptionService.ts   — offerings, purchase, restore, entitlement
-components/OnboardingFlow.tsx       — 3-screen flow
+services/reminderService.ts       — daily local notification scheduling
+components/OnboardingFlow.tsx     — 3-screen flow + tap-along
 components/PaywallScreen.tsx      — plans + legal footer
+components/SessionComplete.tsx      — streak + free sessions remaining
 hooks/useSubscription.ts          — isPremium, trialDaysRemaining
 ```
 
 ### Apple review notes (add when submitting)
 
 ```
-Subscriptions: complete onboarding → tap "Start free trial" → use sandbox account.
+Subscriptions: complete onboarding → complete 3 free sessions → paywall → tap "Start 7-day free trial" → use sandbox account.
 
 Product IDs:
 - com.repit.app.premium.annual (7-day trial)
 - com.repit.app.premium.monthly (7-day trial)
 
 Restore purchases is available on the paywall and in Settings.
+Daily reminder: Settings → Daily reminder → allow notifications when prompted.
 ```
 
 ---
@@ -281,10 +299,12 @@ See [app-store-copy.md](./app-store-copy.md) — subscription description, promo
 - [ ] Subscription products created in App Store Connect  
 - [ ] 7-day introductory offer on both products  
 - [x] Onboarding + paywall implemented  
+- [x] 3 free sessions before paywall  
 - [x] Restore purchases works (Settings + paywall)  
 - [x] Trial reminder (day 5–6)  
 - [x] Expired trial state handled  
 - [x] Paywall legal footer with Privacy Policy link  
+- [x] Daily reminder UI + local notification scheduling  
 - [ ] RevenueCat project + `VITE_REVENUECAT_IOS_API_KEY` in `.env`  
 - [ ] Sandbox tested end-to-end on device  
 - [ ] Privacy policy mentions subscriptions billed through Apple (optional sentence)  

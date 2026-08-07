@@ -97,8 +97,9 @@ npm run qa:browser  # Playwright only (requires: npx playwright install chromium
 | Flow | Expected behavior |
 |------|-------------------|
 | Toggle off | Status: “Daily reminder off.” |
-| Toggle on + time | Persists hour/minute; status explains iOS scheduling ships later |
-| Native | `reminderService.ts` stub — wire `@capacitor/local-notifications` with Developer account |
+| Toggle on + time | Persists hour/minute; status: “Daily reminder set for …” on iOS |
+| Native | `@capacitor/local-notifications` — requests permission on first enable |
+| Permission denied | Status: “Allow notifications in Settings…” |
 
 ---
 
@@ -152,7 +153,7 @@ Good for copy, layout, settings, paywall UI — not native animation parity.
 | TestFlight / App Store | Paid Apple Developer Program |
 | Sandbox IAP / RevenueCat live | Developer account |
 | Home Screen widget (App Groups) | Developer account + device testing |
-| Local notification delivery | Developer account + `@capacitor/local-notifications` |
+| Local notification delivery | Simulator/device — enable reminder, allow notifications, verify at scheduled time |
 | Tier 3 device QA (haptics, Face ID, audio) | Physical iPhone |
 
 ---

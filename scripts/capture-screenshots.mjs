@@ -125,14 +125,15 @@ async function main() {
     await capture(page, '01-hero-idle.png');
 
     console.log('2/6 Active session (~24/108)');
-    await loadApp(page, { 'repit-delay': '0.5' });
+    await loadApp(page, { 'repit-delay': '0.4', 'repit-autoFocusLock': 'false' });
     await page.getByRole('button', { name: 'Tap to begin' }).click();
     await page.waitForFunction(
       () => {
         const heading = document.querySelector('main h1');
-        return heading?.textContent?.replace(/,/g, '') === '24';
+        const n = parseInt(heading?.textContent?.replace(/,/g, '') ?? '0', 10);
+        return n >= 24;
       },
-      { timeout: 20_000 }
+      { timeout: 45_000 }
     );
     await page.waitForTimeout(800);
     await capture(page, '02-session-active.png');
@@ -162,7 +163,7 @@ async function main() {
     console.log('6/6 Welcome splash (optional)');
     await loadApp(page);
     await page.getByRole('button', { name: 'Open settings' }).click();
-    await page.getByRole('button', { name: 'Logout' }).click();
+    await page.getByRole('button', { name: 'Lock now' }).click();
     await page.getByText('Welcome back').waitFor();
     await page.waitForTimeout(800);
     await capture(page, '06-welcome-splash-optional.png');
