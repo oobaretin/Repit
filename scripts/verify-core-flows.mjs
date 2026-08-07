@@ -157,6 +157,18 @@ function flowerScaleAt(t) {
 assert('Flower full at tick', Math.abs(flowerScaleAt(0) - 1) < 0.02);
 assert('Flower constricts mid-interval', flowerScaleAt(0.5) < 0.92);
 
+{
+  const parse = (value) => {
+    const [h, m] = value.split(':').map((part) => parseInt(part, 10));
+    return {
+      hour: Number.isFinite(h) ? Math.min(23, Math.max(0, h)) : 8,
+      minute: Number.isFinite(m) ? Math.min(59, Math.max(0, m)) : 0,
+    };
+  };
+  assert('Reminder parses 07:30', parse('07:30').hour === 7 && parse('07:30').minute === 30);
+  assert('Reminder clamps invalid', parse('xx:yy').hour === 8 && parse('xx:yy').minute === 0);
+}
+
 console.log('\nRepit core flow verification\n');
 console.log(`  Passed: ${PASS.length}`);
 PASS.forEach((n) => console.log(`    ✓ ${n}`));

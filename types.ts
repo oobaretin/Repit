@@ -79,4 +79,10 @@ export interface SettingsPageProps {
   onSavePreset: (name: string) => void;
   onApplyPreset: (preset: CustomPreset) => void;
   onDeletePreset: (id: string) => void;
+  reminderEnabled: boolean;
+  setReminderEnabled: (enabled: boolean) => void;
+  reminderHour: number;
+  reminderMinute: number;
+  setReminderTime: (hour: number, minute: number) => void;
+  reminderStatusMessage: string;
 }

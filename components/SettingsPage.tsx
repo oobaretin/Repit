@@ -6,6 +6,11 @@ import { formatDuration } from '../utils/formatDuration';
 import { formatHistoryDate } from '../utils/practiceStats';
 import { ChevronLeftIcon, ChevronDownIcon, ChevronUpIcon } from './icons';
 import packageJson from '../package.json';
+import {
+  formatReminderTime,
+  parseReminderTimeInput,
+  reminderTimeInputValue,
+} from '../services/reminderService';
 
 const SOUND_GRID_CLASS = {
   1: 'sound-grid-1',
@@ -132,6 +137,12 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
   onSavePreset,
   onApplyPreset,
   onDeletePreset,
+  reminderEnabled,
+  setReminderEnabled,
+  reminderHour,
+  reminderMinute,
+  setReminderTime,
+  reminderStatusMessage,
 }) => {
   const estimatedSessionSec = targetReps > 0 ? targetReps * delay : 0;
   const [restoreMessage, setRestoreMessage] = useState('');
@@ -165,6 +176,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
     hapticsEnabled && 'Haptics on',
     autoFocusLock && 'Practice mode',
     lockOnLeave && 'App lock',
+    reminderEnabled && `Reminder ${formatReminderTime(reminderHour, reminderMinute)}`,
   ]
     .filter(Boolean)
     .join(' · ') || 'Defaults';
@@ -392,6 +404,33 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
             description="Require unlock after switching apps"
           />
         </SettingsFold>
+
+        <section className="settings-card space-y-3">
+          <h2 className="settings-section-title">Daily reminder</h2>
+          <Toggle
+            checked={reminderEnabled}
+            onChange={() => setReminderEnabled(!reminderEnabled)}
+            label="Practice reminder"
+            description="Gentle nudge at the same time each day"
+          />
+          {reminderEnabled ? (
+            <label className="block">
+              <span className="mb-2 block text-sm text-gray-400">Reminder time</span>
+              <input
+                type="time"
+                value={reminderTimeInputValue(reminderHour, reminderMinute)}
+                onChange={(e) => {
+                  const { hour, minute } = parseReminderTimeInput(e.target.value);
+                  setReminderTime(hour, minute);
+                }}
+                className="w-full rounded-2xl border border-gray-700 bg-gray-950/60 px-3.5 py-3 text-sm text-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/30"
+              />
+            </label>
+          ) : null}
+          {reminderStatusMessage ? (
+            <p className="text-xs text-gray-500">{reminderStatusMessage}</p>
+          ) : null}
+        </section>
 
         <section className="settings-card">
           <p className="settings-group-label">Progress</p>

@@ -16,6 +16,7 @@ import { hapticsService } from './services/hapticsService';
 import { nativeService } from './services/nativeService';
 import { isBiometricAvailable } from './services/lockService';
 import { syncWidgetData } from './services/widgetSyncService';
+import { reminderService } from './services/reminderService';
 import {
   appendSessionRecord,
   computeCurrentStreak,
@@ -92,6 +93,10 @@ const App: React.FC = () => {
   const [autoFocusLock, setAutoFocusLock] = usePersistentState('repit-autoFocusLock', true);
   const [displayName, setDisplayName] = usePersistentState('repit-displayName', '');
   const [practiceIntention, setPracticeIntentionRaw] = usePersistentState('repit-practiceIntention', '');
+  const [reminderEnabled, setReminderEnabled] = usePersistentState('repit-reminderEnabled', false);
+  const [reminderHour, setReminderHour] = usePersistentState('repit-reminderHour', 8);
+  const [reminderMinute, setReminderMinute] = usePersistentState('repit-reminderMinute', 0);
+  const [reminderStatusMessage, setReminderStatusMessage] = useState('');
 
   const setPracticeIntention = useCallback((value: string) => {
     setPracticeIntentionRaw(normalizePracticeIntention(value));
@@ -132,6 +137,17 @@ const App: React.FC = () => {
       totalSessions: sessionStats.totalSessions,
     });
   }, [currentStreak, repsThisWeek, sessionStats.totalSessions]);
+
+  useEffect(() => {
+    void reminderService
+      .sync({ enabled: reminderEnabled, hour: reminderHour, minute: reminderMinute })
+      .then((result) => setReminderStatusMessage(result.message));
+  }, [reminderEnabled, reminderHour, reminderMinute]);
+
+  const setReminderTime = useCallback((hour: number, minute: number) => {
+    setReminderHour(hour);
+    setReminderMinute(minute);
+  }, [setReminderHour, setReminderMinute]);
 
   useEffect(() => {
     nativeService.initialize();
@@ -464,6 +480,12 @@ const App: React.FC = () => {
             onSavePreset={handleSavePreset}
             onApplyPreset={handleApplyPreset}
             onDeletePreset={handleDeletePreset}
+            reminderEnabled={reminderEnabled}
+            setReminderEnabled={setReminderEnabled}
+            reminderHour={reminderHour}
+            reminderMinute={reminderMinute}
+            setReminderTime={setReminderTime}
+            reminderStatusMessage={reminderStatusMessage}
           />
           </div>
         ) : (
