@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import BrandRing from './BrandRing';
 import OnboardingRhythmDemo from './OnboardingRhythmDemo';
+import OnboardingTapAlong from './OnboardingTapAlong';
 import { ONBOARDING_STEPS } from '../constants/subscription';
 import { normalizeDisplayName } from '../utils/displayName';
 import { LockIcon } from './icons';
@@ -56,6 +57,7 @@ const OnboardingLockPreview: React.FC = () => (
 const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, setDisplayName }) => {
   const [step, setStep] = useState(0);
   const [nameInput, setNameInput] = useState('');
+  const [tapAlongDone, setTapAlongDone] = useState(false);
   const current = ONBOARDING_STEPS[step];
   const isLast = step === ONBOARDING_STEPS.length - 1;
 
@@ -107,7 +109,7 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, setDisplayN
           ))}
         </div>
 
-        <div className="flex flex-1 flex-col items-center justify-center px-2 text-center">
+        <div className="flex flex-1 flex-col items-center justify-center overflow-y-auto px-2 text-center">
           {step === 0 && (
             <div className="welcome-brand-ring-wrap relative mb-10">
               <BrandRing className="welcome-brand-ring" />
@@ -115,7 +117,14 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, setDisplayN
           )}
 
           {step === 1 &&
-            (prefersReducedMotion ? <OnboardingRhythmPreviewStatic /> : <OnboardingRhythmDemo />)}
+            (prefersReducedMotion ? (
+              <OnboardingRhythmPreviewStatic />
+            ) : (
+              <>
+                <OnboardingRhythmDemo />
+                <OnboardingTapAlong onComplete={() => setTapAlongDone(true)} />
+              </>
+            ))}
 
           {step === 2 && <OnboardingLockPreview />}
 
@@ -147,9 +156,10 @@ const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete, setDisplayN
           <button
             type="button"
             onClick={handleNext}
-            className="welcome-unlock-btn w-full rounded-2xl py-4 text-base font-semibold"
+            disabled={step === 1 && !prefersReducedMotion && !tapAlongDone}
+            className="welcome-unlock-btn w-full rounded-2xl py-4 text-base font-semibold disabled:opacity-40"
           >
-            {isLast ? 'Begin practice' : 'Continue'}
+            {isLast ? 'Begin practice' : step === 1 && !tapAlongDone && !prefersReducedMotion ? 'Tap the circle above' : 'Continue'}
           </button>
 
           {isLast && (

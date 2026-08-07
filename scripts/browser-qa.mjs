@@ -107,6 +107,10 @@ async function main() {
     const idleHeading = page.locator('main h1').first();
     assert('Idle shows target reps (108)', (await idleHeading.textContent())?.includes('108'));
     assert('Adjust practice pill visible', await page.getByText('Adjust practice').isVisible());
+    await page.getByText('Adjust practice').click();
+    assert('Adjust sheet opens', await page.getByRole('heading', { name: 'Adjust practice' }).isVisible());
+    assert('Rep presets in sheet', await page.getByRole('button', { name: '108' }).first().isVisible());
+    await page.getByRole('button', { name: 'Done' }).click();
 
     await page.getByRole('button', { name: 'Open settings' }).click();
     await page.getByRole('heading', { name: 'Settings' }).waitFor();
@@ -142,8 +146,15 @@ async function main() {
     assert('Onboarding rhythm step copy', await page.getByText('Feel the rhythm').isVisible());
     assert(
       'Onboarding live demo visible',
-      await page.locator('.onboarding-rhythm-preview').isVisible(),
+      await page.locator('.onboarding-rhythm-preview').first().isVisible(),
     );
+    const tapCircle = page.getByRole('button', { name: 'Tap to count a repetition' });
+    for (let i = 0; i < 3; i += 1) {
+      await tapCircle.click();
+      await page.waitForTimeout(1300);
+    }
+    await page.getByRole('button', { name: 'Continue' }).click();
+    assert('Onboarding tap-along complete', await page.getByText('Private by design').isVisible());
 
     // Paywall when starting session after free tier
     await loadApp(page, {

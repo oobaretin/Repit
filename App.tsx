@@ -31,6 +31,7 @@ import UnlockWelcomeScreen from './components/UnlockWelcomeScreen';
 import FocusLockOverlay from './components/FocusLockOverlay';
 import BrandMark from './components/BrandMark';
 import ConfigPill from './components/ConfigPill';
+import PracticeAdjustSheet from './components/PracticeAdjustSheet';
 import OnboardingFlow from './components/OnboardingFlow';
 import PaywallScreen from './components/PaywallScreen';
 import TrialReminderBanner from './components/TrialReminderBanner';
@@ -76,6 +77,7 @@ const App: React.FC = () => {
   const [focusLocked, setFocusLocked] = useState(false);
   const [biometricAvailable, setBiometricAvailable] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
+  const [showAdjustSheet, setShowAdjustSheet] = useState(false);
   const currentRepRef = useRef(currentRep);
   const sessionStartRef = useRef<number | null>(null);
 
@@ -338,8 +340,18 @@ const App: React.FC = () => {
   }, []);
 
   const openSettings = useCallback(async () => {
+    setShowAdjustSheet(false);
     setScreen('settings');
     await hapticsService.light();
+  }, []);
+
+  const openAdjustSheet = useCallback(async () => {
+    setShowAdjustSheet(true);
+    await hapticsService.light();
+  }, []);
+
+  const closeAdjustSheet = useCallback(() => {
+    setShowAdjustSheet(false);
   }, []);
 
   const handleRestorePurchases = useCallback(async () => {
@@ -514,7 +526,7 @@ const App: React.FC = () => {
                   currentStreak={currentStreak}
                   repsThisWeek={repsThisWeek}
                   isNewPractitioner={sessionStats.totalSessions === 0}
-                  onPress={openSettings}
+                  onPress={openAdjustSheet}
                 />
               )}
             </div>
@@ -552,6 +564,19 @@ const App: React.FC = () => {
           onDismiss={closePaywall}
         />
       )}
+
+      <PracticeAdjustSheet
+        open={showAdjustSheet && screen === 'timer' && !focusLocked}
+        onClose={closeAdjustSheet}
+        onOpenFullSettings={openSettings}
+        targetReps={targetReps}
+        setTargetReps={setTargetReps}
+        delay={delay}
+        setDelay={setDelay}
+        selectedSound={selectedSound}
+        onSoundSelect={handleSoundSelection}
+        isTimerActive={isTimerActive}
+      />
     </main>
   );
 };

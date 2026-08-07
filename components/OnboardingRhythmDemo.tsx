@@ -1,9 +1,11 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useId, useRef } from 'react';
 import { SoundOption } from '../types';
 import { audioService } from '../services/audioService';
 import { hapticsService } from '../services/hapticsService';
 import { breathAtPhase } from '../utils/repCycle';
+import { flowerBreathAtPhase } from '../utils/flowerOfLife';
 import { brandGlow } from '../utils/brandColors';
+import FlowerOfLifeLayer, { type FlowerOfLifeHandle } from './FlowerOfLifeLayer';
 
 const DEMO_TARGET = 5;
 const DEMO_INTERVAL_MS = 1200;
@@ -11,10 +13,11 @@ const RADIUS = 88;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 const OnboardingRhythmDemo: React.FC = () => {
+  const filterId = useId().replace(/:/g, '');
   const ringRef = useRef<SVGCircleElement>(null);
   const countRef = useRef<HTMLParagraphElement>(null);
   const remainingRef = useRef<HTMLParagraphElement>(null);
-  const breathRef = useRef<HTMLDivElement>(null);
+  const flowerRef = useRef<FlowerOfLifeHandle>(null);
   const repRef = useRef(0);
   const cycleStartRef = useRef(performance.now());
   const doneRef = useRef(false);
@@ -49,11 +52,7 @@ const OnboardingRhythmDemo: React.FC = () => {
           remaining > 0 ? `${remaining} remaining` : 'Complete';
       }
 
-      if (breathRef.current) {
-        const scale = 0.88 + (breath.scale - 0.9) * 0.35;
-        breathRef.current.style.transform = `scale(${scale})`;
-        breathRef.current.style.opacity = String(0.2 + breath.opacity * 0.35);
-      }
+      flowerRef.current?.applyBreath(flowerBreathAtPhase(phase));
     };
 
     const tick = (now: number) => {
@@ -95,11 +94,11 @@ const OnboardingRhythmDemo: React.FC = () => {
       className="onboarding-rhythm-preview relative mb-10 flex aspect-square w-[min(72vw,14rem)] items-center justify-center"
       aria-hidden="true"
     >
-      <div
-        ref={breathRef}
-        className="absolute inset-[8%] rounded-full bg-cyan-500/10 ring-1 ring-cyan-400/20"
-        style={{ transform: 'scale(0.9)', opacity: 0.25 }}
-      />
+      <div className="absolute inset-0 flex items-center justify-center overflow-hidden rounded-full">
+        <div className="h-full w-full scale-[0.48]">
+          <FlowerOfLifeLayer ref={flowerRef} filterId={filterId} lite />
+        </div>
+      </div>
       <svg className="absolute h-full w-full -rotate-90" viewBox="0 0 200 200">
         <circle cx="100" cy="100" r={RADIUS} stroke="rgba(55,65,81,0.8)" strokeWidth="6" fill="transparent" />
         <circle
@@ -122,7 +121,7 @@ const OnboardingRhythmDemo: React.FC = () => {
         </defs>
       </svg>
       <div className="relative text-center">
-        <p ref={remainingRef} className="text-[10px] uppercase tracking-[0.35em] text-gray-500">
+        <p ref={remainingRef} className="label-meta label-meta-wide">
           {DEMO_TARGET} remaining
         </p>
         <p

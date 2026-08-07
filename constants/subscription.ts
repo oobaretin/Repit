@@ -36,7 +36,7 @@ export const ONBOARDING_STEPS = [
   },
   {
     headline: 'Feel the rhythm',
-    body: 'Each bead. Each breath. Each sound. Watch a few reps — this is how practice feels in Repit.',
+    body: 'Watch a few reps, then tap the circle three times yourself. This is how practice feels in Repit.',
   },
   {
     headline: 'Private by design',
