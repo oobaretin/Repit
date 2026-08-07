@@ -6,6 +6,8 @@
 
 **Tester context:** No paid Apple Developer account yet · No physical iPhone (Simulator + browser only)
 
+**Privacy policy:** Live at [https://oobaretin.github.io/Repit/](https://oobaretin.github.io/Repit/) (verified August 7, 2026)
+
 ---
 
 ## Automated verification
@@ -13,7 +15,7 @@
 Run:
 
 ```bash
-npm run verify    # logic checks
+npm run verify    # logic checks (28 checks)
 npm run qa        # verify + browser Tier 1
 npm run qa:browser  # Playwright only (requires: npx playwright install chromium)
 ```
@@ -33,8 +35,10 @@ npm run qa:browser  # Playwright only (requires: npx playwright install chromium
 | Practice intention trim + 48-char cap | ✓ Pass |
 | Flower full scale at tick / constricts mid-interval | ✓ Pass |
 | Reminder time parsing | ✓ Pass |
+| Free session limit (3 before paywall) | ✓ Pass |
+| Reminder service schedules local notifications | ✓ Pass |
 
-**Run date:** August 6, 2026
+**Run date:** August 7, 2026
 
 ### Browser QA (Tier 1 — Playwright)
 
@@ -52,7 +56,7 @@ npm run qa:browser  # Playwright only (requires: npx playwright install chromium
 | Paywall on session start after free sessions | ✓ Pass |
 | Paywall lists Flower of Life | ✓ Pass |
 
-**Run date:** August 6, 2026
+**Run date:** August 7, 2026
 
 ---
 
@@ -65,9 +69,11 @@ npm run qa:browser  # Playwright only (requires: npx playwright install chromium
 | **Idle hierarchy** | No quick-count chips; StatusChip only when paused/complete |
 | **Settings IA** | Practice-first order; empty history state; sound fold open for new users |
 | **Onboarding tap-along** | Step 2: auto demo + Flower of Life + user taps circle 3× before Continue |
-| **Daily reminder (UI)** | Settings → toggle + time; saved locally; native scheduling stub until notifications plugin |
+| **Daily reminder** | Settings → toggle + time; `@capacitor/local-notifications` schedules repeating daily alert on iOS |
 | **Post-session** | Streak line + free sessions remaining; “Same practice again” for all users |
 | **Flower of Life (native)** | Lite path on iOS; CSS ring sweep; full 19-circle pattern |
+| **Freemium** | 3 free sessions; paywall on session 4 start |
+| **App Store screenshots** | Regenerated in `screenshots/` (1290 × 2796) |
 
 ---
 
@@ -77,7 +83,7 @@ npm run qa:browser  # Playwright only (requires: npx playwright install chromium
 
 | Flow | Expected behavior | Code reference |
 |------|-------------------|----------------|
-| Start | Tap circle → `Running` (paywall if no subscription after free session) | `App.tsx` `handleStartPauseResume` |
+| Start | Tap circle → `Running` (paywall if no subscription after 3 free sessions) | `App.tsx` `handleStartPauseResume` |
 | Tick | Every `delay` seconds (min 0.1s), rep increments, sound + light haptic | `useMeditationTimer.ts` |
 | Pause | Tap while running → `Paused`; session bar appears | same |
 | Complete | At `targetReps`, completion sheet + history | `completeSession` |
@@ -88,7 +94,7 @@ npm run qa:browser  # Playwright only (requires: npx playwright install chromium
 | Flow | Expected behavior |
 |------|-------------------|
 | Onboarding | 3 screens → demo + 3 taps on step 2 → **Begin practice** |
-| First sessions | **3** full practice sessions free |
+| Free tier | **3** full practice sessions before paywall |
 | After free sessions | Settings/history accessible; paywall when starting session 4 |
 | Dev mode | `repit-devPremium` localStorage simulates premium |
 
@@ -96,10 +102,10 @@ npm run qa:browser  # Playwright only (requires: npx playwright install chromium
 
 | Flow | Expected behavior |
 |------|-------------------|
-| Toggle off | Status: “Daily reminder off.” |
+| Toggle off | Status: “Daily reminder off.”; pending notification cancelled |
 | Toggle on + time | Persists hour/minute; status: “Daily reminder set for …” on iOS |
-| Native | `@capacitor/local-notifications` — requests permission on first enable |
-| Permission denied | Status: “Allow notifications in Settings…” |
+| Permission | System prompt on first enable; denied → “Allow notifications in Settings…” |
+| Scheduled alert | Title “Time for practice”; repeats daily at chosen time |
 
 ---
 
@@ -127,14 +133,14 @@ In Xcode: **iPhone 15** (or any) simulator → **Product → Clean Build Folder*
 | 4 | Sheet: change reps/sound/interval → Done | ✓ Pass | |
 | 5 | Start → pause → resume; session bar only when paused | ✓ Pass | |
 | 6 | Complete session → celebration sheet → Done → still on timer | ✓ Pass | |
-| 7 | Session 2 attempt → paywall overlay; **Not now** → settings still open | ✓ Pass | |
-| 8 | Settings → daily reminder toggle + time | ✓ Pass | Status message appears |
+| 7 | After 3 free sessions → paywall overlay; **Not now** → settings still open | ✓ Pass | |
+| 8 | Settings → daily reminder → allow notifications → **8:00 AM** | ✓ Pass | Status: “Daily reminder set for 8:00 AM.” |
 | 9 | Flower + ring animation (subjective smoothness) | ✓ Pass | Acceptable in Simulator |
 | 10 | Practice mode + hold-to-exit overlay | ✓ Pass | |
 
 **Run date:** August 7, 2026 — all **10** simulator checks passed.
 
-**Simulator limits (skip for now):** haptics, Face ID, real audio unlock edge cases, true WKWebView perf vs device.
+**Simulator limits (skip for now):** haptics, Face ID, real audio unlock edge cases, true WKWebView perf vs device, notification banner at exact fire time (scheduled; delivery not re-tested at 8:00 AM).
 
 ### Step 3 — Web dev (fast iteration)
 
@@ -153,7 +159,7 @@ Good for copy, layout, settings, paywall UI — not native animation parity.
 | TestFlight / App Store | Paid Apple Developer Program |
 | Sandbox IAP / RevenueCat live | Developer account |
 | Home Screen widget (App Groups) | Developer account + device testing |
-| Local notification delivery | Simulator/device — enable reminder, allow notifications, verify at scheduled time |
+| Notification at fire time on device | Physical iPhone (optional Simulator re-check at 8:00 AM) |
 | Tier 3 device QA (haptics, Face ID, audio) | Physical iPhone |
 
 ---
@@ -168,10 +174,13 @@ Good for copy, layout, settings, paywall UI — not native animation parity.
 
 ## Sign-off
 
-- [x] Automated logic verification
-- [x] Automated browser Tier 1
+- [x] Automated logic verification (28 checks)
+- [x] Automated browser Tier 1 (15 checks)
 - [x] UX quick wins + adjust sheet + onboarding tap-along
-- [x] Daily reminder UI + stub service
+- [x] Freemium (3 free sessions) + post-session polish
+- [x] Daily reminder + local notification scheduling
+- [x] Privacy policy live at GitHub Pages
+- [x] App Store screenshots regenerated
 - [x] Tier 2 Simulator checklist (10/10 — August 7, 2026)
 - [ ] Tier 3 device pass (blocked — no iPhone)
 - [ ] Subscription sandbox (blocked — no Developer account)
