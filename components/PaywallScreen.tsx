@@ -30,8 +30,8 @@ const PAYWALL_COPY = {
     subtitle: 'Subscribe to continue your practice with Repit.',
   },
   afterFirstSession: {
-    title: 'You finished your first session',
-    subtitle: 'Start a 7-day free trial to keep your streak, history, and daily practice.',
+    title: 'Your free sessions are complete',
+    subtitle: 'You’ve practiced 3 times with Repit. Start a 7-day free trial to keep your streak, history, and daily practice.',
   },
   default: {
     title: 'Start your 7-day free trial',

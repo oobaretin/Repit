@@ -45,6 +45,11 @@ import { useMeditationTimer } from './hooks/useMeditationTimer';
 import { useSubscription } from './hooks/useSubscription';
 import { LockIcon, SettingsIcon } from './components/icons';
 import { parsePracticeDeepLink } from './utils/deepLink';
+import {
+  freeSessionsRemaining,
+  requiresPaidSubscription,
+  showPostFreeSessionPaywallCopy,
+} from './utils/subscriptionAccess';
 
 const shellStyle = {
   paddingTop: 'calc(0.75rem + var(--safe-top))',
@@ -115,9 +120,13 @@ const App: React.FC = () => {
   const longestStreak = useMemo(() => computeLongestStreak(sessionHistory), [sessionHistory]);
   const repsThisWeek = useMemo(() => repsInLastDays(sessionHistory, 7), [sessionHistory]);
 
-  const hasFreeSessionRemaining = sessionStats.totalSessions === 0;
-  const requiresSubscription = !isPremium && !hasFreeSessionRemaining;
-  const paywallAfterFirstSession = requiresSubscription && sessionStats.totalSessions === 1 && !everPremium;
+  const freeSessionsLeft = freeSessionsRemaining(sessionStats.totalSessions);
+  const requiresSubscription = requiresPaidSubscription(isPremium, sessionStats.totalSessions);
+  const paywallAfterFreeSessions = showPostFreeSessionPaywallCopy(
+    sessionStats.totalSessions,
+    everPremium,
+    isPremium,
+  );
 
   const showTrialReminder =
     isPremium &&
@@ -629,16 +638,17 @@ const App: React.FC = () => {
           displayName={displayName}
           practiceIntention={practiceIntention}
           currentStreak={currentStreak}
+          freeSessionsRemaining={freeSessionsLeft}
+          isPremium={isPremium}
           onDismiss={dismissComplete}
           onSameAgain={handleSameAgain}
-          showSameAgain={isPremium}
         />
       )}
 
       {showPaywall && (
         <PaywallScreen
           expired={everPremium}
-          afterFirstSession={paywallAfterFirstSession}
+          afterFirstSession={paywallAfterFreeSessions}
           devMode={devMode}
           onSubscribed={handleSubscribed}
           onPurchase={purchase}

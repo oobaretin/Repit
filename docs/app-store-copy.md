@@ -37,7 +37,7 @@ Full plan, onboarding, and paywall copy: [subscription-plan.md](./subscription-p
 
 Optional. Can be updated without a new app review.
 
-> Count japa, mala rounds, and breath reps with a calm timer. 108 presets, focus lock, streaks, and a Home Screen widget. Try one session free.
+> Count japa, mala rounds, and breath reps with a calm timer. 108 presets, focus lock, streaks, and a Home Screen widget. Try three sessions free.
 
 (158 characters)
 
@@ -48,7 +48,7 @@ Optional. Can be updated without a new app review.
 ```
 Repit is a minimal japa and mala timer for mantra practice, breath counting, and any repetition-based mindfulness routine.
 
-Try your first session free. After that, start a 7-day free trial — then choose annual ($24.99/year) or monthly ($4.99/month). Cancel anytime in your Apple ID subscription settings.
+Try three practice sessions free. After that, start a 7-day free trial — then choose annual ($24.99/year) or monthly ($4.99/month). Cancel anytime in your Apple ID subscription settings.
 
 Set your target — 27, 54, 108, 1000, or any count — tap Start, and follow the breathing circle. Each rep brings a gentle sound and haptic tap so you can stay present without watching the screen.
 
@@ -66,7 +66,7 @@ FEATURES
 
 SUBSCRIPTION
 
-Repit requires a subscription after your first free session and 7-day trial. Payment is charged to your Apple ID. Subscriptions renew automatically unless canceled at least 24 hours before the end of the current period. Manage subscriptions in Settings → Apple ID → Subscriptions.
+Repit requires a subscription after three free practice sessions (then a 7-day trial when you subscribe). Payment is charged to your Apple ID. Subscriptions renew automatically unless canceled at least 24 hours before the end of the current period. Manage subscriptions in Settings → Apple ID → Subscriptions.
 
 WHO IT'S FOR
 
@@ -174,7 +174,7 @@ Optional field when submitting:
 ```
 Repit is a japa and mala repetition timer. No account is required.
 
-Subscriptions: complete onboarding → tap "Begin practice" → finish one free session → paywall appears → start 7-day trial with sandbox Apple ID when prompted.
+Subscriptions: complete onboarding → tap "Begin practice" → finish **three** free sessions → paywall on session 4 → start 7-day trial with sandbox Apple ID when prompted.
 Products: com.repit.app.premium.annual and com.repit.app.premium.monthly (7-day free trial each).
 Restore purchases is on the paywall.
 

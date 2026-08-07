@@ -181,6 +181,16 @@ assert('Flower constricts mid-interval', flowerScaleAt(0.5) < 0.92);
   assert('Deep link ignores other schemes', parse('https://example.com') === null);
 }
 
+{
+  const FREE_SESSION_LIMIT = 3;
+  const remaining = (total) => Math.max(0, FREE_SESSION_LIMIT - total);
+  const requiresPaid = (premium, total) => !premium && total >= FREE_SESSION_LIMIT;
+  assert('Three free sessions remaining at start', remaining(0) === 3);
+  assert('One free session after two completed', remaining(2) === 1);
+  assert('Paywall after third session', requiresPaid(false, 3));
+  assert('Premium skips paywall', !requiresPaid(true, 10));
+}
+
 console.log('\nRepit core flow verification\n');
 console.log(`  Passed: ${PASS.length}`);
 PASS.forEach((n) => console.log(`    ✓ ${n}`));

@@ -49,7 +49,7 @@ npm run qa:browser  # Playwright only (requires: npx playwright install chromium
 | Session bar visible when paused | ✓ Pass |
 | Onboarding step 1 | ✓ Pass |
 | Onboarding rhythm demo + tap-along (3 taps) | ✓ Pass |
-| Paywall on session start after free session | ✓ Pass |
+| Paywall on session start after free sessions | ✓ Pass |
 | Paywall lists Flower of Life | ✓ Pass |
 
 **Run date:** August 6, 2026
@@ -66,6 +66,7 @@ npm run qa:browser  # Playwright only (requires: npx playwright install chromium
 | **Settings IA** | Practice-first order; empty history state; sound fold open for new users |
 | **Onboarding tap-along** | Step 2: auto demo + Flower of Life + user taps circle 3× before Continue |
 | **Daily reminder (UI)** | Settings → toggle + time; saved locally; native scheduling stub until notifications plugin |
+| **Post-session** | Streak line + free sessions remaining; “Same practice again” for all users |
 | **Flower of Life (native)** | Lite path on iOS; CSS ring sweep; full 19-circle pattern |
 
 ---
@@ -87,8 +88,8 @@ npm run qa:browser  # Playwright only (requires: npx playwright install chromium
 | Flow | Expected behavior |
 |------|-------------------|
 | Onboarding | 3 screens → demo + 3 taps on step 2 → **Begin practice** |
-| First session | One full session free |
-| After first session | Settings/history accessible; paywall when starting session 2 |
+| First sessions | **3** full practice sessions free |
+| After free sessions | Settings/history accessible; paywall when starting session 4 |
 | Dev mode | `repit-devPremium` localStorage simulates premium |
 
 ### Daily reminder

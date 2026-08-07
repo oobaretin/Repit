@@ -1,5 +1,8 @@
 export const ENTITLEMENT_PREMIUM = 'premium';
 
+/** Full practice sessions before subscription is required (trial starts after this). */
+export const FREE_SESSION_LIMIT = 3;
+
 export const PRODUCT_ANNUAL = 'com.repit.app.premium.annual';
 export const PRODUCT_MONTHLY = 'com.repit.app.premium.monthly';
 

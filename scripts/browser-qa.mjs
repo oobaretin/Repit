@@ -159,11 +159,11 @@ async function main() {
     // Paywall when starting session after free tier
     await loadApp(page, {
       'repit-devPremium': 'false',
-      'repit-sessionStats': JSON.stringify({ totalSessions: 1, totalReps: 108, lastSessionAt: null }),
+      'repit-sessionStats': JSON.stringify({ totalSessions: 3, totalReps: 324, lastSessionAt: null }),
       'repit-everPremium': 'false',
     });
     await page.getByRole('button', { name: /Tap to begin/i }).click();
-    assert('Paywall after first session', await page.getByText('You finished your first session').isVisible());
+    assert('Paywall after free sessions', await page.getByText('Your free sessions are complete').isVisible());
     assert('Paywall lists Flower of Life', await page.getByText(/Flower of Life/i).isVisible());
   } finally {
     await browser.close();
