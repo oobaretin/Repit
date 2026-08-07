@@ -149,6 +149,18 @@ input[type='range']::-moz-range-thumb {
   transform: scale(0.96);
 }
 
+.label-meta {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgb(107, 114, 128);
+}
+
+.label-meta-wide {
+  letter-spacing: 0.28em;
+}
+
 .settings-card {
   border-radius: 1rem;
   border: 1px solid rgba(55, 65, 81, 0.45);

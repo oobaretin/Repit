@@ -193,63 +193,6 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
       )}
 
       <div className="mt-5 flex-1 space-y-5 overflow-y-auto pb-6">
-        <section className="settings-card">
-          <p className="settings-group-label">Lifetime</p>
-          <p className="mt-1 text-sm text-gray-300">
-            {totalSessions} session{totalSessions === 1 ? '' : 's'} · {totalReps.toLocaleString()} reps
-          </p>
-          <div className="mt-3 grid grid-cols-3 gap-2">
-            <div className="rounded-xl bg-gray-950/50 px-2 py-2.5 text-center ring-1 ring-gray-700/40">
-              <p className="text-lg font-semibold text-cyan-300">{currentStreak}</p>
-              <p className="text-[10px] uppercase tracking-wide text-gray-500">Day streak</p>
-            </div>
-            <div className="rounded-xl bg-gray-950/50 px-2 py-2.5 text-center ring-1 ring-gray-700/40">
-              <p className="text-lg font-semibold text-white">{longestStreak}</p>
-              <p className="text-[10px] uppercase tracking-wide text-gray-500">Best streak</p>
-            </div>
-            <div className="rounded-xl bg-gray-950/50 px-2 py-2.5 text-center ring-1 ring-gray-700/40">
-              <p className="text-lg font-semibold text-white">{repsThisWeek.toLocaleString()}</p>
-              <p className="text-[10px] uppercase tracking-wide text-gray-500">Reps (7d)</p>
-            </div>
-          </div>
-          {targetReps > 0 && (
-            <p className="mt-3 text-xs text-gray-500">
-              Next session ~{formatDuration(estimatedSessionSec)}
-            </p>
-          )}
-        </section>
-
-        {recentHistory.length > 0 && (
-          <SettingsFold
-            title="Recent sessions"
-            hint={
-              recentHistory[0]
-                ? `Latest · ${formatHistoryDate(recentHistory[0].completedAt)} · ${recentHistory[0].reps.toLocaleString()} reps`
-                : undefined
-            }
-            badge={String(recentHistory.length)}
-          >
-            <ul className="space-y-2">
-              {recentHistory.map((entry) => (
-                <li
-                  key={entry.id}
-                  className="flex items-center justify-between gap-3 rounded-xl bg-gray-950/40 px-3 py-2.5 text-sm ring-1 ring-gray-800/60"
-                >
-                  <div>
-                    <p className="font-medium text-gray-200">{formatHistoryDate(entry.completedAt)}</p>
-                    <p className="text-xs text-gray-500">
-                      {entry.reps.toLocaleString()} reps · {entry.delay.toFixed(1)}s · {entry.sound}
-                    </p>
-                  </div>
-                  {entry.durationSec != null && (
-                    <span className="shrink-0 text-xs text-gray-500">{formatDuration(entry.durationSec)}</span>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </SettingsFold>
-        )}
-
         <section className="settings-card space-y-3">
           <h2 className="settings-section-title">Practice</h2>
           <label htmlFor="practice-intention" className="block text-sm text-gray-400">
@@ -396,12 +339,18 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
             <span>0.5s</span>
             <span>10s</span>
           </div>
+          {targetReps > 0 && (
+            <p className="text-xs text-gray-500">
+              Next session ~{formatDuration(estimatedSessionSec)}
+            </p>
+          )}
         </section>
 
         <SettingsFold
           title="Tick sound"
           hint="Tap to preview · plays each rep"
           badge={selectedSound}
+          defaultOpen={totalSessions < 3}
         >
           {SOUND_GROUPS.map((group) => (
             <div key={group.id} className="space-y-2">
@@ -444,6 +393,65 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
           />
         </SettingsFold>
 
+        <section className="settings-card">
+          <p className="settings-group-label">Progress</p>
+          <p className="mt-1 text-sm text-gray-300">
+            {totalSessions} session{totalSessions === 1 ? '' : 's'} · {totalReps.toLocaleString()} reps
+          </p>
+          <div className="mt-3 grid grid-cols-3 gap-2">
+            <div className="rounded-xl bg-gray-950/50 px-2 py-2.5 text-center ring-1 ring-gray-700/40">
+              <p className="text-lg font-semibold text-cyan-300">{currentStreak}</p>
+              <p className="label-meta">Day streak</p>
+            </div>
+            <div className="rounded-xl bg-gray-950/50 px-2 py-2.5 text-center ring-1 ring-gray-700/40">
+              <p className="text-lg font-semibold text-white">{longestStreak}</p>
+              <p className="label-meta">Best streak</p>
+            </div>
+            <div className="rounded-xl bg-gray-950/50 px-2 py-2.5 text-center ring-1 ring-gray-700/40">
+              <p className="text-lg font-semibold text-white">{repsThisWeek.toLocaleString()}</p>
+              <p className="label-meta">Reps (7d)</p>
+            </div>
+          </div>
+        </section>
+
+        {recentHistory.length > 0 ? (
+          <SettingsFold
+            title="Recent sessions"
+            hint={
+              recentHistory[0]
+                ? `Latest · ${formatHistoryDate(recentHistory[0].completedAt)} · ${recentHistory[0].reps.toLocaleString()} reps`
+                : undefined
+            }
+            badge={String(recentHistory.length)}
+          >
+            <ul className="space-y-2">
+              {recentHistory.map((entry) => (
+                <li
+                  key={entry.id}
+                  className="flex items-center justify-between gap-3 rounded-xl bg-gray-950/40 px-3 py-2.5 text-sm ring-1 ring-gray-800/60"
+                >
+                  <div>
+                    <p className="font-medium text-gray-200">{formatHistoryDate(entry.completedAt)}</p>
+                    <p className="text-xs text-gray-500">
+                      {entry.reps.toLocaleString()} reps · {entry.delay.toFixed(1)}s · {entry.sound}
+                    </p>
+                  </div>
+                  {entry.durationSec != null && (
+                    <span className="shrink-0 text-xs text-gray-500">{formatDuration(entry.durationSec)}</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </SettingsFold>
+        ) : (
+          <section className="settings-card text-center">
+            <p className="text-sm text-gray-400">No sessions yet</p>
+            <p className="mt-1 text-xs text-gray-500">
+              Complete your first practice to see history here.
+            </p>
+          </section>
+        )}
+
         <section className="settings-card space-y-3">
           <h2 className="settings-section-title">Subscription</h2>
           <p className="text-xs text-gray-500">
@@ -470,8 +478,11 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
             onClick={onLogout}
             className="w-full rounded-xl bg-rose-500/15 py-3.5 text-sm font-medium text-rose-300 ring-1 ring-rose-400/25 active:bg-rose-500/25"
           >
-            Lock app
+            Lock now
           </button>
+          <p className="mt-2 text-center text-xs text-gray-500">
+            Require Face ID or tap to unlock before using Repit again.
+          </p>
         </section>
 
         <p className="pb-2 text-center text-[11px] text-gray-600">

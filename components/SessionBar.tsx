@@ -10,7 +10,7 @@ interface SessionBarProps {
 const SessionBar: React.FC<SessionBarProps> = ({ summary, onRestart }) => (
   <div className="flex w-full max-w-md items-center gap-3 rounded-2xl border border-gray-700/50 bg-gray-900/60 px-4 py-3.5 backdrop-blur-sm">
     <div className="min-w-0 flex-1">
-      <p className="text-[11px] uppercase tracking-[0.2em] text-gray-500">Session</p>
+      <p className="label-meta">Session</p>
       <p className="mt-0.5 truncate text-sm text-gray-200">{summary}</p>
     </div>
     <button

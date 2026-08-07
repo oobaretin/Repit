@@ -10,11 +10,19 @@ interface PaywallScreenProps {
   onSubscribed: () => void;
   onPurchase: (plan: SubscriptionPlan) => Promise<{ success: boolean; error?: string }>;
   onRestore: () => Promise<{ success: boolean; error?: string }>;
+  onDismiss?: () => void;
   devMode?: boolean;
   expired?: boolean;
   /** Shown right after the user's first free session */
   afterFirstSession?: boolean;
 }
+
+const PAYWALL_FEATURES = [
+  'Unlimited sessions, history & streaks',
+  'Focus lock, tick sounds & Flower of Life breath',
+  'Mantra, haptics & custom presets',
+  'Everything on your device — no account',
+] as const;
 
 const PAYWALL_COPY = {
   expired: {
@@ -35,6 +43,7 @@ const PaywallScreen: React.FC<PaywallScreenProps> = ({
   onSubscribed,
   onPurchase,
   onRestore,
+  onDismiss,
   devMode = false,
   expired = false,
   afterFirstSession = false,
@@ -92,22 +101,25 @@ const PaywallScreen: React.FC<PaywallScreenProps> = ({
       <div className="ambient-vignette" aria-hidden="true" />
 
       <div className="relative z-10 mx-auto flex w-full max-w-md flex-1 flex-col py-4">
+        {onDismiss && (
+          <div className="mb-2 flex justify-end">
+            <button
+              type="button"
+              onClick={onDismiss}
+              className="rounded-lg px-3 py-1.5 text-sm text-gray-400 hover:text-gray-300"
+            >
+              Not now
+            </button>
+          </div>
+        )}
+
         <header className="mb-6 text-center">
           <h1 className="text-2xl font-semibold tracking-tight">{copy.title}</h1>
           <p className="mt-2 text-sm text-gray-400">{copy.subtitle}</p>
         </header>
 
         <ul className="mb-6 space-y-2.5 text-sm text-gray-300">
-          {[
-            'Unlimited repetition sessions',
-            'Focus lock & Face ID app lock',
-            'Four calming tick sounds — Mala, Gong, Crystal, Bowl',
-            'Breathing Flower of Life synced to each rep',
-            'Optional mantra or intention for your practice',
-            'Haptic feedback on every rep',
-            'Practice history, streaks & custom presets',
-            'Everything on your device — no account',
-          ].map((item) => (
+          {PAYWALL_FEATURES.map((item) => (
             <li key={item} className="flex items-start gap-2.5">
               <span className="mt-0.5 text-cyan-400" aria-hidden="true">
                 ✓

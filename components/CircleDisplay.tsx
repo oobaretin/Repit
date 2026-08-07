@@ -291,7 +291,7 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
           ? `${progressPercent}%`
           : 'Open count';
 
-  const showHint = !isRunning && !isFocusLocked;
+  const showHint = !isRunning && !isFocusLocked && !isIdleReady;
 
   return (
     <div
@@ -374,7 +374,7 @@ const CircleDisplay: React.FC<CircleDisplayProps> = ({
       >
         <p
           ref={progressPercentRef}
-          className={`mb-3 min-h-[1rem] text-[11px] uppercase tracking-[0.35em] ${
+          className={`mb-3 min-h-[1rem] label-meta label-meta-wide ${
             isIdleReady ? 'text-cyan-400/80' : 'text-gray-500'
           } ${topLabel ? '' : 'invisible'}`}
         >

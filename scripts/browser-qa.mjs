@@ -106,7 +106,7 @@ async function main() {
     await loadApp(page);
     const idleHeading = page.locator('main h1').first();
     assert('Idle shows target reps (108)', (await idleHeading.textContent())?.includes('108'));
-    assert('Quick count chips visible', await page.getByRole('button', { name: '27' }).isVisible());
+    assert('Adjust practice pill visible', await page.getByText('Adjust practice').isVisible());
 
     await page.getByRole('button', { name: 'Open settings' }).click();
     await page.getByRole('heading', { name: 'Settings' }).waitFor();
@@ -145,12 +145,13 @@ async function main() {
       await page.locator('.onboarding-rhythm-preview').isVisible(),
     );
 
-    // Paywall after first session path
+    // Paywall when starting session after free tier
     await loadApp(page, {
       'repit-devPremium': 'false',
       'repit-sessionStats': JSON.stringify({ totalSessions: 1, totalReps: 108, lastSessionAt: null }),
       'repit-everPremium': 'false',
     });
+    await page.getByRole('button', { name: /Tap to begin/i }).click();
     assert('Paywall after first session', await page.getByText('You finished your first session').isVisible());
     assert('Paywall lists Flower of Life', await page.getByText(/Flower of Life/i).isVisible());
   } finally {

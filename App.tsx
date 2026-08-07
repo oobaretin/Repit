@@ -31,7 +31,6 @@ import UnlockWelcomeScreen from './components/UnlockWelcomeScreen';
 import FocusLockOverlay from './components/FocusLockOverlay';
 import BrandMark from './components/BrandMark';
 import ConfigPill from './components/ConfigPill';
-import QuickPracticeChips from './components/QuickPracticeChips';
 import OnboardingFlow from './components/OnboardingFlow';
 import PaywallScreen from './components/PaywallScreen';
 import TrialReminderBanner from './components/TrialReminderBanner';
@@ -76,6 +75,7 @@ const App: React.FC = () => {
   const [unlockReveal, setUnlockReveal] = useState(false);
   const [focusLocked, setFocusLocked] = useState(false);
   const [biometricAvailable, setBiometricAvailable] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
   const currentRepRef = useRef(currentRep);
   const sessionStartRef = useRef<number | null>(null);
 
@@ -237,9 +237,26 @@ const App: React.FC = () => {
     onComplete: completeSession,
   });
 
+  const openPaywall = useCallback(() => setShowPaywall(true), []);
+  const closePaywall = useCallback(() => setShowPaywall(false), []);
+
+  const handleSubscribed = useCallback(() => {
+    setShowPaywall(false);
+    void refresh();
+  }, [refresh]);
+
   const handleStartPauseResume = useCallback(async () => {
     if (focusLocked) return;
     audioService.initialize();
+
+    if (
+      requiresSubscription &&
+      timerState === TimerState.Idle &&
+      currentRep === 0
+    ) {
+      setShowPaywall(true);
+      return;
+    }
 
     if (timerState === TimerState.Running) {
       setTimerState(TimerState.Paused);
@@ -270,7 +287,7 @@ const App: React.FC = () => {
       await audioService.unlock();
       void playFeedback('tap');
     }
-  }, [timerState, currentRep, playFeedback, focusLocked, autoFocusLock]);
+  }, [timerState, currentRep, playFeedback, focusLocked, autoFocusLock, requiresSubscription]);
 
   const handleRestart = useCallback(async () => {
     setTimerState(TimerState.Idle);
@@ -294,6 +311,7 @@ const App: React.FC = () => {
   const handleSameAgain = useCallback(async () => {
     if (requiresSubscription) {
       setShowComplete(false);
+      setShowPaywall(true);
       return;
     }
     setShowComplete(false);
@@ -357,11 +375,6 @@ const App: React.FC = () => {
     [setTargetReps, setDelay, setSelectedSound],
   );
 
-  const handleQuickReps = useCallback((reps: number) => {
-    setTargetReps(reps);
-    void hapticsService.light();
-  }, [setTargetReps]);
-
   const handleDeletePreset = useCallback(
     (id: string) => {
       setCustomPresets((prev) => prev.filter((p) => p.id !== id));
@@ -376,19 +389,6 @@ const App: React.FC = () => {
 
   if (!onboardingComplete) {
     return <OnboardingFlow onComplete={() => setOnboardingComplete(true)} setDisplayName={setDisplayName} />;
-  }
-
-  if (requiresSubscription && !showComplete) {
-    return (
-      <PaywallScreen
-        expired={everPremium}
-        afterFirstSession={paywallAfterFirstSession}
-        devMode={devMode}
-        onSubscribed={() => void refresh()}
-        onPurchase={purchase}
-        onRestore={restore}
-      />
-    );
   }
 
   if (!appUnlocked) {
@@ -416,7 +416,7 @@ const App: React.FC = () => {
         {showTrialReminder && screen === 'timer' && !focusLocked && (
           <TrialReminderBanner
             daysLeft={trialDaysLeft!}
-            onViewPlans={openSettings}
+            onViewPlans={openPaywall}
             onDismiss={() => setTrialReminderDismissed(true)}
           />
         )}
@@ -479,7 +479,9 @@ const App: React.FC = () => {
                   >
                     <SettingsIcon className="h-4 w-4" />
                   </button>
-                  <StatusChip state={timerState} />
+                  {(timerState === TimerState.Paused || timerState === TimerState.Finished) && (
+                    <StatusChip state={timerState} />
+                  )}
                 </div>
               </header>
             )}
@@ -506,17 +508,14 @@ const App: React.FC = () => {
               )}
 
               {!focusLocked && timerState === TimerState.Idle && !showComplete && (
-                <div className="flex w-full max-w-md flex-col items-center gap-4">
-                  <QuickPracticeChips targetReps={targetReps} onSelect={handleQuickReps} />
-                  <ConfigPill
-                    summary={sessionSummary}
-                    intention={practiceIntention}
-                    currentStreak={currentStreak}
-                    repsThisWeek={repsThisWeek}
-                    isNewPractitioner={sessionStats.totalSessions === 0}
-                    onPress={openSettings}
-                  />
-                </div>
+                <ConfigPill
+                  summary={sessionSummary}
+                  intention={practiceIntention}
+                  currentStreak={currentStreak}
+                  repsThisWeek={repsThisWeek}
+                  isNewPractitioner={sessionStats.totalSessions === 0}
+                  onPress={openSettings}
+                />
               )}
             </div>
           </>
@@ -539,6 +538,18 @@ const App: React.FC = () => {
           onDismiss={dismissComplete}
           onSameAgain={handleSameAgain}
           showSameAgain={isPremium}
+        />
+      )}
+
+      {showPaywall && (
+        <PaywallScreen
+          expired={everPremium}
+          afterFirstSession={paywallAfterFirstSession}
+          devMode={devMode}
+          onSubscribed={handleSubscribed}
+          onPurchase={purchase}
+          onRestore={restore}
+          onDismiss={closePaywall}
         />
       )}
     </main>
