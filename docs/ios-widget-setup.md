@@ -1,6 +1,8 @@
 # iOS Home Screen Widget Setup
 
-Repit includes a WidgetKit extension that shows your **day streak**, **reps this week**, and **total sessions** on the Home Screen.
+Repit includes a WidgetKit extension that shows your **day streak**, **reps this week**, **last practice**, and **total sessions** on the Home Screen.
+
+**Tap the widget** → opens the app via `repit://practice?start=1` and starts a session when subscribed (otherwise shows the paywall).
 
 Data flows: **App (Capacitor)** → `WidgetSyncPlugin` → **App Group** (`group.com.repit.app`) → **RepitWidget**.
 
@@ -65,3 +67,18 @@ In Xcode:
 - **Medium:** same layout with more horizontal space
 
 Timelines refresh when the app syncs stats and hourly as a fallback.
+
+---
+
+## Deep link (tap to start)
+
+| URL | Behavior |
+|-----|----------|
+| `repit://practice?start=1` | Opens timer and starts a session (or paywall if unsubscribed) |
+| `repit://practice` | Opens timer only |
+
+Registered in `ios/App/App/Info.plist` under `CFBundleURLTypes` (`repit` scheme). Handled in `App.tsx` via `@capacitor/app` `appUrlOpen` + `getLaunchUrl`.
+
+The widget sets `.widgetURL(URL(string: "repit://practice?start=1"))` on its view.
+
+**Test without a widget:** In Safari on Simulator, type `repit://practice?start=1` in the address bar (may prompt to open Repit).

@@ -1,5 +1,7 @@
 
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { App as CapApp } from '@capacitor/app';
+import { Capacitor } from '@capacitor/core';
 import {
   TimerState,
   SoundOption,
@@ -42,6 +44,7 @@ import { normalizePracticeIntention } from './utils/practiceIntention';
 import { useMeditationTimer } from './hooks/useMeditationTimer';
 import { useSubscription } from './hooks/useSubscription';
 import { LockIcon, SettingsIcon } from './components/icons';
+import { parsePracticeDeepLink } from './utils/deepLink';
 
 const shellStyle = {
   paddingTop: 'calc(0.75rem + var(--safe-top))',
@@ -81,6 +84,8 @@ const App: React.FC = () => {
   const [showAdjustSheet, setShowAdjustSheet] = useState(false);
   const currentRepRef = useRef(currentRep);
   const sessionStartRef = useRef<number | null>(null);
+  const pendingWidgetStartRef = useRef(false);
+  const startPauseResumeRef = useRef<() => Promise<void>>(async () => {});
 
   const [targetReps, setTargetReps] = usePersistentState('repit-targetReps', 108);
   const [delay, setDelay] = usePersistentState('repit-delay', 1.5);
@@ -135,8 +140,18 @@ const App: React.FC = () => {
       currentStreak,
       repsThisWeek,
       totalSessions: sessionStats.totalSessions,
+      targetReps,
+      delay,
+      sound: selectedSound,
     });
-  }, [currentStreak, repsThisWeek, sessionStats.totalSessions]);
+  }, [
+    currentStreak,
+    repsThisWeek,
+    sessionStats.totalSessions,
+    targetReps,
+    delay,
+    selectedSound,
+  ]);
 
   useEffect(() => {
     void reminderService
@@ -148,6 +163,27 @@ const App: React.FC = () => {
     setReminderHour(hour);
     setReminderMinute(minute);
   }, [setReminderHour, setReminderMinute]);
+
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+
+    const handleOpen = ({ url }: { url: string }) => {
+      const link = parsePracticeDeepLink(url);
+      if (!link) return;
+      setScreen('timer');
+      setShowAdjustSheet(false);
+      if (link.autoStart) pendingWidgetStartRef.current = true;
+    };
+
+    const listener = CapApp.addListener('appUrlOpen', handleOpen);
+    void CapApp.getLaunchUrl().then((result) => {
+      if (result?.url) handleOpen({ url: result.url });
+    });
+
+    return () => {
+      void listener.then((handle) => handle.remove());
+    };
+  }, []);
 
   useEffect(() => {
     nativeService.initialize();
@@ -306,6 +342,30 @@ const App: React.FC = () => {
       void playFeedback('tap');
     }
   }, [timerState, currentRep, playFeedback, focusLocked, autoFocusLock, requiresSubscription]);
+
+  startPauseResumeRef.current = handleStartPauseResume;
+
+  useEffect(() => {
+    if (subscriptionLoading || !onboardingComplete || !appUnlocked) return;
+    if (!pendingWidgetStartRef.current) return;
+    pendingWidgetStartRef.current = false;
+
+    if (requiresSubscription) {
+      setShowPaywall(true);
+      return;
+    }
+
+    if (timerState !== TimerState.Idle || currentRep !== 0 || focusLocked) return;
+    void startPauseResumeRef.current();
+  }, [
+    subscriptionLoading,
+    onboardingComplete,
+    appUnlocked,
+    requiresSubscription,
+    timerState,
+    currentRep,
+    focusLocked,
+  ]);
 
   const handleRestart = useCallback(async () => {
     setTimerState(TimerState.Idle);

@@ -169,6 +169,18 @@ assert('Flower constricts mid-interval', flowerScaleAt(0.5) < 0.92);
   assert('Reminder clamps invalid', parse('xx:yy').hour === 8 && parse('xx:yy').minute === 0);
 }
 
+{
+  const parse = (url) => {
+    const parsed = new URL(url);
+    if (parsed.protocol !== 'repit:') return null;
+    if (parsed.host !== 'practice') return null;
+    return { autoStart: parsed.searchParams.get('start') === '1' };
+  };
+  assert('Deep link practice autostart', parse('repit://practice?start=1')?.autoStart === true);
+  assert('Deep link practice open only', parse('repit://practice')?.autoStart === false);
+  assert('Deep link ignores other schemes', parse('https://example.com') === null);
+}
+
 console.log('\nRepit core flow verification\n');
 console.log(`  Passed: ${PASS.length}`);
 PASS.forEach((n) => console.log(`    ✓ ${n}`));

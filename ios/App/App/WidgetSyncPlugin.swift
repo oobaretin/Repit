@@ -21,6 +21,9 @@ public class WidgetSyncPlugin: CAPPlugin, CAPBridgedPlugin {
         defaults.set(call.getInt("currentStreak") ?? 0, forKey: "currentStreak")
         defaults.set(call.getInt("repsThisWeek") ?? 0, forKey: "repsThisWeek")
         defaults.set(call.getInt("totalSessions") ?? 0, forKey: "totalSessions")
+        defaults.set(call.getInt("targetReps") ?? 108, forKey: "targetReps")
+        defaults.set(call.getDouble("delay") ?? 1.5, forKey: "delay")
+        defaults.set(call.getString("sound") ?? "Mala", forKey: "sound")
 
         if #available(iOS 14.0, *) {
             WidgetCenter.shared.reloadAllTimelines()

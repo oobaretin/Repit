@@ -47,5 +47,16 @@
 	<string>Unlock Repit with Face ID or Touch ID</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.repit.app</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>repit</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>
